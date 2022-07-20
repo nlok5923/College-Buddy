@@ -1,0 +1,89 @@
+@import "../../Sass/imports";
+.footer {
+  &-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    &-logo,
+    &-intouch,
+    &-contact,
+    &-subscribe {
+      color: #59afff;
+      @include font-config(12px, 400, "montserrat", #59afff);
+      line-height: 25.95px;
+      margin-top: 15%;
+    }
+
+    &-contact ul {
+      margin-top: 4%;
+      list-style-type: none;
+      line-height: 4vh;
+      @include font-config(15px, 500, "montserrat", black);
+    }
+
+    &-subscribe {
+      button {
+        border-radius: 28px;
+        font-family: Arial;
+        color: #59afff;
+        margin-top: 5%;
+        font-size: 15px;
+        font-weight: bold;
+        background: rgba(89, 175, 255, 0.1);
+        padding: 10px 20px 10px 20px;
+        text-decoration: none;
+        border: none;
+      }
+
+      input {
+        border: none;
+        height: 4vh;
+        box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+        border-radius: 10px;
+        width: 15vw;
+        margin-top: 3%;
+      }
+
+      ::placeholder {
+        margin-left: 10%;
+        @include font-config(12px, 400, "montserrat", rgba(121, 121, 121, 1));
+      }
+    }
+
+    &-intouch {
+      width: 12vw;
+      h3 {
+        color: black;
+        margin-top: 7%;
+      }
+
+      &-social {
+        margin-top: 4%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    &-logo {
+      p {
+        color: rgba(98, 98, 98, 1);
+        font-size: 15px;
+        width: 9vw;
+      }
+
+      h2,
+      h3 {
+        margin-top: 4%;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    &-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
