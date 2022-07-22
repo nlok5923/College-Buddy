@@ -1,18 +1,13 @@
 import React from "react";
 import "./Footer.scss";
-// import Role from "../../customHooks/role";
-// import { useLocation } from "react-router-dom";
 
 const Footer = () => {
   const backgroundStyling = {
-    backgroundImage: `url("asset/Home/Images/footer.png")`,
+    backgroundImage: `url("asset/Footer/Images/footer-bg.png")`,
     backgroundRepeat: "no-repeat",
     height: "60%",
     backgroundSize: "100% 100%",
   };
-//   const location = useLocation();
-
-//   const role = Role(location.pathname);
 
   return (
     <>
@@ -30,10 +25,10 @@ const Footer = () => {
               <h1>Get in Touch</h1>
               <h3> goalex@gmail.com</h3>
               <div className="footer-container-intouch-social">
-                <img src="/assets/svg/footer/twitter.svg" alt="twitter" />
-                <img src="/assets/svg/footer/instagram.svg" alt="twitter" />
-                <img src="/assets/svg/footer/youtube.svg" alt="twitter" />
-                <img src="/assets/svg/footer/facebook.svg" alt="twitter" />
+                <img src="/asset/Footer/svg/twitter.svg" alt="twitter" />
+                <img src="/asset/Footer/svg/instagram.svg" alt="twitter" />
+                <img src="/asset/Footer/svg/youtube.svg" alt="twitter" />
+                <img src="/asset/Footer/svg/facebook.svg" alt="twitter" />
               </div>
             </div>
             <div className="footer-container-subscribe">

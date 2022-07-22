@@ -12,12 +12,12 @@
       width: 28%;
 
       h1 {
-        @include font-config(20px, 400, "Julius Sans One", white);
+        @include font-config(20px, 400, "montserrat", white);
         margin-top: 27%;
         margin-left: 10%;
       }
       p {
-        @include font-config(15px, 600, "Avenir", white);
+        @include font-config(15px, 600, "montserrat", white);
         margin-top: 5%;
         width: 70%;
         margin-left: 10%;
@@ -30,7 +30,7 @@
       p {
         float: right;
         margin-top: 2.5%;
-        @include font-config(15px, 400, "Avenir", black);
+        @include font-config(15px, 400, "montserrat", black);
         padding-right: 20px;
       }
       width: 72%;
@@ -43,7 +43,7 @@
         // @todo test below styling
         // @include font-config(15px, 900, "Avenir", black);
         h3 {
-          font-family: "Avenir";
+          font-family: "montserrat";
           margin-top: 4%;
           font-weight: 900;
         }
@@ -88,7 +88,7 @@
 
   button {
     border-radius: 10px;
-    font-family: "Avenir";
+    font-family: "montserrat";
     color: #ffffff;
     background: rgba(49, 156, 255, 1);
     padding: 13px 55px;

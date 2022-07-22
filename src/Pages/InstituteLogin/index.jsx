@@ -1,53 +1,36 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./InstituteLogin.scss";
-// import axios from "axios";
-import { message } from "antd";
 import { useHistory } from "react-router-dom";
-// import useAuth from "../../customHooks/auth";
-// import signInWithGoogle from "../../services/googleAuth";
+import { SignInWithGoogle } from "../../Services/Auth"
+import { UserContext } from "../../Provider/UserProvider";
 
 const Login = () => {
-//   const history = useHistory();
-//   const [loading, setLoading] = useState(false);
-//   const { saveUserId } = useAuth();
+
   const backgroundStyling = {
-    backgroundImage: `url("assets/images/login/login-bg.png")`,
+    backgroundImage: `url("asset/Login/Images/login-bg.png")`,
     backgroundRepeat: "no-repeat",
     height: "100vh",
     backgroundSize: "100% 100%",
   };
-//   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
 
-//   const handleInput = (e) => {
-//     setUserInfo({
-//       ...userInfo,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
+  const history = useHistory();
+  const info = useContext(UserContext);
+  const { user, isLoading } = info;
+  const [redirect, setredirect] = useState(null);
 
-//   const handleSignInResponse = (res) => {
-//     if (res.err) {
-//       message.error(res.err);
-//     } else {
-//       saveUserId(res.userId);
-//       history.push("/featured");
-//     }
-//   };
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
-//   const saveInfo = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     const response = await axios.post(
-//       "http://localhost:5000/auth/login",
-//       userInfo
-//     );
-//     setLoading(false);
-//     handleSignInResponse(response.data);
-//   };
-//   const registerWithGoogle = async () => {
-//     signInWithGoogle(handleSignInResponse);
-//   };
+  const googleSignIn = () => {
+    try {
+      SignInWithGoogle();
+    } catch(err) {
+      console.log("Mishap ", err.message);
+    }
+  }
+
   return (
     <div>
       <div className="login">
@@ -68,13 +51,13 @@ const Login = () => {
               </h1>
               <div className="login-with-google">
                 <img
-                  src="/assets/svg/register/google.svg"
+                  src="/asset/Login/svg/google.svg"
                   alt="google"
-                //   onClick={registerWithGoogle}
+                  onClick={() => googleSignIn("INSTITUTE")}
                 />
               </div>
               <img
-                src="assets/images/login/divider.png"
+                 src="asset/Login/Images/divider.png"
                 alt="divider"
                 className="login-divider"
               />

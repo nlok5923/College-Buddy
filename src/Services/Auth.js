@@ -10,20 +10,22 @@ const provider = new firebase.auth.GoogleAuthProvider();
 var user;
 const db = firebase.firestore();
 
-const saveUser = async ({ email, uid, displayName }) => {
+const saveUser = async ({ email, uid, displayName }, role) => {
+  console.log("this is role ", role);
   await db.collection("users").doc(uid).set({
     displayName,
     email,
+    role: role,
   });
 };
 
-export const signInWithGoogle = () => {
+export const SignInWithGoogle = (role) => {
   auth
     .signInWithPopup(provider)
     .then((result) => {
       if (result.additionalUserInfo.isNewUser) {
         user = result.user;
-        saveUser(user);
+        saveUser(user, role);
       }
 
       return true;

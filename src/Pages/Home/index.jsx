@@ -1,20 +1,22 @@
 import "./Home.scss";
-import TopContainer from "./Components/TopContainer/TopContainer";
-import OfferComponent from "./Components/Offer/Offer";
-import Collaborations from "./Components/Collaborations/Collaborations";
+import Promotion from "./Components/Promotion/index"
+// import TopContainer from "./Components/TopContainer/TopContainer";
+// import OfferComponent from "./Components/Offer/Offer";
+// import Collaborations from "./Components/Collaborations/Collaborations";
 
-const Dashboard = () => {
+const Home = () => {
   return (
     <div>
-      <TopContainer />
+      <Promotion />
+      {/* <TopContainer />
       <div className="collaboration-container">
         <Collaborations />
       </div>
       <div className="offer-container">
         <OfferComponent />
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default Dashboard;
+export default Home;

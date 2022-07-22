@@ -1,9 +1,7 @@
-import dotenv from 'dotenv';
 import 'firebase/auth';
 import firebase from 'firebase/app';
 import '@firebase/database';
 import 'firebase/firestore';
-dotenv.config();
 
 export const initializeApp = () => {
     if (!firebase.apps.length) {

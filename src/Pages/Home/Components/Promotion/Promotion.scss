@@ -1,0 +1,75 @@
+.dashboard-container-1 {
+    height: 80vh;
+    background-size: 100% 100%;
+}
+
+.inner-top-div {
+    font-family: "montserrat";
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 100px;
+    background-size: 100% 70%;
+    align-items: center;
+    height: 80vh;
+    margin-left: 150px;
+}
+
+.top-button-1 {
+    background: rgba(89, 175, 255, 0.18);
+    border-radius: 20px;
+    padding: 7px 10px;
+    font-size: 13px;
+}
+
+.top-button-1 .new-text {
+    background-color: #59afff;
+    margin-right: 10px;
+    border-radius: 20px;
+    padding: 1px 10px;
+    color: white;
+}
+
+.top-container-btn button {
+    outline: none;
+    border: none;
+    border-radius: 7px;
+    line-height: 20.49px;
+    padding: 14px 34px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.top-container-btn {
+    display: flex;
+    justify-content: space-between;
+}
+
+.inst-btn, .adv-btn {
+    background-color: #4D6DE3;
+    color: white;
+}
+
+
+.top-container-left-text {
+    margin: 30px 0;
+}
+
+.top-container-left-text h2 {
+    font-size: 60px;
+    line-height: 55px;
+    color: #4D6DE3;
+    font-weight: 700;
+}
+
+.top-container-left-text p {
+    color: black;
+    font-size: 22px;
+    line-height: 25px;
+    font-family: "montserrat";
+    font-weight: 300;
+}
+
+.dashboard-container-1 img {
+    height: 400px;
+}
