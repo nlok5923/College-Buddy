@@ -2,25 +2,26 @@ import "./Navbar.scss";
 import "antd/dist/antd.css";
 import { Menu, Dropdown, Popover, Button } from "antd";
 import { DownloadOutlined, UserOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
 
     return (
         <>
             <div className="navbar">
-                <div to="/" className="brand-name">
+                <Link to="/" className="brand-name">
                     <span className="brand-name-blue">TokenX</span>
-                </div>
+                </Link>
                 <ul className="nav-items">
                     <li>
-                        <div>
+                        <Link to="/services">
                             Services
-                        </div>
+                        </Link>
                     </li>
                     <li>
-                        <div>
+                        <Link to="/about-us">
                             About Us
-                        </div>
+                        </Link>
                     </li>
                     <li>
                         <Button type="primary" shape="round" icon={<DownloadOutlined />} size={"medium"} >

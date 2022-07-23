@@ -4,6 +4,7 @@ import "./InstituteRegister.scss";
 import { useHistory } from "react-router-dom";
 import { SignInWithGoogle } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
+import { Redirect } from "react-router-dom";
 
 const Register = () => {
 
@@ -25,7 +26,7 @@ const Register = () => {
 
   const googleSignIn = () => {
     try {
-      SignInWithGoogle();
+      SignInWithGoogle("INST");
     } catch(err) {
       console.log("Mishap ", err.message);
     }

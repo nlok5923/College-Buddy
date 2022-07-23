@@ -8,6 +8,9 @@ import InstituteLogin from "./Pages/InstituteLogin/index"
 import InstituteRegister from "./Pages/InstituteRegister/index"
 import Home from "./Pages/Home/index"
 import UserProvider from "./Provider/UserProvider"
+import InstituteRegisterForm from './Pages/InstituteRegister/RegistrationForm/index'
+import InstituteDashboard from "./Pages/Dashboard/InstituteDashboard";
+import AddCourses from "./Pages/Dashboard/InstituteDashboard/AddCourses";
 
 const App = () => {
   return (
@@ -17,10 +20,13 @@ const App = () => {
           <Navbar />
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/advertiser-login" component={AdvertiserLogin} />
+            <Route exact path="/advertiser-login" component={AdvertiserLogin} />
             <Route exact path="/advertiser-register" component={AdvertiserRegister} />
             <Route exact path="/institute-login" component={InstituteLogin} />
             <Route exact path="/institute-register" component={InstituteRegister} />
+            <Route exact path="/institute-register/:instId" component={InstituteRegisterForm} />
+            <Route exact path="/institute-dashboard" component={InstituteDashboard} />
+            <Route exact path="/institute-dashboard/:streamId" component={AddCourses} />
           </Switch>
           <Footer />
         </Router>

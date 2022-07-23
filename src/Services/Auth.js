@@ -11,12 +11,12 @@ var user;
 const db = firebase.firestore();
 
 const saveUser = async ({ email, uid, displayName }, role) => {
-  console.log("this is role ", role);
-  await db.collection("users").doc(uid).set({
+  const savingRes = await db.collection("users").doc(uid).set({
     displayName,
     email,
-    role: role,
+    role
   });
+  console.log(savingRes);
 };
 
 export const SignInWithGoogle = (role) => {
@@ -25,7 +25,7 @@ export const SignInWithGoogle = (role) => {
     .then((result) => {
       if (result.additionalUserInfo.isNewUser) {
         user = result.user;
-        saveUser(user, role);
+        return saveUser(user, role);
       }
 
       return true;

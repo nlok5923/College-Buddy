@@ -25,7 +25,7 @@ const Login = () => {
 
   const googleSignIn = () => {
     try {
-      SignInWithGoogle();
+      SignInWithGoogle("INST");
     } catch(err) {
       console.log("Mishap ", err.message);
     }
