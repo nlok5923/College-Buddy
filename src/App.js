@@ -11,6 +11,8 @@ import UserProvider from "./Provider/UserProvider"
 import InstituteRegisterForm from './Pages/InstituteRegister/RegistrationForm/index'
 import InstituteDashboard from "./Pages/Dashboard/InstituteDashboard";
 import AddCourses from "./Pages/Dashboard/InstituteDashboard/AddCourses";
+import StudentDashboard from "./Pages/Dashboard/StudentDashboard/index"
+import AdvertiserDashboard from "./Pages/Dashboard/AdvertiserDashboard/index"
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
             <Route exact path="/institute-register/:instId" component={InstituteRegisterForm} />
             <Route exact path="/institute-dashboard" component={InstituteDashboard} />
             <Route exact path="/institute-dashboard/:streamId" component={AddCourses} />
+            <Route exact path="/advertiser-dashboard" component={AdvertiserDashboard} />
+            <Route exact path="/student-dashboard" component={StudentDashboard} />
           </Switch>
           <Footer />
         </Router>

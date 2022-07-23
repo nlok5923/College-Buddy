@@ -1,23 +1,34 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import './InstituteDashboard.scss'
-import { Avatar, List } from 'antd';
+import { Avatar, List, Modal } from 'antd';
+import { AddStreams, fetchStreams } from "../../../Services/InstituteUtilities";
+import { UserContext } from "../../../Provider/UserProvider";
+import { Link } from "react-router-dom";
 
 const InstituteDashboard = () => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [streamData, setStreamData] = useState({
+        name: "",
+        description: ""
+    })
+    const [streams, setStreams] = useState([]);
 
-    const data = [
-        {
-            title: 'Ant Design Title 1',
-        },
-        {
-            title: 'Ant Design Title 2',
-        },
-        {
-            title: 'Ant Design Title 3',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-    ];
+    const info = useContext(UserContext);
+    const { user, isLoading } = info;
+
+    const getAllStreams = async () => {
+        try {
+            let resp = await fetchStreams(user.uid);
+            console.log(resp);
+            setStreams(resp);
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
+    useEffect(() => {
+        getAllStreams();
+    }, [user, isLoading])
 
     const backgroundStyling = {
         backgroundImage: `url("asset/Registration/institute/stream-bg.png")`,
@@ -26,8 +37,36 @@ const InstituteDashboard = () => {
         backgroundSize: "100% 100%",
     };
 
+    const handleOk = async () => {
+        console.log(streamData)
+        await AddStreams(user.uid, streamData.name, streamData.description);
+        setIsModalVisible(false);
+    }
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    }
+
+    const OpenModal = () => {
+        setIsModalVisible(true);
+    }
+
+    const handleStreamInfo = (e) => {
+        console.log(streamData)
+        setStreamData({
+            ...streamData,
+            [e.target.name]: e.target.value
+        })
+    }
+
     return (
         <div>
+            <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+                <div className="stream-container">
+                    <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />
+                    <input type="text" placeholder="stream code" name="description" onChange={(e) => handleStreamInfo(e)} />
+                </div>
+            </Modal>
             <div className="dashboard-inst">
                 <div className="dashboard-inst-container">
                     <div className="dashboard-inst-container-bg" style={backgroundStyling}>
@@ -46,19 +85,19 @@ const InstituteDashboard = () => {
                                 <List
                                     size="large"
                                     itemLayout="horizontal"
-                                    dataSource={data}
+                                    dataSource={streams}
                                     renderItem={(item) => (
-                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<a key="list-loadmore-edit">Add Courses</a>]}>
+                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<Link to={`/institute-dashboard/${item.id}`}> Add Courses </Link>]}>
                                             <List.Item.Meta
                                                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                                title={<a href="https://ant.design">{item.title}</a>}
-                                                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                                title={<a href="https://ant.design">{item.name}</a>}
+                                                description={item.description}
                                             />
                                         </List.Item>
                                     )}
                                 />
 
-                                <button>
+                                <button onClick={OpenModal}>
                                     Add Stream
                                 </button>
                             </div>

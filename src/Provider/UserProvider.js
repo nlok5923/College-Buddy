@@ -3,6 +3,7 @@ import { useState, useEffect, createContext } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { initializeApp } from "../Services/Init";
+import { CheckRole } from '../Services/CheckUser'
 
 initializeApp();
 const auth = firebase.auth();
@@ -22,8 +23,10 @@ const UserProvider = (props) => {
       if (person) {
         console.log(person);
         const { displayName, email, uid } = person;
+        const userRole = await CheckRole(uid);
+        const role = userRole.role;
         setInfo({
-          user: { displayName, email, uid },
+          user: { displayName, email, uid, role},
           isLoading: false,
         });
       } else {

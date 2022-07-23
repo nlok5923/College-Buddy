@@ -27,10 +27,6 @@ const RegistrationForm = () => {
     const convertContentToHTML = (state,name) => {
         const currentContentAsHTML = convertToHTML(state.getCurrentContent());
         console.log(currentContentAsHTML);
-        // setProfile({
-        //     ...profile,
-        //     [name]:currentContentAsHTML
-        // })
     };
 
 

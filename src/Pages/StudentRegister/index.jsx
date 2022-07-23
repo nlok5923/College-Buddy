@@ -1,14 +1,15 @@
 /* eslint-disable */
 import React, { useState, useContext, useEffect } from "react";
-import "./InstituteLogin.scss";
+import "./StudentRegister.scss";
 import { useHistory } from "react-router-dom";
 import { SignInWithGoogle } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
+import { Redirect } from "react-router-dom";
 
-const Login = () => {
+const Register = () => {
 
   const backgroundStyling = {
-    backgroundImage: `url("asset/Login/Images/login-bg.png")`,
+    backgroundImage: `url("asset/Login/Images/register-bg.png")`,
     backgroundRepeat: "no-repeat",
     height: "100vh",
     backgroundSize: "100% 100%",
@@ -25,7 +26,7 @@ const Login = () => {
 
   const googleSignIn = () => {
     try {
-      SignInWithGoogle("INST");
+      SignInWithGoogle("STD");
     } catch(err) {
       console.log("Mishap ", err.message);
     }
@@ -33,23 +34,23 @@ const Login = () => {
 
   return (
     <div>
-      <div className="login">
-        <div className="login-container">
-          <div className="login-container-bg" style={backgroundStyling}>
+      <div className="register">
+        <div className="register-container">
+          <div className="register-container-bg" style={backgroundStyling}>
             <h1>GOALEX</h1>
             <p>Dream, Learn and Grow with professional</p>
           </div>
-          <div className="login-container-inputarea">
+          <div className="register-container-inputarea">
             <p>
-              Not a member ? <a href="/register">Register</a>
+              Already a member ? <a href="login">login</a>
             </p>
-            <div className="login-container-inputarea-boxarea">
+            <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Login to Goalex</strong>
+                  <strong>Register to Goalex</strong>
                 </b>
               </h1>
-              <div className="login-with-google">
+              <div className="register-with-google">
                 <img
                   src="/asset/Login/svg/google.svg"
                   alt="google"
@@ -59,20 +60,29 @@ const Login = () => {
               <img
                  src="asset/Login/Images/divider.png"
                 alt="divider"
-                className="login-divider"
+                className="register-divider"
               />
-              <div className="login-input">
+              <div className="register-input">
                 <form 
                 // onSubmit={saveInfo}
                 >
+                  <h3>
+                    <b>Name</b>
+                  </h3>
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    // onChange={handleInput}
+                  />
                   <h3>
                     <b>Email address</b>
                   </h3>
                   <input
                     name="email"
                     type="email"
-                    // onChange={handleInput}
                     required
+                    // onChange={handleInput}
                   />
                   <h3>
                     <b>Password</b>
@@ -80,16 +90,15 @@ const Login = () => {
                   <input
                     name="password"
                     type="password"
-                    // onChange={handleInput}
                     required
+                    // onChange={handleInput}
                   />
-                  <h3>
-                    <a href="forgot"> Forgot password</a>
-                  </h3>
+                  <h5>
+                    Creating an account means you’re okay with our Terms and
+                    <a href="shit"> Privacy Policy</a>
+                  </h5>
                   <button type="submit">
-                    {/* {loading ? "Loading..." :  */}
-                    Login
-                    {/* // } */}
+                    Create Account
                   </button>
                 </form>
               </div>
@@ -101,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

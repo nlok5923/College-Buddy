@@ -1,9 +1,9 @@
 import React from "react";
 import './CourseCard.scss'
-import { EditOutlined, EllipsisOutlined, SettingOutlined, LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined } from '@ant-design/icons';
 import { Avatar, Card } from 'antd';
 
-const CourseCard = () => {
+const CourseCard = (props) => {
     const { Meta } = Card;
     return (
         <div>
@@ -24,8 +24,8 @@ const CourseCard = () => {
             >
                 <Meta
                     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                    title="Course on Economics"
-                    description="500 Students Enrolled"
+                    title={props.postData.name}
+                    description={props.postData.id}
                 />
             </Card>
         </div>
