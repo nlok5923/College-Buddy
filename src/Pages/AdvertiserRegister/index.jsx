@@ -38,12 +38,9 @@ const Register = () => {
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
             <h1>LAE</h1>
-            <p>Dream, Learn and Grow with professional</p>
+            <p>Register with LAE and promote your content </p>
           </div>
           <div className="register-container-inputarea">
-            <p>
-              Already a member ? <a href="login">login</a>
-            </p>
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>

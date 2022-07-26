@@ -18,13 +18,10 @@ const CourseCard = (props) => {
                         src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
                     />
                 }
-                actions={[
-                    <LinkOutlined key="invite-link" />,
-                ]}
             >
                 <Meta
                     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                    title={props.postData.name}
+                    title={"Assignment: " + "#" + props.cardId}
                     description={props.postData.id}
                 />
             </Card>

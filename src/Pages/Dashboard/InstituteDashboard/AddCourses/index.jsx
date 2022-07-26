@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import './AddCourses.scss'
 import CourseCard from "../../../../Components/CourseCard";
 import { Button, Modal } from 'antd'
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { UserContext } from "../../../../Provider/UserProvider";
 import { useParams } from "react-router-dom";
 import { AddCourses, fetchCourses } from "../../../../Services/InstituteUtilities";
@@ -37,6 +37,7 @@ const AddCoursesComponent = () => {
     const handleOk = async () => {
         await AddCourses(user.uid, streamId, courseData.name, courseData.code, courseData.description);
         setIsModalVisible(false);
+        window.location.reload();
     }
 
     const handleCancel = () => {
@@ -49,15 +50,14 @@ const AddCoursesComponent = () => {
 
     return (
         <div>
-            {/* <h1> Stream name</h1> */}
-            <Modal title="Add Course" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+            <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="course-container">
                     <input type="text" placeholder="Question 1" name="name" onChange={(e) => handleModalChange(e)} />
                     <input type="text" placeholder="Question 2" name="code" onChange={(e) => handleModalChange(e)} />
                 </div>
             </Modal>
-            <Button type="primary" className="course-card-btn" shape="round" icon={<DownloadOutlined />} size={"large"} onClick={OpenModal}>
-                Add Streams
+            <Button type="primary" className="course-card-btn" shape="round" icon={<FileAddOutlined />} size={"large"} onClick={() => OpenModal()}>
+                Add Assignment
             </Button>
             <div className="add-course-container" style={{
                 display: "grid",
@@ -69,7 +69,7 @@ const AddCoursesComponent = () => {
                 marginLeft: "2%",
             }}>
                 {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
-                    <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} />
+                    <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
                 </Link>
                 )}
             </div>

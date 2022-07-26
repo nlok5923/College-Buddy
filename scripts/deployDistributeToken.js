@@ -4,30 +4,31 @@ const { Framework } = require("@superfluid-finance/sdk-core");
 
 async function main() {
 
-  //// Applying best practices and using Superfluid Framework to get deployment info
-
   // Setting up network object - this is set as the goerli url, but can be changed to reflect your RPC URL and network of choice
-  const url = "https://eth-goerli.alchemyapi.io/v2/V5p1PckEwUqIq5s5rA2zvwRKH0V9Hslr";
-  const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
-  const network = await customHttpProvider.getNetwork();
+  // const url = "https://eth-goerli.alchemyapi.io/v2/V5p1PckEwUqIq5s5rA2zvwRKH0V9Hslr";
+  // const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
+  // const network = await customHttpProvider.getNetwork();
+  // console.log(" this is network ", network);
 
   // Setting up the out Framework object with Goerli (knows it's Goerli when we pass in network.chainId)
-  const sf = await Framework.create({
-    chainId: network.chainId,
-    provider: customHttpProvider
-  });
+  // const sf = await Framework.create({
+  //   chainId: network.chainId,
+  //   provider: customHttpProvider
+  // });
 
-  // Getting the Goerli fDAIx Super Token object from the Framework object
-  // This is fDAIx on goerli - you can change this token to suit your network and desired token address
-  const daix = await sf.loadSuperToken("LAEx");
+  // const laex = await sf.loadSuperToken("LAEx");
+  // console.log("token address ", laex.address);
+  // console.log(" hsot address",  sf.settings.config.hostAddress)
 
   //// Actually deploying
 
   // We get the contract to deploy to Gorli Testnet
-  const TokenSpreader = await ethers.getContractFactory("DistributeTokens");
+  const TokenSpreader = await ethers.getContractFactory("DistributeToken");
   const tokenSpreader = await TokenSpreader.deploy(
-    sf.settings.config.hostAddress, // Getting the Goerli Host contract address from the Framework object
-    "0xC76C2069Bb251ab6e3FDfDCd4399D3C91da74c04"                  
+    "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9",
+    // sf.settings.config.hostAddress, // Getting the Goerli Host contract address from the Framework object
+    // laex.address                
+    "0xC76C2069Bb251ab6e3FDfDCd4399D3C91da74c04"
   );
 
   await tokenSpreader.deployed();

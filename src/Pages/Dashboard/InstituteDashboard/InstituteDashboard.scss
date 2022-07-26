@@ -9,7 +9,7 @@
     background-color: rgba(89, 175, 255, 0.03);
 
     &-bg {
-      width: 28%;
+      width: 40%;
 
       h1 {
         @include font-config(20px, 400, "montserrat", white);
@@ -37,7 +37,7 @@
 
       &-boxarea {
         margin-top: 6%;
-        width: 70%;
+        width: 80%;
         margin-left: 10%;
         font-weight: bolder;
         // @todo test below styling
@@ -56,6 +56,15 @@
           border-radius: 10px;
           width: 30vw;
           margin-top: 0.2%;
+        }
+
+        p {
+          background-color: rgba(49, 156, 255, 1);
+          color: white !important;
+          border-radius: 10px;
+          text-align: center;
+          font-size: 15px;
+          padding: 5px 15px;
         }
       }
     }

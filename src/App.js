@@ -34,7 +34,7 @@ const App = () => {
               <Route exact path="/student-register" component={StudentRegister} />
               <Route exact path="/student-dashboard/course/:courseId" component={CoursePage} />
             </Switch>
-            <Footer />
+            {/* <Footer /> */}
           </Router>
         </ContractProvider>
       </UserProvider>

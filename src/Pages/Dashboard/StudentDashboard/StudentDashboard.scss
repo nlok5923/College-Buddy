@@ -9,29 +9,40 @@
     background-color: rgba(89, 175, 255, 0.03);
 
     &-bg {
-      width: 40%;
+      // width: 40%;
       margin-top: 5%;
       margin-left: 2%;
-
-      h1 {
-        @include font-config(20px, 400, "montserrat", white);
-        margin-top: 27%;
-        margin-left: 10%;
-      }
       p {
-        @include font-config(15px, 600, "montserrat", white);
-        margin-top: 5%;
-        width: 70%;
-        margin-left: 10%;
-        letter-spacing: 2px;
-        line-height: 20px;
+        background-color: rgba(49, 156, 255, 1);
+        color: white !important;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 1%;
+        font-size: 20px;
+        padding: 5px 15px;
       }
+
     }
 
     &-inputarea {
       margin-left: 2%;
       height: 100%;
       width: 50%;
+
+      &-performance {
+        // background-color: rgba(49, 156, 255, 1);
+        margin-right: 10px;
+
+        p {
+          background-color: rgba(49, 156, 255, 1);
+          color: white !important;
+          border-radius: 10px;
+          text-align: center;
+          margin-top: 1%;
+          font-size: 20px;
+          padding: 5px 15px;
+        }
+      }
 
       &-card {
         margin-top: 5%;

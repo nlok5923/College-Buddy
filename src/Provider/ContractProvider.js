@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import { Contract, ethers } from 'ethers'
 import InstituteFundsManagerFactoryArtifact from '../Ethereum/InstituteFundsManagerFactory.json'
+import DistributeTokencontractArtifact from '../Ethereum/DistributeToken.json'
 // import contractArtifact from '../Ethereum/Post.json'
 
 export const ContractContext = createContext("appContext");
@@ -9,15 +10,19 @@ const ContractProvider = (props) => {
 
   const [contract, setContract] = useState(null);
   const [address, setAddress] = useState('');
+  const [idaContract, setIdaContract] = useState(null);
 
-  // Compiled 2 Solidity files successfully
-  // Institute Funds manager contract address:  0xc4DbE9b781683717D22970376efEd71652D9e979
-  // Factory contract address:  0x40eE5D2dbaBd572824c457a157901F6CfB23056c
-  const contractAddress = "0x545683ed9787c2420998B561b7151bA99e314daC"
+  // Compiled 10 Solidity files successfully
+  // Institute Funds manager contract address:  0xb9EC8eaF71f1bA70Bf4a06Eb145fc8fC438Dc944
+  // Factory contract address:  0xc339A2223Be14cFe6e85421078a49A8d48620437
+  const contractAddress = "0x5859E56028Ca743aCb789FDA7B9a9880Bc222d9f"
+  const distributeTokenAddress = "0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401"
   const _initEthers = async () => {
     let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
     let contractInstance = new ethers.Contract(contractAddress, InstituteFundsManagerFactoryArtifact.abi, ethProvider.getSigner(0));
+    let distributeContractInstance = new ethers.Contract(distributeTokenAddress, DistributeTokencontractArtifact.abi, ethProvider.getSigner(0));
     setContract(contractInstance);
+    setIdaContract(distributeContractInstance);
   }
   
   const _initApp = async () => {
@@ -43,7 +48,7 @@ const ContractProvider = (props) => {
   
   return (
     // eslint-disable-next-line react/prop-types
-    <ContractContext.Provider value = {{ contract, address, _initApp }}> {props.children} </ContractContext.Provider>
+    <ContractContext.Provider value = {{ contract, address, _initApp, idaContract }}> {props.children} </ContractContext.Provider>
   );
 };
 

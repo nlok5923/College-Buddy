@@ -11,22 +11,12 @@ const AdvertiserDashboard = () => {
     const [instData, setInstData] = useState([]);
     const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
-    
-    // const fetchData = async () => {
-    //     let data = await fetchInstitutes()
-    //     // console.log("fetched ", data);
-    //     setInstData(data);
-    // }
-
-    // useEffect(() => {
-    //     fetchData();
-    // }, [user, isLoading])
 
     const getAllInstitutes = async () => {
         try {
             let instituteInfo = [];
             let instituteData = await contractData.contract.getALlInstitutesManager();
-            for(let i=0;i<instituteData.length;i++) {
+            for (let i = 0; i < instituteData.length; i++) {
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(instituteData[i][1], institueManager.abi, ethProvider.getSigner(0));
                 const streams = await contractInstance.getAllStreams();
@@ -40,7 +30,7 @@ const AdvertiserDashboard = () => {
             }
             setInstData(instituteInfo);
             console.log("final institute data ", instituteInfo);
-        } catch(err) {
+        } catch (err) {
             console.log(err.message);
         }
     }
@@ -49,8 +39,11 @@ const AdvertiserDashboard = () => {
         getAllInstitutes();
     }, [contractData])
 
-    return(
+    return (
         <div>
+            <h3 className="no-inst">
+                {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
+            </h3>
             <div className="page-container">
                 {instData.map((data, id) => <PostCard key={id} postData={data} />)}
             </div>

@@ -42,17 +42,12 @@ export const SignInWithGoogle = (role) => {
   auth
     .signInWithPopup(provider)
     .then((result) => {
+      if(role === "ADVT") {
+        window.location.href = "/advertiser-dashboard"
+      }
       if (result.additionalUserInfo.isNewUser) {
         user = result.user;
         return saveUser(user, role);
-      }
-
-      if(role === "INST") {
-        window.location.href = "/institute-dashboard"
-      } else if(role === "ADVT") {
-        window.location.href = "/advertiser-dashboard"
-      } else {
-        window.location.href = "/student-dashboard"
       }
 
       return true;

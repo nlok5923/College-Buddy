@@ -3,14 +3,14 @@ import './Submission.scss'
 import { UserContext } from "../../../../Provider/UserProvider"
 import { useParams } from "react-router-dom"
 import { getSubmission, setMark } from "../../../../Services/InstituteUtilities"
-import { Button } from "antd"
+import { Button, Card } from "antd"
 
 const Submission = () => {
     const { user, isLoading } = useContext(UserContext)
     const { courseId, streamId } = useParams();
     const [submission, setSubmission] = useState([]);
     const [mark, setMarks] = useState(0);
-    
+
     const getAndSet = async () => {
         console.log(streamId + " " + courseId);
         let data = await getSubmission(user.uid, streamId, courseId)
@@ -25,21 +25,29 @@ const Submission = () => {
     const markIt = async (id) => {
         try {
             await setMark(user.uid, streamId, courseId, id, mark);
-        } catch(err) {
+        } catch (err) {
             console.log(err.message);
         }
     }
 
-    return (        
+    return (
         <div>
+            <h3 className="no-submission">
+                {submission.length === 0 ? "No Submissions yet " : " "}
+            </h3>
             <div className="submission-container">
                 {submission.map((data, id) => {
-                    return(
+                    return (
                         <div>
-                            <h3>{data.ans1}</h3>
-                            <h3>{data.ans2}</h3>
-                            <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
-                            <Button onClick = {(e) => markIt(data.id) }> Mark it </Button>
+                            <Card>
+                                <Card.Meta title={"Assignment: #" + id + " Solution"} />
+                                <h2> Ans1 </h2>
+                                <p>{data.ans1}</p>
+                                <h2> Ans2 </h2>
+                                <p>{data.ans2}</p>
+                                <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
+                                <button onClick={(e) => markIt(data.id)}> Mark it </button>
+                            </Card>
                         </div>
                     )
                 })}

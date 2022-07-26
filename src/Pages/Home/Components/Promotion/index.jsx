@@ -1,5 +1,6 @@
 import "./Promotion.scss";
 import { Link } from "react-router-dom";
+import { HomeOutlined, UserSwitchOutlined } from "@ant-design/icons";
 
 const Promotion = () => {
     return (
@@ -19,21 +20,20 @@ const Promotion = () => {
                         <h2>
                             Learn <br />
                             And <br />
-                            Earn and Burn
+                            Earn Token 🤑
                         </h2>
                         <p>
-                            We help you find your dream skill that you
-                            wanted to
+                            Complete your daily assignments with great efficiency
                             <br />
-                            it will be a splendid affair to remember.
+                            and get rewarded based on your performance
                         </p>
                     </div>
                     <div className="top-container-btn">
-                        <Link to="/advertiser-register">
-                            <button className="inst-btn">Register as institute</button>
-                        </Link>
                         <Link to="/institute-register">
-                            <button className="adv-btn">Register as Advertiser</button>
+                            <button className="inst-btn">  <HomeOutlined />  Register as institute</button>
+                        </Link>
+                        <Link to="/advertiser-register">
+                            <button className="adv-btn">  <UserSwitchOutlined /> Register as Advertiser</button>
                         </Link>
                     </div>
                 </div>

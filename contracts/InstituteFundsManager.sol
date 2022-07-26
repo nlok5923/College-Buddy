@@ -10,14 +10,14 @@ contract InstituteFundsManager {
     
     address fundsOwner;
     string public instituteName;
-    address coinContractAddress = 0x6577A4409013c772aF780B46FC05f52B69e51caf;
+    address coinContractAddress = 0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D;
     LearnAndEarn laeContract;
     string[] allStreams;
     mapping(string => uint) streamBalance;
-    uint moduleCount = 0;
+    uint moduleCount = 1000000;
+    address distributor = 0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401;
 
-    function initialize(string memory _name) public {
-        require(fundsOwner == address(0), "already initialized");
+    constructor(string memory _name) {
         fundsOwner = msg.sender;
         instituteName = _name;
         laeContract = LearnAndEarn(coinContractAddress);
@@ -33,17 +33,16 @@ contract InstituteFundsManager {
         // deposit shouldn't be done with zero fund 
         require(msg.value != 0, "No funds transfered");
         streamBalance[_streamCode] = streamBalance[_streamCode] + msg.value; 
-        laeContract.mint(address(this), msg.value);
+        laeContract.mint(distributor, msg.value * 1000);
     }
 
     function addModule(uint _noOfModules) public payable {
         moduleCount = _noOfModules;
     }
 
-    function redeemModule() public {
-        require(moduleCount >= 1, "No more modules avalaible");
-        moduleCount--;
-        laeContract.mint(msg.sender, 100 * 10 ** 18);
+    function getReward() public {
+        moduleCount = moduleCount - 1;
+        laeContract.mint(msg.sender, 1000000000000000000 * 100);
     }
 
     function getAllStreams() public view returns(string[] memory) {

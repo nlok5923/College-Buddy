@@ -9,16 +9,19 @@ import { getImageUrl } from '../../../Services/AdvertiserUtilities';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
 import { Avatar, List, Space } from 'antd';
 import { ethers } from 'ethers';
+import { ContractContext } from '../../../Provider/ContractProvider';
+import InstititueManager from '../../../Ethereum/InstituteFundsManager.json'
 
 const StudentDashboard = () => {
 
   const [adv, setAdv] = useState([]);
-
+  const contractData = useContext(ContractContext);
   const history = useHistory();
   const info = useContext(UserContext);
   const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
   const [courseId, setCourseId] = useState('');
+  const [instituteContract, setContractInstance] = useState(null);
   const [studentData, setStudentData] = useState({
     instId: "",
     streamId: "",
@@ -65,6 +68,7 @@ const StudentDashboard = () => {
         instId: data.instId,
         streamId: data.streamId
       })
+      console.log(" this is updated student data ", studentData);
       getAllAssignments(data.instId, data.streamId);
       getAllAdvertisements(data.instId);
       getAllModules(data.instId);
@@ -82,17 +86,44 @@ const StudentDashboard = () => {
     })
   }
 
+  const getAddress = (instituteData) => {
+    console.log("in get address", instituteData)
+    console.log(" this is again studnt data ", studentData)
+    let res = instituteData.filter((data) => data[2] === studentData.instId);
+    return res;
+  }
+
+  const getCurrentInstitute = async () => {
+    try {
+      if(contractData.contract) {
+        let instituteData = await contractData.contract.getALlInstitutesManager();
+        let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+        let instituteAddress = getAddress(instituteData);
+        console.log(" this is institue address ", instituteAddress[0][1]);
+        //! give him address and you are done ig 
+        let contractInstance = new ethers.Contract(instituteAddress[0][1], InstititueManager.abi, ethProvider.getSigner(0));
+        setContractInstance(contractInstance);
+      }
+    } catch(err) {
+
+    }
+  }
+
+  useEffect(() => {
+    getCurrentInstitute();
+  }, [contractData])
+
   const handleAns = async (courseId) => {
     await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans1, ans.ans2, user.uid);
   }
 
-  const handleModuleSubmit = () => {
+  const handleModuleSubmit = async () => {
     try {
-      let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
-      //! give him address and you are done ig 
-      let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
+      console.log(" this is institute contract ", instituteContract);
+      let txn = await instituteContract.redeemModule({gasLimit: 9000000});
+      txn.wait();
     } catch(err) {
-
+      console.log(err.message);
     }
   }
 
@@ -101,8 +132,7 @@ const StudentDashboard = () => {
       <div className="LAE">
         <div className="LAE-container">
           <div className="LAE-container-bg">
-            <h3> Total token earned: 100 LAE</h3> 
-            <h3> Your performance score: 100</h3>
+            <p> Total token earned: 100 LAE</p> 
             <Card title="All you assignments">
               {
                 assignments.map((data, id) => (
@@ -131,6 +161,10 @@ const StudentDashboard = () => {
             </Card>
           </div>
           <div className="LAE-container-inputarea">
+            <div className="LAE-container-inputarea-performance">
+            <p>Performance score: 89  </p>  
+            </div>
+            <div>
           <List 
               itemLayout="vertical"
               size="large"
@@ -141,9 +175,9 @@ const StudentDashboard = () => {
                 pageSize: 3,
               }}
               dataSource={adv}
-              renderItem={(item) => (
+              renderItem={(item, id) => (
                 <List.Item
-                  key={item.name}
+                  key={item.name + id}
                   actions={[
                     // <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
                     // <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
@@ -166,6 +200,7 @@ const StudentDashboard = () => {
                  </List.Item>
                )}
              />
+            </div>
           </div>
         </div>
       </div>

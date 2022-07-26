@@ -69,12 +69,16 @@ const InstituteDashboard = () => {
     const handleOk = async () => {
         console.log(streamData)
         try {
-            await AddStreams(user.uid, streamData.name, streamData.description);
-            let txn = await instituteContract.addStreams(streamData.description);
-            txn.wait();
-            window.location.reload();
+            if (!instituteContract) {
+                toast.error("Please connect metamask first and make sure you init institute first !!");
+            } else {
+                await AddStreams(user.uid, streamData.name, streamData.description);
+                let txn = await instituteContract.addStreams(streamData.description);
+                txn.wait();
+                window.location.reload();
+            }
             setIsModalVisible(false);
-        } catch(err) {
+        } catch (err) {
             console.log("while adding streams", err.message);
         }
     }
@@ -130,10 +134,12 @@ const InstituteDashboard = () => {
                                 <b>
                                     <strong>Add Streams</strong>
                                 </b>
-                            </h1>
 
+                                <p>
+                               Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
+                            </p>
+                            </h1>
                             <div className="dashboard-inst-input">
-                                <h2>Address: {address} </h2>
                                 {!address && <div>
                                     <input type="text" placeholder="Enter inst unique code" onChange={(e) => setName(e.target.value)} />
                                     <button onClick={() => initInstitute()}>
@@ -146,7 +152,7 @@ const InstituteDashboard = () => {
                                     itemLayout="horizontal"
                                     dataSource={streams}
                                     renderItem={(item) => (
-                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<Link to={`/institute-dashboard/${item.id}`}> Add Courses </Link>]}>
+                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
                                             <List.Item.Meta
                                                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                                                 title={<a href="https://ant.design">{item.name}</a>}

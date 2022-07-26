@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import { UserContext } from "../../Provider/UserProvider"
 import Promotion from "./Components/Promotion/index"
 import "./Home.scss";
+import Footer from '../../Components/Footer/index'
 
 const Home = () => {
   const info = useContext(UserContext);
@@ -29,6 +30,7 @@ const Home = () => {
   return (
     <div>
       <Promotion />
+      <Footer />
     </div>
   );
 };

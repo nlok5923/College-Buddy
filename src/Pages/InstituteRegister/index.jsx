@@ -18,6 +18,7 @@ const Register = () => {
     backgroundSize: "100% 100%",
   };
 
+
   const [inst, setInst] = useState({
     name: "",
     description: ""
@@ -25,16 +26,18 @@ const Register = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const history = useHistory();
+
   const handleOk = async () => {
     await updateInstitute(user.uid, inst.name, inst.description);
     setIsModalVisible(false);
+    history.push("/institute-dashboard");
   }
 
   const handleCancel = () => {
     setIsModalVisible(false);
   }
 
-  const history = useHistory();
   const info = useContext(UserContext);
   const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
@@ -46,7 +49,8 @@ const Register = () => {
   const googleSignIn = async () => {
     try {
       await SignInWithGoogle("INST");
-      if(!getInstitute(user.uid)) {
+      let instituteData = await getInstitute(user.uid)
+      if(!instituteData) {
         setIsModalVisible(true);
       } 
     } catch (err) {
@@ -66,19 +70,16 @@ const Register = () => {
       <Modal title="Provide Info" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
         <div className="stream-container">
           <input type="text" placeholder="Enter institute name" name="name" onChange={(e) => handleInstituteInfo(e)} />
-          <input type="text" placeholder="About inst" name="description" onChange={(e) => handleInstituteInfo(e)} />
+          <textarea className="desc-textarea" type="text" placeholder="About inst" name="description" onChange={(e) => handleInstituteInfo(e)} />
         </div>
       </Modal>
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
             <h1>LAE</h1>
-            <p>Dream, Learn and Grow with professional</p>
+            <p>Register manager your evaluations </p>
           </div>
           <div className="register-container-inputarea">
-            <p>
-              Already a member ? <a href="login">login</a>
-            </p>
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
