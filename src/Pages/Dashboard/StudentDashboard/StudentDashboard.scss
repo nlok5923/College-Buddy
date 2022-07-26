@@ -1,6 +1,6 @@
 @import "../../../Sass/imports";
 
-.sdb {
+.LAE {
   &-container {
     display: flex;
     flex-direction: row;
@@ -10,6 +10,8 @@
 
     &-bg {
       width: 40%;
+      margin-top: 5%;
+      margin-left: 2%;
 
       h1 {
         @include font-config(20px, 400, "montserrat", white);
@@ -27,7 +29,9 @@
     }
 
     &-inputarea {
-      margin-left: 6%;
+      margin-left: 2%;
+      height: 100%;
+      width: 50%;
 
       &-card {
         margin-top: 5%;
@@ -67,73 +71,49 @@
         font-size: 13px;
         cursor: pointer;
       }
-
-      &-boxarea {
-        margin-top: 15%;
-        width: 70%;
-        margin-left: 10%;
-        font-weight: bolder;
-        // @todo test below styling
-        // @include font-config(15px, 900, "Avenir", black);
-        h3 {
-          font-family: "montserrat";
-          margin-top: 4%;
-          font-weight: 900;
-        }
-        input {
-          outline: none;
-          padding: 0 5px;
-          border: none;
-          height: 6vh;
-          box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
-          border-radius: 10px;
-          width: 30vw;
-          margin-top: 0.2%;
-        }
-      }
     }
   }
 }
 
-.sdb-with-google {
-  padding: 20px 10px;
-  width: 60%;
-  margin-top: 4%;
-  box-shadow: 0px 4px 4px 0px rgba(206, 206, 206, 0.25);
-  border-radius: 15px;
-  img {
-    margin: auto;
-    display: block;
-    height: auto;
-    width: 15vw;
-  }
-}
+// .LAE-with-google {
+//   padding: 20px 10px;
+//   width: 60%;
+//   margin-top: 4%;
+//   box-shadow: 0px 4px 4px 0px rgba(206, 206, 206, 0.25);
+//   border-radius: 15px;
+//   img {
+//     margin: auto;
+//     display: block;
+//     height: auto;
+//     width: 15vw;
+//   }
+// }
 
-.sdb-divider {
-  margin-left: 5%;
-  margin-top: 3%;
-  width: 25vw;
-  height: auto;
-}
+// .LAE-divider {
+//   margin-left: 5%;
+//   margin-top: 3%;
+//   width: 25vw;
+//   height: auto;
+// }
 
-.sdb-input {
-  margin-top: 4%;
+// .LAE-input {
+//   margin-top: 4%;
 
-  button {
-    border-radius: 10px;
-    font-family: "montserrat";
-    color: #ffffff;
-    background: rgba(49, 156, 255, 1);
-    padding: 13px 55px;
-    text-decoration: none;
-    border: none;
-    letter-spacing: 2px;
-    box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
-    margin-top: 3%;
-    font-size: 13px;
-    cursor: pointer;
-  }
-}
+//   button {
+//     border-radius: 10px;
+//     font-family: "montserrat";
+//     color: #ffffff;
+//     background: rgba(49, 156, 255, 1);
+//     padding: 13px 55px;
+//     text-decoration: none;
+//     border: none;
+//     letter-spacing: 2px;
+//     box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+//     margin-top: 3%;
+//     font-size: 13px;
+//     cursor: pointer;
+//   }
+// }
 
 .course-sub-card {
   margin-top: 8%;

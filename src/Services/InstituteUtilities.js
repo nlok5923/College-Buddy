@@ -29,7 +29,6 @@ export const AddCourses = async (uid, streamId, name, code, description) => {
     let data = await db.collection('users').doc(uid).collection('streams').doc(streamId).collection('courses').add({
         name,
         code,
-        description
     });
     console.log(data.id);
 }
@@ -37,7 +36,7 @@ export const AddCourses = async (uid, streamId, name, code, description) => {
 export const fetchCourses = async (uid, streamId) => {
     try {
         let data = [];
-        let ref = await db.collection("users").doc(uid).collection('streams').doc(streamId).collection('courses').get();
+        let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').get();
         ref.forEach((doc) => {
             data.push({
                 id: doc.id,
@@ -70,5 +69,72 @@ export const fetchStreams = async (uid) => {
     } catch (error) {
         console.log(error.message);
         console.log("Error while accessing all blogs");
+    }
+}
+
+export const updateInstitute = async (uid, _name, _description) => {
+    try {
+        await db.collection('users').doc(uid).update({
+            name: _name,
+            description: _description
+        })
+    } catch(err) {
+        console.log(err.message);
+    }
+}
+
+export const getSubmission = async (uid, streamId, courseId) => {
+    try {
+        let data = [];
+        let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(courseId.trim()).collection('submission').get()
+        ref.forEach((doc) => {
+            data.push({
+                id: doc.id,
+                ans1: doc.data().ans1,
+                ans2: doc.data().ans2,
+            })
+        })
+        console.log(" these are all stream ", data);
+        return data;
+    } catch (error) {
+        console.log(error.message);
+        console.log("Error while accessing all blogs");
+    }
+}
+
+export const setMark = async (uid, streamId, courseId, subId, _mark) => {
+    try {
+        await db.collection('users').doc(uid).collection('streams').doc(streamId).collection('courses').doc(courseId).collection('submission').doc(subId).update({
+            mark: _mark
+        })
+    } catch(err) {
+        console.log(err.message);
+    }
+}
+
+export const getInstitute = async (uid) => {
+    try {
+        let data = await db.collection('users').doc(uid).get();
+        if(data.data().name || data.data().description) return true;
+        return false;
+    } catch(err) {
+        console.log(err.message);
+    }
+}
+
+export const getModules = async (instId) => {
+    try {
+        let data = [];
+        let ref = await db.collection('users').doc(instId).collection('module').get();
+        ref.forEach((doc) => {
+            data.push({
+                id: doc.id,
+                q1: doc.data().q1,
+                q2: doc.data().q2,
+            })
+        })
+        return data;
+    } catch(err) {
+        console.log(err.message);
     }
 }

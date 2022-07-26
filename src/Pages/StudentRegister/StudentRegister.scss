@@ -1,0 +1,122 @@
+.stream-container {
+    input {
+        outline: none;
+        padding: 0 5px;
+        border: none;
+        height: 6vh;
+        box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+        border-radius: 10px;
+        width: 30vw;
+        margin-top: 1%;
+    }
+}
+
+@import "../../Sass/imports";
+
+.register {
+  &-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: rgba(89, 175, 255, 0.03);
+
+    &-bg {
+      width: 28%;
+
+      h1 {
+        @include font-config(20px, 400, "montserrat", white);
+        margin-top: 27%;
+        margin-left: 10%;
+      }
+      p {
+        @include font-config(15px, 600, "montserrat", white);
+        margin-top: 5%;
+        width: 70%;
+        margin-left: 10%;
+        letter-spacing: 2px;
+        line-height: 20px;
+      }
+    }
+
+    &-inputarea {
+      p {
+        float: right;
+        margin-top: 2.5%;
+        @include font-config(15px, 400, "montserrat", black);
+        padding-right: 20px;
+      }
+      width: 72%;
+
+      &-boxarea {
+        margin-top: 6%;
+        width: 70%;
+        margin-left: 10%;
+        font-weight: bolder;
+        // @todo test below styling
+        // @include font-config(15px, 900, "Avenir", black);
+        h3 {
+          font-family: "montserrat";
+          margin-top: 4%;
+          font-weight: 900;
+        }
+
+        h5 {
+          font-family: "montserrat";
+          color: #8c8c8c;
+          margin-top: 5%;
+        }
+        input {
+          border: none;
+          height: 6vh;
+          box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+          border-radius: 10px;
+          width: 30vw;
+          margin-top: 0.2%;
+          outline: none;
+          padding: 0 5px;
+        }
+      }
+    }
+  }
+}
+
+.register-with-google {
+  padding: 20px 10px;
+  width: 60%;
+  margin-top: 4%;
+  box-shadow: 0px 4px 4px 0px rgba(206, 206, 206, 0.25);
+  border-radius: 15px;
+  height: auto;
+  width: 30vw;
+  img {
+    margin: auto;
+    display: block;
+  }
+}
+
+.register-divider {
+  margin-left: 5%;
+  margin-top: 3%;
+  width: 25vw;
+  height: auto;
+}
+
+.register-input {
+  margin-top: 4%;
+
+  button {
+    border-radius: 10px;
+    font-family: "montserrat";
+    color: #ffffff;
+    background: rgba(49, 156, 255, 1);
+    padding: 13px 55px;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+    margin-top: 3%;
+    letter-spacing: 2px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+}

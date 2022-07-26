@@ -10,7 +10,11 @@ contract LearnAndEarn is ERC20, ERC20Burnable, Ownable {
         _mint(msg.sender, 100000000 * 10 ** decimals());
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public {
         _mint(to, amount);
+    }
+
+    function burn(address from, uint256 amount) public {
+        _burn(from, amount);
     }
 }

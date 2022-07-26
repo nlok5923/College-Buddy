@@ -37,7 +37,7 @@ const Register = () => {
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
-            <h1>GOALEX</h1>
+            <h1>LAE</h1>
             <p>Dream, Learn and Grow with professional</p>
           </div>
           <div className="register-container-inputarea">
@@ -47,7 +47,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Register to Goalex</strong>
+                  <strong>Register to LAE</strong>
                 </b>
               </h1>
               <div className="register-with-google">

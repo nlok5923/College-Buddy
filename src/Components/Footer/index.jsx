@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="footer">
           <div className="footer-container">
             <div className="footer-container-logo">
-              <h1>GOALEX</h1>
+              <h1>LAE</h1>
               <p>San Fransisco, CA 329831, USA.. +1 82398321</p>
 
               <h2>Privacy policy</h2>
@@ -23,7 +23,7 @@ const Footer = () => {
             </div>
             <div className="footer-container-intouch">
               <h1>Get in Touch</h1>
-              <h3> goalex@gmail.com</h3>
+              <h3> LAE@gmail.com</h3>
               <div className="footer-container-intouch-social">
                 <img src="/asset/Footer/svg/twitter.svg" alt="twitter" />
                 <img src="/asset/Footer/svg/instagram.svg" alt="twitter" />

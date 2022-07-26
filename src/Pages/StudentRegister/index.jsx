@@ -5,6 +5,8 @@ import { useHistory } from "react-router-dom";
 import { SignInWithGoogle } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
 import { Redirect } from "react-router-dom";
+import { Modal } from "antd"
+import { studentEnroll, getStudent } from "../../Services/StudentUtilities";
 
 const Register = () => {
 
@@ -15,6 +17,29 @@ const Register = () => {
     backgroundSize: "100% 100%",
   };
 
+  const [studentData, setStudentData] = useState({
+    instId: "",
+    streamId: ""
+  })
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleOk = async () => {
+    await studentEnroll(user.uid, studentData.instId, studentData.streamId);
+    setIsModalVisible(false);
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  }
+
+  const handleStudentInfo = (e) => {
+    setStudentData({
+      ...studentData,
+      [e.target.name]: e.target.value
+    })
+  }
+
   const history = useHistory();
   const info = useContext(UserContext);
   const { user, isLoading } = info;
@@ -22,22 +47,31 @@ const Register = () => {
 
   useEffect(() => {
     console.log(user);
-  }, [user]);
+  }, [user, isLoading]);
 
-  const googleSignIn = () => {
+  const googleSignIn = async () => {
     try {
-      SignInWithGoogle("STD");
-    } catch(err) {
+      await SignInWithGoogle("STD");
+      if(!getStudent(user.uid)) {
+        setIsModalVisible(true);
+      }
+    } catch (err) {
       console.log("Mishap ", err.message);
     }
   }
 
   return (
     <div>
+      <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+        <div className="stream-container">
+          <input type="text" placeholder="Enter institute ID" name="instId" onChange={(e) => handleStudentInfo(e)} />
+          <input type="text" placeholder="Enter Stream ID" name="streamId" onChange={(e) => handleStudentInfo(e)} />
+        </div>
+      </Modal>
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
-            <h1>GOALEX</h1>
+            <h1>LAE</h1>
             <p>Dream, Learn and Grow with professional</p>
           </div>
           <div className="register-container-inputarea">
@@ -47,7 +81,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Register to Goalex</strong>
+                  <strong>Register to LAE</strong>
                 </b>
               </h1>
               <div className="register-with-google">
@@ -58,12 +92,12 @@ const Register = () => {
                 />
               </div>
               <img
-                 src="asset/Login/Images/divider.png"
+                src="asset/Login/Images/divider.png"
                 alt="divider"
                 className="register-divider"
               />
               <div className="register-input">
-                <form 
+                <form
                 // onSubmit={saveInfo}
                 >
                   <h3>
@@ -73,7 +107,7 @@ const Register = () => {
                     name="name"
                     type="text"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h3>
                     <b>Email address</b>
@@ -82,7 +116,7 @@ const Register = () => {
                     name="email"
                     type="email"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h3>
                     <b>Password</b>
@@ -91,10 +125,10 @@ const Register = () => {
                     name="password"
                     type="password"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h5>
-                    Creating an account means you’re okay with our Terms and
+                    Creating an account means you're okay with our Terms and
                     <a href="shit"> Privacy Policy</a>
                   </h5>
                   <button type="submit">

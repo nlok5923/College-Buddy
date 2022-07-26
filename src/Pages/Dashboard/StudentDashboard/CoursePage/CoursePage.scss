@@ -1,0 +1,43 @@
+.course-page {
+    display: block;
+    margin: auto;
+    margin-left: 30%;
+    margin-top: 10%;
+
+    input {
+        border: none;
+        height: 6vh;
+        margin-bottom: 2%;
+        box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+        border-radius: 10px;
+        width: 30vw;
+        margin-top: 0.2%;
+        outline: none;
+        padding: 0 5px;
+    }
+
+    textarea {
+        border: none;
+        height: 6vh;
+        box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+        border-radius: 10px;
+        width: 30vw;
+        margin-top: 0.2%;
+        outline: none;
+        padding: 0 5px;
+    }
+
+    button {
+        border-radius: 10px;
+        font-family: "montserrat";
+        color: #ffffff;
+        background: rgba(49, 156, 255, 1);
+        padding: 10px 25px;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+        letter-spacing: 2px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+}

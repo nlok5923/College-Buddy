@@ -4,9 +4,17 @@ import { Avatar, List, Modal } from 'antd';
 import { AddStreams, fetchStreams } from "../../../Services/InstituteUtilities";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Link } from "react-router-dom";
+import { ContractContext } from "../../../Provider/ContractProvider";
+import toast, { Toaster } from 'react-hot-toast'
+import { ethers } from "ethers";
+import instituteManager from '../../../Ethereum/InstituteFundsManager.json'
 
 const InstituteDashboard = () => {
+    const contractData = useContext(ContractContext);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [name, setName] = useState('');
+    const [instituteContract, setInstituteContract] = useState(null);
+    const [address, setInstAddress] = useState('');
     const [streamData, setStreamData] = useState({
         name: "",
         description: ""
@@ -30,6 +38,27 @@ const InstituteDashboard = () => {
         getAllStreams();
     }, [user, isLoading])
 
+    const getInstituteContract = (_address) => {
+        let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+        let contractInstance = new ethers.Contract(_address, instituteManager.abi, ethProvider.getSigner(0));
+        setInstituteContract(contractInstance);
+    }
+
+    const getInstituteAddress = async () => {
+        try {
+            let data = await contractData.contract.getALlInstitutesManager();
+            console.log("resp from bc", data);
+            setInstAddress(data[0][1]);
+            getInstituteContract(data[0][1]);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    useEffect(() => {
+        getInstituteAddress();
+    }, [contractData])
+
     const backgroundStyling = {
         backgroundImage: `url("asset/Registration/institute/stream-bg.png")`,
         backgroundRepeat: "no-repeat",
@@ -39,8 +68,15 @@ const InstituteDashboard = () => {
 
     const handleOk = async () => {
         console.log(streamData)
-        await AddStreams(user.uid, streamData.name, streamData.description);
-        setIsModalVisible(false);
+        try {
+            await AddStreams(user.uid, streamData.name, streamData.description);
+            let txn = await instituteContract.addStreams(streamData.description);
+            txn.wait();
+            window.location.reload();
+            setIsModalVisible(false);
+        } catch(err) {
+            console.log("while adding streams", err.message);
+        }
     }
 
     const handleCancel = () => {
@@ -59,8 +95,23 @@ const InstituteDashboard = () => {
         })
     }
 
+    const initInstitute = async () => {
+        try {
+            if (contractData.contract) {
+                let txn = await contractData.contract.addInstitute(name, user.uid);
+                txn.wait();
+                window.location.reload();
+            } else {
+                toast.error("Please connect metamask !!");
+            }
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
     return (
         <div>
+            <Toaster />
             <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="stream-container">
                     <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />
@@ -82,6 +133,14 @@ const InstituteDashboard = () => {
                             </h1>
 
                             <div className="dashboard-inst-input">
+                                <h2>Address: {address} </h2>
+                                {!address && <div>
+                                    <input type="text" placeholder="Enter inst unique code" onChange={(e) => setName(e.target.value)} />
+                                    <button onClick={() => initInstitute()}>
+                                        Init Institute
+                                    </button>
+                                </div>
+                                }
                                 <List
                                     size="large"
                                     itemLayout="horizontal"
