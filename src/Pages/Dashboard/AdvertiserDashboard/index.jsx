@@ -6,13 +6,14 @@ import { UserContext } from "../../../Provider/UserProvider";
 import { ContractContext } from "../../../Provider/ContractProvider"
 import { ethers } from "ethers";
 import institueManager from '../../../Ethereum/InstituteFundsManager.json'
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const AdvertiserDashboard = () => {
     const [instData, setInstData] = useState([]);
     const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
     const history = useHistory();
+    const [currentUserId, setCurrentUserId] = useState('');
 
     const getAllInstitutes = async () => {
         try {
@@ -41,8 +42,19 @@ const AdvertiserDashboard = () => {
         getAllInstitutes();
     }, [contractData])
 
+    useEffect(() => {
+        console.log(" this is not running ", user);
+        if(user) {
+            console.log("updating", user);
+            setCurrentUserId(user.uid);
+        }
+    }, [user])
+
     return (
         <div>
+            <Link to={`/advertiser-dashboard/${currentUserId}`}>
+                <p className="poap-request">POAP requests</p>
+            </Link>
             <h3 className="no-inst">
                 {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
             </h3>

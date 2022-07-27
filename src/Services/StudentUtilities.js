@@ -69,3 +69,38 @@ export const fetchPost = async (instId) => {
         console.log(err.message);
     }
 } 
+
+export const fetchEvent = async (instId) => {
+    try {
+        let data = [];
+        console.log(" this is inst id ", instId);
+        let ref = await db.collection('users').doc(instId.trim()).collection('event').get();
+        ref.forEach(async (doc) => {
+            data.push({
+                id: doc.id,
+                name: doc.data().name,
+                description: doc.data().description,
+                link: doc.data().link,
+                advtId: doc.data().advtId
+            })
+        })
+        return data;
+    } catch(err) {
+        console.log(err.message);
+    }
+}
+
+export const claims = async (advtid, poapData, _address) => {
+    try {
+        console.log(advtid + " " + poapData + " " + _address);
+        await db.collection('users').doc(advtid).collection('claims').add({
+            name: poapData.name,
+            about: poapData.about,
+            contribution: poapData.contribution,
+            imageUrl: poapData.imageUrl,
+            address: _address
+        });
+    } catch (err) {
+        console.log(err.message);
+    }
+} 

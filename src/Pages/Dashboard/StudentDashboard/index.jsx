@@ -3,9 +3,9 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
-import { studentEnroll, getStudent, submitAns, fetchPost } from '../../../Services/StudentUtilities';
+import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims } from '../../../Services/StudentUtilities';
 import { fetchCourses, getModules } from '../../../Services/InstituteUtilities';
-import { getImageUrl } from '../../../Services/AdvertiserUtilities';
+import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
 import { Avatar, List, Modal } from 'antd';
 import { ethers } from 'ethers';
@@ -22,6 +22,14 @@ const StudentDashboard = () => {
   const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
   const [courseId, setCourseId] = useState('');
+  const [poapImage, setPoapImage] = useState(null);
+  const [poap, setPoap] = useState({
+    name: '',
+    about: '',
+    contribution: '',
+    imageUrl: ''
+  });
+  const [poapClaimModal, setPoapClaimModal] = useState(false);
   const [instituteContract, setContractInstance] = useState(null);
   const [studentData, setStudentData] = useState({
     instId: "",
@@ -32,7 +40,9 @@ const StudentDashboard = () => {
     ans2: ""
   })
   const [modules, setModules] = useState([]);
+  const [events, setEvents] = useState([]);
   const [balance, setBalance] = useState(0);
+  const [currentAdvtId, setCurrentAdvtId] = useState('');
 
   const [assignments, setAssignments] = useState([]);
 
@@ -63,6 +73,11 @@ const StudentDashboard = () => {
     setModules(data);
   }
 
+  const getAllEvents = async (id) => {
+    let data = await fetchEvent(id);
+    setEvents(data);
+  }
+
   const getAndSetData = async () => {
     if (user && user.uid) {
       let data = await getStudent(user.uid);
@@ -77,6 +92,7 @@ const StudentDashboard = () => {
         getAllAssignments(data.instId.trim(), data.streamId.trim());
         getAllAdvertisements(data.instId.trim());
         getAllModules(data.instId.trim());
+        getAllEvents(data.instId.trim());
       } else {
         toast.error("Make sure to add inst Id and streamId ");
         // studentEnroll
@@ -154,6 +170,35 @@ const StudentDashboard = () => {
     setIsModalVisible(false);
   }
 
+  const handlePoapClaim = async () => {
+    try {
+      if (!contractData.contract) {
+        toast.error("Please connect to metamask first");
+      } else {
+        console.log(" this is address ", contractData.address);
+        await claims(currentAdvtId, poap, contractData.address);
+      }
+      setPoapClaimModal(false);
+    } catch (err) {
+      console.log(err.message)
+    }
+  }
+
+  const handleClaimCancel = () => {
+    setPoapClaimModal(false);
+  }
+
+  const handlePoapImage = async (e) => {
+    setPoapImage(e.target.files[0]);
+    let fileName = await uploadPoapImage(e.target.files[0]);
+    let _imageUrl = await getImageUrl("itemimage", fileName);
+    console.log(" this is image url ", _imageUrl);
+    setPoap({
+      ...poap,
+      imageUrl: _imageUrl
+    });
+  }
+
   return (
     <div>
       <Toaster />
@@ -170,12 +215,35 @@ const StudentDashboard = () => {
             })} />
           </div>
         </Modal>
+
+        <Modal title="Claim Poap" visible={poapClaimModal} onOk={() => handlePoapClaim()} onCancel={() => handleClaimCancel()}>
+          <div className="stream-container">
+            <input type="text" placeholder="Event name" name="name" onChange={(e) => setPoap({
+              ...poap,
+              [e.target.name]: e.target.value
+            })} />
+            <input type="text" placeholder="About Event" name="about" onChange={(e) => setPoap({
+              ...poap,
+              [e.target.name]: e.target.value
+            })} />
+            <input type="text" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
+              ...poap,
+              [e.target.name]: e.target.value
+            })} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handlePoapImage(e)}
+            ></input>
+          </div>
+        </Modal>
+
         <div className="LAE-container">
           <div className="LAE-container-bg">
             <div className="LAE-container-inputarea-performance">
               <p>Performance score: 89  </p>
             </div>
-            <p> Total token earned: {balance} LAE</p>
+            <p> Balance: {balance} LAE</p>
             <Card title="All you assignments">
               {
                 assignments.map((data, id) => (
@@ -191,47 +259,56 @@ const StudentDashboard = () => {
             </Card>
           </div>
           <div className="LAE-container-inputarea">
-            <div>
-              <List
-                itemLayout="vertical"
-                size="large"
-                pagination={{
-                  onChange: (page) => {
-                    console.log(page);
-                  },
-                  pageSize: 3,
-                }}
-                dataSource={adv}
-                renderItem={(item, id) => (
-                  <List.Item
-                    key={item.name + id}
-                    actions={[
-                      // <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                      // <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                      // <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-                    ]}
-                    extra={
+            <Card title='All Advertisements'>
+              {adv.map((data, id) => {
+                return (
+                  <Card
+                    style={{
+                      width: 630,
+                    }}
+                    cover={
                       <img
-                        width={272}
-                        alt="logo"
-                      // src={item.fileName}
+                        alt="example"
+                        src={data.fileName}
                       />
                     }
                   >
-                    <List.Item.Meta
-                      avatar={<Avatar />}
-                      title={item.name}
-                      description={item.description}
+                    <Meta
+                      avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                      title={data.name}
+                      description={data.description}
                     />
-                    {item.content}
-                  </List.Item>
-                )}
-              />
-            </div>
+                  </Card>
+                )
+              })}
+              {events.map((data, id) => {
+                return (
+                  <Card style={{
+                    width: 630,
+                    marginTop: "3%"
+                  }}>
+                    <Meta
+                      avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                      title={data.name}
+                      description={data.description}
+                    />
+                    <button onClick={() => {
+                      setCurrentAdvtId(data.advtId);
+                      setPoapClaimModal(true);
+                    }} >
+                      Claim PAOP
+                    </button>
+                    <button onClick={() => {
+                      window.location.href = data.link
+                    }}>Event link</button>
+                  </Card>
+                )
+              })}
+            </Card>
           </div>
 
           <div className='LAE-container-modules'>
-            <Card title="Avalaible modules">
+            <Card title="Sponsored Modules">
               {
                 modules.map((data, id) => (
                   <Card type="inner" className="course-sub-card">

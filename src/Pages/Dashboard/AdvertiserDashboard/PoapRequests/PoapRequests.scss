@@ -1,0 +1,15 @@
+.poap-page {
+    font-family: "montserrat";
+    h2 {
+        text-align: center;
+    }
+    &-query {
+        display: block;
+        margin: auto;
+        width: 50%;
+
+        &-card {
+            margin-top: 2%;
+        }
+    }
+}

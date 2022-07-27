@@ -23,7 +23,7 @@ export const fetchInstitutes = async () => {
         let ref = await db.collection("users").get();
         ref.forEach((doc) => {
             console.log("doc", doc.data());
-            if(doc.data().role === "INST") {
+            if (doc.data().role === "INST") {
                 data.push({
                     id: doc.id,
                     name: doc.data().name || "temp",
@@ -40,54 +40,114 @@ export const fetchInstitutes = async () => {
 }
 
 
- const handleUpload = async (image, fileName, folderName) => {
+const handleUpload = async (image, fileName, folderName) => {
     await firebase
-      .storage()
-      .ref(`${folderName}/${fileName}`)
-      .put(image);
-  };
-  
-  const getFileName = () => {
+        .storage()
+        .ref(`${folderName}/${fileName}`)
+        .put(image);
+};
+
+const getFileName = () => {
     let fileName =
-      String(Date.now()) +
-      parseInt(Math.random() * 10) +
-      parseInt(Math.random() * 10) +
-      parseInt(Math.random() * 10);
+        String(Date.now()) +
+        parseInt(Math.random() * 10) +
+        parseInt(Math.random() * 10) +
+        parseInt(Math.random() * 10);
     return fileName;
-  };
+};
 
-  export const getImageUrl = async (folderName, fileName) => {
+export const getImageUrl = async (folderName, fileName) => {
     let url = await firebase
-      .storage()
-      .ref(folderName)
-      .child(fileName)
-      .getDownloadURL();
+        .storage()
+        .ref(folderName)
+        .child(fileName)
+        .getDownloadURL();
     return url;
-  };
+};
 
-export const addPost = async (uid, name, description, fileLocation) => {
+export const addPost = async (uid, name, description, fileLocation, advtId) => {
     console.log(uid + " " + name + " " + description + " " + fileLocation);
     try {
         let fileName = getFileName();
-        if(fileLocation) {
+        if (fileLocation) {
             await handleUpload(fileLocation, fileName, "itemimage");
         }
         await db.collection('users').doc(uid).collection("advertisement").add({
             name,
             description,
-            fileName
+            fileName,
+            advtId
         });
-    } catch(err) {
+    } catch (err) {
         console.log(err.message);
     }
 }
 
-export const addModule = async (instId, _q1, _q2) => {
+export const uploadPoapImage = async (location) => {
+    try {
+        let fileName = getFileName();
+        await handleUpload(location, fileName, "itemimage");
+        return fileName;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const addModule = async (instId, _q1, _q2, _advtId) => {
     try {
         await db.collection('users').doc(instId).collection('module').add({
             q1: _q1,
-            q2: _q2
+            q2: _q2,
+            advtId: _advtId
         })
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const addEvent = async (instId, _name, _description, _link, _advtId) => {
+    console.log(instId + " " + _name + " " + _description + " " + _link + " " + _advtId);
+    try {
+        await db.collection('users').doc(instId).collection('event').add({
+            name: _name,
+            description: _description,
+            link: _link,
+            advtId: _advtId
+        });
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const getAllClaims = async (uid) => {
+    try {
+        let data = [];
+        let ref = await db.collection("users").doc(uid).collection('claims').get();
+        ref.forEach((doc) => {
+            console.log("doc", doc.data());
+            data.push({
+                id: doc.id,
+                name: doc.data().name || "temp",
+                about: doc.data().about || "temp",
+                link: doc.data().link,
+                address: doc.data().address,
+                imageUrl: doc.data().imageUrl,
+                contribution: doc.data().contribution,
+                claimed: doc.data().claimed || false                
+            })
+        })
+        console.log(" these are all stream ", data);
+        return data;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const PoapClaimed = async (advtId, claimId) => {
+    try {
+        await db.collection('users').doc(advtId).collection('claims').doc(claimId).update({
+            claimed: true
+        });
     } catch(err) {
         console.log(err.message);
     }

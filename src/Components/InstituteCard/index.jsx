@@ -1,12 +1,12 @@
 import { Card, Modal } from 'antd';
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../Provider/UserProvider';
-import { addPost, addModule } from '../../Services/AdvertiserUtilities';
+import { addPost, addModule, addEvent } from '../../Services/AdvertiserUtilities';
 import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
 import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
-import { UsergroupAddOutlined, ScheduleOutlined } from "@ant-design/icons"
+import { UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined } from "@ant-design/icons"
 
 const { Meta } = Card;
 const PostCard = (props) => {
@@ -17,9 +17,16 @@ const PostCard = (props) => {
         q2: ""
     });
 
+    const [event, setEvent] = useState({
+        name: '',
+        description: '',
+        link: '',        
+    })
+
     const [count, setCount] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [eventModal, setEventModal] = useState(false);
     const [cardData, setCardData] = useState({
         title: "",
         description: ""
@@ -28,7 +35,7 @@ const PostCard = (props) => {
 
     const handleOk = async () => {
         try {
-            await addPost(props.postData.instId, cardData.title, cardData.description, image);
+            await addPost(props.postData.instId, cardData.title, cardData.description, image, user.uid);
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
                 setIsModalVisible(false);
@@ -62,7 +69,7 @@ const PostCard = (props) => {
     //! also add time limit for advertisement as a property 
 
     const handleModuleLock = async () => {
-        await addModule(props.postData.instId, module.q1, module.q2);
+        await addModule(props.postData.instId, module.q1, module.q2, user.uid);
         try {
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
@@ -80,8 +87,29 @@ const PostCard = (props) => {
         setModalVisible(false);
     }
 
+    const handleEvent = async () => {
+        try {
+            await addEvent(props.postData.instId, event.name, event.description, event.link, user.uid);
+            if (!window.ethereum) {
+                toast.error("Please connect metamask first");
+                setEventModal(false);
+            } else {
+                // taking 200 LAE from user to mint an event
+                let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+                let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
+                await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
+                await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo" , "201");
+                console.log(" this is tream info ", props.postData.streamInfo[0])
+                setEventModal(false);
+            }
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
     const handleModuleCancel = () => {
         setModalVisible(false);
+        setEventModal(false);
     }
 
     return <Card
@@ -93,6 +121,7 @@ const PostCard = (props) => {
         actions={[
             <UsergroupAddOutlined onClick={() => setIsModalVisible(true)} key="promote" />,
             <ScheduleOutlined  onClick={() => setModalVisible(true)} key="modules" />,
+            <VideoCameraOutlined onClick={() => setEventModal(true)} key='event' />
           ]}
     > <Toaster />
         <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
@@ -120,6 +149,23 @@ const PostCard = (props) => {
                     [e.target.name]: e.target.value
                 })} />
                 <input type="number" placeholder="Enter number of modules" onChange={(e) => setCount(e.target.value)} />
+            </div>
+        </Modal>
+
+        <Modal title="Create POAP based event" visible={eventModal} onOk={() => handleEvent()} onCancel={() => handleModuleCancel()}>
+            <div className="stream-container">
+                <input type="text" placeholder="Event name" name="name" onChange={(e) => setEvent({
+                    ...event,
+                    [e.target.name]: e.target.value
+                })} />
+                <input type="text" placeholder="Event description" name="description" onChange={(e) => setEvent({
+                    ...event,
+                    [e.target.name]: e.target.value
+                })} />
+                <input type="text" placeholder="Event Link" name="link" onChange={(e) => setEvent({
+                    ...event,
+                    [e.target.name]: e.target.value
+                })} />
             </div>
         </Modal>
 

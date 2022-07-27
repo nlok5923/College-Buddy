@@ -14,6 +14,7 @@ import StudentRegister from "./Pages/StudentRegister/index"
 import CoursePage from "./Pages/Dashboard/StudentDashboard/CoursePage";
 import Submission from "./Pages/Dashboard/InstituteDashboard/Submission";
 import ContractProvider from "./Provider/ContractProvider";
+import PoapRequest from './Pages/Dashboard/AdvertiserDashboard/PoapRequests/index'
 
 const App = () => {
   return (
@@ -33,8 +34,8 @@ const App = () => {
               <Route exact path="/student-dashboard" component={StudentDashboard} />
               <Route exact path="/student-register" component={StudentRegister} />
               <Route exact path="/student-dashboard/course/:courseId" component={CoursePage} />
+              <Route exact path="/advertiser-dashboard/:advtId" component={PoapRequest} />
             </Switch>
-            {/* <Footer /> */}
           </Router>
         </ContractProvider>
       </UserProvider>

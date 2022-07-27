@@ -2,6 +2,7 @@ import { useState, createContext } from "react";
 import { ethers } from 'ethers'
 import InstituteFundsManagerFactoryArtifact from '../Ethereum/InstituteFundsManagerFactory.json'
 import DistributeTokencontractArtifact from '../Ethereum/DistributeToken.json'
+import ProofOfAttendenceArtifact from '../Ethereum/ProofOfAttendence.json'
 import LearnAndEarnArtifact from '../Ethereum/LearnAndEarn.json'
 
 export const ContractContext = createContext("appContext");
@@ -11,6 +12,7 @@ const ContractProvider = (props) => {
   const [address, setAddress] = useState('');
   const [idaContract, setIdaContract] = useState(null);
   const [laeContract, setLaeContractInstance] = useState(null);
+  const [poaContract, setPOAContract] = useState(null);
 
   // Compiled 10 Solidity files successfully
   // Institute Funds manager contract address:  0xb9EC8eaF71f1bA70Bf4a06Eb145fc8fC438Dc944
@@ -18,14 +20,17 @@ const ContractProvider = (props) => {
   const contractAddress = "0x620b75FA4fEbc1432f431D39D0eEe185B25cAd25"
   const distributeTokenAddress = "0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
+  const poaContractAddress = "0x372aD2f2bC12146971991e09271f3ABce0d4604b"
   const _initEthers = async () => {
     let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
     let contractInstance = new ethers.Contract(contractAddress, InstituteFundsManagerFactoryArtifact.abi, ethProvider.getSigner(0));
     let distributeContractInstance = new ethers.Contract(distributeTokenAddress, DistributeTokencontractArtifact.abi, ethProvider.getSigner(0));
     let learnAndEarnContractInstance = new ethers.Contract(learnAndEarnTokenAddress, LearnAndEarnArtifact.abi, ethProvider.getSigner(0));
+    let poaContractInstance = new ethers.Contract(poaContractAddress, ProofOfAttendenceArtifact.abi, ethProvider.getSigner(0))
     setContract(contractInstance);
     setIdaContract(distributeContractInstance);
     setLaeContractInstance(learnAndEarnContractInstance);
+    setPOAContract(poaContractInstance);
   }
   
   const _initApp = async () => {
@@ -51,7 +56,7 @@ const ContractProvider = (props) => {
   
   return (
     // eslint-disable-next-line react/prop-types
-    <ContractContext.Provider value = {{ contract, address, _initApp, idaContract, laeContract }}> {props.children} </ContractContext.Provider>
+    <ContractContext.Provider value = {{ contract, address, _initApp, idaContract, laeContract, poaContract }}> {props.children} </ContractContext.Provider>
   );
 };
 

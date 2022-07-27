@@ -24,13 +24,7 @@ const Navbar = () => {
             console.log(err.message);
         }
     }
-
-    // useEffect(() => {
-    //     if(!user && isLoading) {
-            // window.location.href = '/';
-    //     }
-    // }, [user, isLoading])
-
+    
     return (
         <>
             <div className="navbar">
