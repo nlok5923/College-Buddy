@@ -7,10 +7,11 @@ import { studentEnroll, getStudent, submitAns, fetchPost } from '../../../Servic
 import { fetchCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl } from '../../../Services/AdvertiserUtilities';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { Avatar, List, Space } from 'antd';
+import { Avatar, List, Modal } from 'antd';
 import { ethers } from 'ethers';
 import { ContractContext } from '../../../Provider/ContractProvider';
 import InstititueManager from '../../../Ethereum/InstituteFundsManager.json'
+import toast, { Toaster } from "react-hot-toast"
 
 const StudentDashboard = () => {
 
@@ -31,10 +32,12 @@ const StudentDashboard = () => {
     ans2: ""
   })
   const [modules, setModules] = useState([]);
+  const [balance, setBalance] = useState(0);
 
   const [assignments, setAssignments] = useState([]);
 
   const { Meta } = Card;
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const getAllAssignments = async (instId, streamId) => {
     try {
@@ -68,10 +71,17 @@ const StudentDashboard = () => {
         instId: data.instId,
         streamId: data.streamId
       })
-      console.log(" this is updated student data ", studentData);
-      getAllAssignments(data.instId, data.streamId);
-      getAllAdvertisements(data.instId);
-      getAllModules(data.instId);
+
+      if (data.instId && data.streamId) {
+        console.log(" this is updated student data ", studentData);
+        getAllAssignments(data.instId, data.streamId);
+        getAllAdvertisements(data.instId);
+        getAllModules(data.instId);
+      } else {
+        toast.error("Make sure to add inst Id and streamId ");
+        // studentEnroll
+        setIsModalVisible(true);
+      }
     }
   }
 
@@ -95,7 +105,7 @@ const StudentDashboard = () => {
 
   const getCurrentInstitute = async () => {
     try {
-      if(contractData.contract) {
+      if (contractData.contract) {
         let instituteData = await contractData.contract.getALlInstitutesManager();
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
         let instituteAddress = getAddress(instituteData);
@@ -103,9 +113,12 @@ const StudentDashboard = () => {
         //! give him address and you are done ig 
         let contractInstance = new ethers.Contract(instituteAddress[0][1], InstititueManager.abi, ethProvider.getSigner(0));
         setContractInstance(contractInstance);
+        let balance = await contractData.laeContract.balanceOf(contractData.address);
+        console.log("Student balance ", parseInt(balance._hex));
+        setBalance(parseInt(balance._hex) / 1000000000000000000);
       }
-    } catch(err) {
-
+    } catch (err) {
+      console.log(err.message);
     }
   }
 
@@ -120,19 +133,46 @@ const StudentDashboard = () => {
   const handleModuleSubmit = async () => {
     try {
       console.log(" this is institute contract ", instituteContract);
-      let txn = await instituteContract.redeemModule({gasLimit: 9000000});
-      txn.wait();
-    } catch(err) {
+      if (instituteContract) {
+        let txn = await instituteContract.getReward({ gasLimit: 9000000 });
+        txn.wait();
+      } else {
+        toast.error("Please connect metamask ");
+      }
+    } catch (err) {
       console.log(err.message);
     }
   }
 
+  const handleOk = async () => {
+    await studentEnroll(user.uid, studentData.instId, studentData.streamId);
+    setIsModalVisible(false);
+    window.location.reload();
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  }
+
   return (
     <div>
+      <Toaster />
       <div className="LAE">
+        <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+          <div className="stream-container">
+            <input type="text" placeholder="Enter Institute Id" name="instId" onChange={(e) => setStudentData({
+              ...studentData,
+              [e.target.name]: e.target.value
+            })} />
+            <input type="text" placeholder="Enter Stream Id" name="streamId" onChange={(e) => setStudentData({
+              ...studentData,
+              [e.target.name]: e.target.value
+            })} />
+          </div>
+        </Modal>
         <div className="LAE-container">
           <div className="LAE-container-bg">
-            <p> Total token earned: 100 LAE</p> 
+            <p> Total token earned: {balance} LAE</p>
             <Card title="All you assignments">
               {
                 assignments.map((data, id) => (
@@ -146,7 +186,7 @@ const StudentDashboard = () => {
                 ))
               }
             </Card>
-            <Card>
+            <Card title="Availaible modules">
               {
                 modules.map((data, id) => (
                   <Card type="inner" className="course-sub-card">
@@ -162,44 +202,44 @@ const StudentDashboard = () => {
           </div>
           <div className="LAE-container-inputarea">
             <div className="LAE-container-inputarea-performance">
-            <p>Performance score: 89  </p>  
+              <p>Performance score: 89  </p>
             </div>
             <div>
-          <List 
-              itemLayout="vertical"
-              size="large"
-              pagination={{
-                onChange: (page) => {
-                  console.log(page);
-                },
-                pageSize: 3,
-              }}
-              dataSource={adv}
-              renderItem={(item, id) => (
-                <List.Item
-                  key={item.name + id}
-                  actions={[
-                    // <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                    // <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                    // <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-                  ]}
-                  extra={
-                    <img
-                      width={272}
-                      alt="logo"
+              <List
+                itemLayout="vertical"
+                size="large"
+                pagination={{
+                  onChange: (page) => {
+                    console.log(page);
+                  },
+                  pageSize: 3,
+                }}
+                dataSource={adv}
+                renderItem={(item, id) => (
+                  <List.Item
+                    key={item.name + id}
+                    actions={[
+                      // <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
+                      // <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
+                      // <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
+                    ]}
+                    extra={
+                      <img
+                        width={272}
+                        alt="logo"
                       // src={item.fileName}
+                      />
+                    }
+                  >
+                    <List.Item.Meta
+                      avatar={<Avatar />}
+                      title={item.name}
+                      description={item.description}
                     />
-                  }
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar />}
-                    title={item.name}
-                    description={item.description}
-                  />
-                   {item.content} 
-                 </List.Item>
-               )}
-             />
+                    {item.content}
+                  </List.Item>
+                )}
+              />
             </div>
           </div>
         </div>
@@ -210,4 +250,3 @@ const StudentDashboard = () => {
 
 export default StudentDashboard;
 
-  

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import './InstituteDashboard.scss'
 import { Avatar, List, Modal } from 'antd';
-import { AddStreams, fetchStreams } from "../../../Services/InstituteUtilities";
+import { AddStreams, fetchStreams, updateInstitute, getInstitute } from "../../../Services/InstituteUtilities";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Link } from "react-router-dom";
 import { ContractContext } from "../../../Provider/ContractProvider";
@@ -20,6 +20,11 @@ const InstituteDashboard = () => {
         description: ""
     })
     const [streams, setStreams] = useState([]);
+    const [instInfoModal, setInstInfoModal] = useState(false);
+    const [inst, setInst] = useState({
+        name: '',
+        description: ''
+    })
 
     const info = useContext(UserContext);
     const { user, isLoading } = info;
@@ -34,8 +39,18 @@ const InstituteDashboard = () => {
         }
     }
 
+    const getInstInfo = async () => {
+        let data = await getInstitute(user.uid);
+        console.log(" this is inst data ", data);
+        if(!data) {
+            setInstInfoModal(true);
+        }
+    }
     useEffect(() => {
         getAllStreams();
+        if(user && !isLoading) {
+            getInstInfo();
+        }
     }, [user, isLoading])
 
     const getInstituteContract = (_address) => {
@@ -113,6 +128,22 @@ const InstituteDashboard = () => {
         }
     }
 
+    const handleInstOk = async () => {
+        await updateInstitute(user.uid, inst.name, inst.description);
+        setInstInfoModal(false);
+    }
+
+    const handleInstCancel = () => {
+        setInstInfoModal(false);
+    }
+
+    const handleInstituteInfo = (e) => {
+        setInst({
+            ...inst,
+            [e.target.name]: e.target.value
+          })
+    }
+
     return (
         <div>
             <Toaster />
@@ -120,6 +151,12 @@ const InstituteDashboard = () => {
                 <div className="stream-container">
                     <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />
                     <input type="text" placeholder="stream code" name="description" onChange={(e) => handleStreamInfo(e)} />
+                </div>
+            </Modal>
+            <Modal title="Provide Info" visible={instInfoModal} onOk={() => handleInstOk()} onCancel={() => handleInstCancel()}>
+                <div className="stream-container">
+                    <input type="text" placeholder="Enter institute name" name="name" onChange={(e) => handleInstituteInfo(e)} />
+                    <textarea className="desc-textarea" type="text" placeholder="About inst" name="description" onChange={(e) => handleInstituteInfo(e)} />
                 </div>
             </Modal>
             <div className="dashboard-inst">
@@ -136,8 +173,8 @@ const InstituteDashboard = () => {
                                 </b>
 
                                 <p>
-                               Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
-                            </p>
+                                    Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
+                                </p>
                             </h1>
                             <div className="dashboard-inst-input">
                                 {!address && <div>

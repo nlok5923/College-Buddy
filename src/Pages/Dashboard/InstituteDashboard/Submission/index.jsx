@@ -22,9 +22,9 @@ const Submission = () => {
         getAndSet();
     }, [user, isLoading]);
 
-    const markIt = async (id) => {
+    const markIt = async (id, studentId) => {
         try {
-            await setMark(user.uid, streamId, courseId, id, mark);
+            await setMark(user.uid, streamId, courseId, id, mark, studentId);
         } catch (err) {
             console.log(err.message);
         }
@@ -46,7 +46,7 @@ const Submission = () => {
                                 <h2> Ans2 </h2>
                                 <p>{data.ans2}</p>
                                 <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
-                                <button onClick={(e) => markIt(data.id)}> Mark it </button>
+                                <button onClick={(e) => markIt(data.id, data.studentId)}> Mark it </button>
                             </Card>
                         </div>
                     )

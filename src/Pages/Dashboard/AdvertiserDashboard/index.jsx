@@ -6,11 +6,13 @@ import { UserContext } from "../../../Provider/UserProvider";
 import { ContractContext } from "../../../Provider/ContractProvider"
 import { ethers } from "ethers";
 import institueManager from '../../../Ethereum/InstituteFundsManager.json'
+import { useHistory } from "react-router-dom";
 
 const AdvertiserDashboard = () => {
     const [instData, setInstData] = useState([]);
     const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
+    const history = useHistory();
 
     const getAllInstitutes = async () => {
         try {

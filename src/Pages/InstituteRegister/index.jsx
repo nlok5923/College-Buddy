@@ -43,16 +43,14 @@ const Register = () => {
   const [redirect, setredirect] = useState(null);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    if(user && !isLoading) {
+      history.push('/institute-dashboard');
+    }
+  }, [user, isLoading]);
 
   const googleSignIn = async () => {
     try {
       await SignInWithGoogle("INST");
-      let instituteData = await getInstitute(user.uid)
-      if(!instituteData) {
-        setIsModalVisible(true);
-      } 
     } catch (err) {
       console.log("Mishap ", err.message);
     }
@@ -67,12 +65,12 @@ const Register = () => {
 
   return (
     <div>
-      <Modal title="Provide Info" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+      {/* <Modal title="Provide Info" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
         <div className="stream-container">
           <input type="text" placeholder="Enter institute name" name="name" onChange={(e) => handleInstituteInfo(e)} />
           <textarea className="desc-textarea" type="text" placeholder="About inst" name="description" onChange={(e) => handleInstituteInfo(e)} />
         </div>
-      </Modal>
+      </Modal> */}
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>

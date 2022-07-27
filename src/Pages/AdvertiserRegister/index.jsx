@@ -21,8 +21,10 @@ const Register = () => {
   const [redirect, setredirect] = useState(null);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    if(user && !isLoading) {
+      history.push('/advertiser-dashboard');
+    }
+  }, [user, isLoading]);
 
   const googleSignIn = () => {
     try {

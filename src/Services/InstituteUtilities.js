@@ -92,6 +92,7 @@ export const getSubmission = async (uid, streamId, courseId) => {
                 id: doc.id,
                 ans1: doc.data().ans1,
                 ans2: doc.data().ans2,
+                studentId: doc.data().studentId
             })
         })
         console.log(" these are all stream ", data);
@@ -102,11 +103,16 @@ export const getSubmission = async (uid, streamId, courseId) => {
     }
 }
 
-export const setMark = async (uid, streamId, courseId, subId, _mark) => {
+export const setMark = async (uid, streamId, courseId, subId, _mark, stdId) => {
     try {
         await db.collection('users').doc(uid).collection('streams').doc(streamId).collection('courses').doc(courseId).collection('submission').doc(subId).update({
             mark: _mark
         })
+        let doc = await db.collection('users').doc(stdId).get();
+        let oldMark = doc.data().mark;
+        await db.collection('users').doc(stdId).update({
+            mark: oldMark + _mark            
+        });
     } catch(err) {
         console.log(err.message);
     }

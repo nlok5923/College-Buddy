@@ -42,14 +42,11 @@ export const SignInWithGoogle = (role) => {
   auth
     .signInWithPopup(provider)
     .then((result) => {
-      if(role === "ADVT") {
-        window.location.href = "/advertiser-dashboard"
-      }
+
       if (result.additionalUserInfo.isNewUser) {
         user = result.user;
         return saveUser(user, role);
-      }
-
+      } 
       return true;
     })
     .catch((error) => {

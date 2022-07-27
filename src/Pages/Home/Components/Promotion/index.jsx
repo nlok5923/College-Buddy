@@ -30,10 +30,10 @@ const Promotion = () => {
                     </div>
                     <div className="top-container-btn">
                         <Link to="/institute-register">
-                            <button className="inst-btn">  <HomeOutlined />  Register as institute</button>
+                            <button className="inst-btn">  <HomeOutlined />  Login as institute</button>
                         </Link>
                         <Link to="/advertiser-register">
-                            <button className="adv-btn">  <UserSwitchOutlined /> Register as Advertiser</button>
+                            <button className="adv-btn">  <UserSwitchOutlined /> Login as Advertiser</button>
                         </Link>
                     </div>
                 </div>

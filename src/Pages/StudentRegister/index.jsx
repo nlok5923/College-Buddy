@@ -10,6 +10,7 @@ import { studentEnroll, getStudent } from "../../Services/StudentUtilities";
 
 const Register = () => {
 
+  const history = useHistory();
   const backgroundStyling = {
     backgroundImage: `url("asset/Login/Images/register-bg.png")`,
     backgroundRepeat: "no-repeat",
@@ -46,16 +47,14 @@ const Register = () => {
   const [redirect, setredirect] = useState(null);
 
   useEffect(() => {
-    console.log(user);
+    if(user && !isLoading) {
+      history.push('/student-dashboard');
+    }
   }, [user, isLoading]);
 
   const googleSignIn = async () => {
     try {
       await SignInWithGoogle("STD");
-      let studentData = await getStudent(user.uid);
-      if(!studentData) {
-        setIsModalVisible(true);
-      }
     } catch (err) {
       console.log("Mishap ", err.message);
     }
