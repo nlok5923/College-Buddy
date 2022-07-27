@@ -4,13 +4,13 @@ import { UserContext } from '../../Provider/UserProvider';
 import { addPost, addModule } from '../../Services/AdvertiserUtilities';
 import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
-// import { ContractContext } from '../../Provider/ContractProvider';
+import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
 import { UsergroupAddOutlined, ScheduleOutlined } from "@ant-design/icons"
 
 const { Meta } = Card;
 const PostCard = (props) => {
-    // const contractData = useContext(ContractContext);
+    const contractData = useContext(ContractContext);
     const { user, isLoading } = useContext(UserContext);
     const [module, setModule] = useState({
         q1: "",
@@ -35,7 +35,8 @@ const PostCard = (props) => {
             } else {
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                await contractInstance.depositFundsToStream(props.postData.streamInfo[0], { value: ethers.utils.parseEther("0.01"), gasLimit: 9000000 });
+                await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
+                await contractInstance.depositFundsToStream(props.postData.streamInfo[0], "201");
                 setIsModalVisible(false);
             }
         } catch (err) {
@@ -69,7 +70,8 @@ const PostCard = (props) => {
             } else {
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                await contractInstance.addModule(count, { value: ethers.utils.parseEther(String(count * 0.01)), gasLimit: 9000000 });
+                await contractData.laeContract.transfer(props.postData.address, String(100 * count * 1000000000000000000));
+                await contractInstance.addModule(count, "CSE", String(100 * count));
                 setModalVisible(false);
             }
         } catch(err) {

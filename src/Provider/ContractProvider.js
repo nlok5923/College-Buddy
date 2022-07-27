@@ -15,7 +15,7 @@ const ContractProvider = (props) => {
   // Compiled 10 Solidity files successfully
   // Institute Funds manager contract address:  0xb9EC8eaF71f1bA70Bf4a06Eb145fc8fC438Dc944
   // Factory contract address:  0xc339A2223Be14cFe6e85421078a49A8d48620437
-  const contractAddress = "0x5859E56028Ca743aCb789FDA7B9a9880Bc222d9f"
+  const contractAddress = "0x620b75FA4fEbc1432f431D39D0eEe185B25cAd25"
   const distributeTokenAddress = "0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
   const _initEthers = async () => {

@@ -4,6 +4,7 @@ pragma solidity >0.4.23 <0.9.0;
 contract LearnAndEarn {
     function mint(address to, uint256 amount) public {}
     function burn(address from, uint256 amount) public {}
+    function transfer(address from, uint256 amount) public {}
 }
 
 contract InstituteFundsManager {
@@ -29,20 +30,40 @@ contract InstituteFundsManager {
         allStreams.push(_streamCode);
     }
 
-    function depositFundsToStream(string memory _streamCode) public payable {
+    function depositFundsToStream(string memory _streamCode, uint256 _noOfTokens) public {
         // deposit shouldn't be done with zero fund 
-        require(msg.value != 0, "No funds transfered");
-        streamBalance[_streamCode] = streamBalance[_streamCode] + msg.value; 
-        laeContract.mint(distributor, msg.value * 1000);
+        require(_noOfTokens != 0, "Can't deposit zero token");
+        // min 200 tokens needed to post the advertisement
+        require(_noOfTokens >= 200, "Not enough tokens to advertise");
+        streamBalance[_streamCode] = streamBalance[_streamCode] + _noOfTokens; 
     }
 
-    function addModule(uint _noOfModules) public payable {
+    function getStreamFunds(string memory _streamCode) public view returns(uint256) {
+        return streamBalance[_streamCode];
+    }
+
+    function redeemToken(uint256 _amount) public {
+        laeContract.transfer(msg.sender, _amount * 1000000000000000000);
+    }
+
+    // this is just for testing purpose
+    function mintSomeTokens() public {
+        laeContract.mint(address(this), 1000000000000000000 * 10000000);
+    }
+
+    function addModule(uint _noOfModules, string memory _streamCode, uint256 _noOfTokens) public {
+        // minting a module will cost 100 tokens each
+        require(_noOfTokens >= _noOfModules * 100, "Not enough tokens transfered");
         moduleCount = _noOfModules;
+        streamBalance[_streamCode] = streamBalance[_streamCode] + _noOfTokens;
     }
 
     function getReward() public {
+        // currently completing a single module will incentivize user with 100 LAE tokens 
+        require(moduleCount >= 1, "No more rewarding modules availaible");
         moduleCount = moduleCount - 1;
-        laeContract.mint(msg.sender, 1000000000000000000 * 100);
+        laeContract.transfer(msg.sender, 1000000000000000000 * 100);
+        // laeContract.mint(msg.sender, 1000000000000000000 * 100);
     }
 
     function getAllStreams() public view returns(string[] memory) {

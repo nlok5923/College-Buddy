@@ -68,15 +68,15 @@ const StudentDashboard = () => {
       let data = await getStudent(user.uid);
       console.log("LAE", data);
       setStudentData({
-        instId: data.instId,
-        streamId: data.streamId
+        instId: data.instId.trim(),
+        streamId: data.streamId.trim()
       })
 
       if (data.instId && data.streamId) {
         console.log(" this is updated student data ", studentData);
-        getAllAssignments(data.instId, data.streamId);
-        getAllAdvertisements(data.instId);
-        getAllModules(data.instId);
+        getAllAssignments(data.instId.trim(), data.streamId.trim());
+        getAllAdvertisements(data.instId.trim());
+        getAllModules(data.instId.trim());
       } else {
         toast.error("Make sure to add inst Id and streamId ");
         // studentEnroll
@@ -134,7 +134,7 @@ const StudentDashboard = () => {
     try {
       console.log(" this is institute contract ", instituteContract);
       if (instituteContract) {
-        let txn = await instituteContract.getReward({ gasLimit: 9000000 });
+        let txn = await instituteContract.getReward();
         txn.wait();
       } else {
         toast.error("Please connect metamask ");
@@ -172,6 +172,9 @@ const StudentDashboard = () => {
         </Modal>
         <div className="LAE-container">
           <div className="LAE-container-bg">
+            <div className="LAE-container-inputarea-performance">
+              <p>Performance score: 89  </p>
+            </div>
             <p> Total token earned: {balance} LAE</p>
             <Card title="All you assignments">
               {
@@ -186,24 +189,8 @@ const StudentDashboard = () => {
                 ))
               }
             </Card>
-            <Card title="Availaible modules">
-              {
-                modules.map((data, id) => (
-                  <Card type="inner" className="course-sub-card">
-                    <h4> {data.q1}</h4>
-                    <input placeholder="Enter your answer here" />
-                    <h4> {data.q2} </h4>
-                    <input placeholder='Enter your answer here' />
-                    <Button onClick={() => handleModuleSubmit()}> Submit </Button>
-                  </Card>
-                ))
-              }
-            </Card>
           </div>
           <div className="LAE-container-inputarea">
-            <div className="LAE-container-inputarea-performance">
-              <p>Performance score: 89  </p>
-            </div>
             <div>
               <List
                 itemLayout="vertical"
@@ -241,6 +228,22 @@ const StudentDashboard = () => {
                 )}
               />
             </div>
+          </div>
+
+          <div className='LAE-container-modules'>
+            <Card title="Avalaible modules">
+              {
+                modules.map((data, id) => (
+                  <Card type="inner" className="course-sub-card">
+                    <h4> {data.q1}</h4>
+                    <input placeholder="Enter your answer here" />
+                    <h4> {data.q2} </h4>
+                    <input placeholder='Enter your answer here' />
+                    <Button onClick={() => handleModuleSubmit()}> Submit </Button>
+                  </Card>
+                ))
+              }
+            </Card>
           </div>
         </div>
       </div>
