@@ -46,6 +46,7 @@
 
       &-performance {
         margin-right: 10px;
+        font-family: "montserrat";
 
         p {
           background-color: rgba(49, 156, 255, 1);
@@ -110,4 +111,19 @@
 
 .course-sub-card {
   margin-top: 8%;
+}
+
+.assignment-ans-txtarea {
+  border: none;
+  height: 20vh;
+  box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+  border-radius: 10px;
+  width: 14vw;
+  margin-top: 6%;
+  outline: none;
+  padding: 0 5px;
+}
+
+.spn-modules {
+  margin-top: 6%;
 }

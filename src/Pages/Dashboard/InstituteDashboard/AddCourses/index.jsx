@@ -7,12 +7,14 @@ import { UserContext } from "../../../../Provider/UserProvider";
 import { useParams } from "react-router-dom";
 import { AddCourses, fetchCourses } from "../../../../Services/InstituteUtilities";
 import { Link } from "react-router-dom";
+// import {  }
 
 const AddCoursesComponent = () => {
     const info = useContext(UserContext);
     const { user, isLoading } = info;
     let { streamId } = useParams();
-    const [courseData, setCourseData] = useState({ name: "", code: "", description: "" });
+    const [courseData, setCourseData] = useState({ name: "" });
+    const [file, setFile] = useState(null);
     const [courses, setCourses] = useState([]);
 
     const getCourses = async () => {
@@ -35,7 +37,7 @@ const AddCoursesComponent = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const handleOk = async () => {
-        await AddCourses(user.uid, streamId, courseData.name, courseData.code, courseData.description);
+        await AddCourses(user.uid, streamId, courseData.name, file);
         setIsModalVisible(false);
         window.location.reload();
     }
@@ -52,8 +54,12 @@ const AddCoursesComponent = () => {
         <div>
             <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="course-container">
-                    <input type="text" placeholder="Question 1" name="name" onChange={(e) => handleModalChange(e)} />
-                    <input type="text" placeholder="Question 2" name="code" onChange={(e) => handleModalChange(e)} />
+                    <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
+                    <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFile(e.target.files[0])}
+                ></input>
                 </div>
             </Modal>
             <Button type="primary" className="course-card-btn" shape="round" icon={<FileAddOutlined />} size={"large"} onClick={() => OpenModal()}>

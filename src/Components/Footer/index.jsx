@@ -3,7 +3,7 @@ import "./Footer.scss";
 
 const Footer = () => {
   const backgroundStyling = {
-    backgroundImage: `url("asset/Footer/Images/footer-bg.png")`,
+    backgroundImage: `url("asset/Home/Images/footer-new.png")`,
     backgroundRepeat: "no-repeat",
     height: "60%",
     backgroundSize: "100% 100%",

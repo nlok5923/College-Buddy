@@ -2,6 +2,7 @@ import 'firebase/auth';
 import firebase from 'firebase/app';
 import '@firebase/database';
 import 'firebase/firestore';
+import { handleUpload, getFileName, getImageUrl } from './AdvertiserUtilities'
 
 if (!firebase.apps.length) {
     firebase.initializeApp({
@@ -24,11 +25,17 @@ export const AddStreams = async (uid, name, description) => {
     });
 }
 
-export const AddCourses = async (uid, streamId, name, code, description) => {
-    console.log(uid + " " + streamId + " " + name + " " + code + " "+ description);
+export const AddCourses = async (uid, streamId, _name, image) => {
+    console.log(uid + " " + streamId + " " + _name + " " + image);
+    let fileName = getFileName();
+    if (image) {
+        await handleUpload(image, fileName, "itemimage");
+    }
+    let fileUrl = await getImageUrl("itemimage", fileName);
+    console.log(" this is file url ", fileUrl);
     let data = await db.collection('users').doc(uid).collection('streams').doc(streamId).collection('courses').add({
-        name,
-        code,
+        name: _name,
+        code: fileUrl
     });
     console.log(data.id);
 }
@@ -41,7 +48,6 @@ export const fetchCourses = async (uid, streamId) => {
             data.push({
                 id: doc.id,
                 name: doc.data().name,
-                description: doc.data().description,
                 code: doc.data().code
             })
         })
@@ -90,7 +96,6 @@ export const getSubmission = async (uid, streamId, courseId) => {
         ref.forEach((doc) => {
             data.push({
                 id: doc.id,
-                ans1: doc.data().ans1,
                 ans2: doc.data().ans2,
                 studentId: doc.data().studentId
             })
@@ -111,7 +116,7 @@ export const setMark = async (uid, streamId, courseId, subId, _mark, stdId) => {
         let doc = await db.collection('users').doc(stdId).get();
         let oldMark = doc.data().mark;
         await db.collection('users').doc(stdId).update({
-            mark: oldMark + _mark            
+            mark: String(parseInt(parseInt(oldMark) + parseInt(_mark)))            
         });
     } catch(err) {
         console.log(err.message);

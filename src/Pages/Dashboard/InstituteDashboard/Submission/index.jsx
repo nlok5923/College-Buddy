@@ -41,10 +41,7 @@ const Submission = () => {
                         <div>
                             <Card>
                                 <Card.Meta title={"Assignment: #" + id + " Solution"} />
-                                <h2> Ans1 </h2>
-                                <p>{data.ans1}</p>
-                                <h2> Ans2 </h2>
-                                <p>{data.ans2}</p>
+                                <p className="submissions">{data.ans2}</p>
                                 <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
                                 <button onClick={(e) => markIt(data.id, data.studentId)}> Mark it </button>
                             </Card>

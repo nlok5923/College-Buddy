@@ -2,7 +2,7 @@ import "./Navbar.scss";
 import { useContext, useEffect } from "react";
 import "antd/dist/antd.css";
 import { Menu, Dropdown, Popover, Button } from "antd";
-import { DownloadOutlined, UserOutlined, LinkOutlined, LogoutOutlined } from "@ant-design/icons";
+import { DownloadOutlined, UserOutlined, LinkOutlined, LogoutOutlined, FileDoneOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { ContractContext } from "../../Provider/ContractProvider";
 import { signOut } from '../../Services/Auth'
@@ -55,7 +55,6 @@ const Navbar = () => {
                             <LogoutOutlined />  Logout
                         </Link>
                     </li>
-
                     <li>
                         <UserOutlined />
                         <span className="nav-profile-name">{contractData != undefined ? contractData.address.slice(0, 7) + "..." : "Please connect"}</span>

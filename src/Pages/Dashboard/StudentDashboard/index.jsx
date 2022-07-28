@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
-import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims } from '../../../Services/StudentUtilities';
+import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore } from '../../../Services/StudentUtilities';
 import { fetchCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import { ethers } from 'ethers';
 import { ContractContext } from '../../../Provider/ContractProvider';
 import InstititueManager from '../../../Ethereum/InstituteFundsManager.json'
 import toast, { Toaster } from "react-hot-toast"
+import { Link } from 'react-router-dom';
 
 const StudentDashboard = () => {
 
@@ -43,6 +44,7 @@ const StudentDashboard = () => {
   const [events, setEvents] = useState([]);
   const [balance, setBalance] = useState(0);
   const [currentAdvtId, setCurrentAdvtId] = useState('');
+  const [score, setScore] = useState(0);
 
   const [assignments, setAssignments] = useState([]);
 
@@ -77,6 +79,11 @@ const StudentDashboard = () => {
     let data = await fetchEvent(id);
     setEvents(data);
   }
+  
+  const getStudentScore = async (id) => {
+    let data = await getScore(id);
+    setScore(data);
+  }
 
   const getAndSetData = async () => {
     if (user && user.uid) {
@@ -93,6 +100,7 @@ const StudentDashboard = () => {
         getAllAdvertisements(data.instId.trim());
         getAllModules(data.instId.trim());
         getAllEvents(data.instId.trim());
+        getStudentScore(user.uid);
       } else {
         toast.error("Make sure to add inst Id and streamId ");
         // studentEnroll
@@ -108,7 +116,7 @@ const StudentDashboard = () => {
   const handleChange = (e) => {
     setAns({
       ...ans,
-      [e.target.name]: e.target.name
+      [e.target.name]: e.target.value
     })
   }
 
@@ -122,6 +130,7 @@ const StudentDashboard = () => {
   const getCurrentInstitute = async () => {
     try {
       if (contractData.contract) {
+        console.log(" this is contract ", contractData.contract);
         let instituteData = await contractData.contract.getALlInstitutesManager();
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
         let instituteAddress = getAddress(instituteData);
@@ -143,7 +152,7 @@ const StudentDashboard = () => {
   }, [contractData])
 
   const handleAns = async (courseId) => {
-    await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans1, ans.ans2, user.uid);
+    await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.uid);
   }
 
   const handleModuleSubmit = async () => {
@@ -241,17 +250,20 @@ const StudentDashboard = () => {
         <div className="LAE-container">
           <div className="LAE-container-bg">
             <div className="LAE-container-inputarea-performance">
-              <p>Performance score: 89  </p>
-            </div>
+              <p>Performance score: {score}  </p>
             <p> Balance: {balance} LAE</p>
-            <Card title="All you assignments">
+            <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
+            <p> Your POA Wall </p>
+            </Link>
+            </div>
+            <Card title="All your assignments">
               {
                 assignments.map((data, id) => (
-                  <Card type="inner" className="course-sub-card" title={`assignment ${id + 1}`} >
-                    <h4>{data.name}</h4> <br />
-                    <input placeholder='Enter ans for q1' name="ans1" onChange={(e) => handleChange(e)} />
-                    <h4>{data.code}</h4> <br />
-                    <input placeholder='Enter ans for q2' name="ans2" onChange={(e) => handleChange(e)} /> <br /> <br />
+                  <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
+                    <Button onClick={() => {
+                      window.location.href = data.code
+                    }}> Download Assignment </Button>
+                    <textarea className='assignment-ans-txtarea' placeholder='Enter ans for the assignment' name="ans2" onChange={(e) => handleChange(e)} /> <br /> <br />
                     <Button onClick={() => handleAns(data.id)}> Submit </Button>
                   </Card>
                 ))
@@ -266,6 +278,7 @@ const StudentDashboard = () => {
                     style={{
                       width: 630,
                     }}
+                    className="spn-modules"
                     cover={
                       <img
                         alt="example"
@@ -312,11 +325,11 @@ const StudentDashboard = () => {
               {
                 modules.map((data, id) => (
                   <Card type="inner" className="course-sub-card">
-                    <h4> {data.q1}</h4>
-                    <input placeholder="Enter your answer here" />
-                    <h4> {data.q2} </h4>
-                    <input placeholder='Enter your answer here' />
-                    <Button onClick={() => handleModuleSubmit()}> Submit </Button>
+                    <h4 className="spn-modules"> Q1) {data.q1}</h4>
+                    <input className="spn-modules" placeholder="Enter your answer here" />
+                    <h4 className="spn-modules"> Q2) {data.q2} </h4>
+                    <input placeholder='Enter your answer here' /> <br />
+                    <Button className="spn-modules" onClick={() => handleModuleSubmit()}> Submit </Button>
                   </Card>
                 ))
               }

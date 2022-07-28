@@ -1,7 +1,6 @@
 import "./App.scss";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar/index"
-import Footer from "./Components/Footer/index"
 import AdvertiserRegister from "./Pages/AdvertiserRegister/index"
 import InstituteRegister from "./Pages/InstituteRegister/index"
 import Home from "./Pages/Home/index"
@@ -15,6 +14,7 @@ import CoursePage from "./Pages/Dashboard/StudentDashboard/CoursePage";
 import Submission from "./Pages/Dashboard/InstituteDashboard/Submission";
 import ContractProvider from "./Provider/ContractProvider";
 import PoapRequest from './Pages/Dashboard/AdvertiserDashboard/PoapRequests/index'
+import POAWall from './Pages/Dashboard/StudentDashboard/POAWall/index'
 
 const App = () => {
   return (
@@ -35,6 +35,7 @@ const App = () => {
               <Route exact path="/student-register" component={StudentRegister} />
               <Route exact path="/student-dashboard/course/:courseId" component={CoursePage} />
               <Route exact path="/advertiser-dashboard/:advtId" component={PoapRequest} />
+              <Route exact path="/student-dashboard/:stdId" component={POAWall} />
             </Switch>
           </Router>
         </ContractProvider>

@@ -40,14 +40,14 @@ export const fetchInstitutes = async () => {
 }
 
 
-const handleUpload = async (image, fileName, folderName) => {
+export const handleUpload = async (image, fileName, folderName) => {
     await firebase
         .storage()
         .ref(`${folderName}/${fileName}`)
         .put(image);
 };
 
-const getFileName = () => {
+export const getFileName = () => {
     let fileName =
         String(Date.now()) +
         parseInt(Math.random() * 10) +

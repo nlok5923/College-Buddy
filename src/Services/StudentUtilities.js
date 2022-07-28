@@ -39,10 +39,10 @@ export const getStudent = async (uid) => {
     return studentData.data();
 }
 
-export const submitAns = async (instId, streamId, courseId, _ans1, _ans2, uid) => {
+export const submitAns = async (instId, streamId, courseId, _ans2, uid) => {
+    console.log(" this is asn2 ", _ans2);
     try {
         await db.collection('users').doc(instId.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(courseId.trim()).collection('submission').add({
-            ans1: _ans1,
             ans2: _ans2,
             studentId: uid
         })
@@ -104,3 +104,12 @@ export const claims = async (advtid, poapData, _address) => {
         console.log(err.message);
     }
 } 
+
+export const getScore = async (uid) => {
+    try {
+        let data = await db.collection('users').doc(uid).get();
+        return data.data().mark;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
