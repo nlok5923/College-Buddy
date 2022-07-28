@@ -7,7 +7,8 @@ import { UserContext } from "../../../../Provider/UserProvider";
 import { useParams } from "react-router-dom";
 import { AddCourses, fetchCourses } from "../../../../Services/InstituteUtilities";
 import { Link } from "react-router-dom";
-// import {  }
+import Loader from '../../../../Components/Loader/index'
+import toast, { Toaster } from 'react-hot-toast'
 
 const AddCoursesComponent = () => {
     const info = useContext(UserContext);
@@ -16,11 +17,14 @@ const AddCoursesComponent = () => {
     const [courseData, setCourseData] = useState({ name: "" });
     const [file, setFile] = useState(null);
     const [courses, setCourses] = useState([]);
+    const [loading, setIsLoading] = useState(false);
 
     const getCourses = async () => {
+        setIsLoading(true);
         const data = await fetchCourses(user.uid, streamId);
         console.log(" these are the obtained courses ", data);
         setCourses(data);
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -37,9 +41,17 @@ const AddCoursesComponent = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const handleOk = async () => {
-        await AddCourses(user.uid, streamId, courseData.name, file);
-        setIsModalVisible(false);
-        window.location.reload();
+        try {
+            setIsLoading(true);
+            await AddCourses(user.uid, streamId, courseData.name, file);
+            setIsModalVisible(false);
+            setIsLoading(false);
+            toast.success("Assignment added successfully ");
+            window.location.reload();
+        } catch (err) {
+            toast.error("Error happened while adding assignment");
+            console.log(err.message);
+        }
     }
 
     const handleCancel = () => {
@@ -52,6 +64,8 @@ const AddCoursesComponent = () => {
 
     return (
         <div>
+            <Loader isLoading = {loading} >
+                <Toaster />
             <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="course-container">
                     <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
@@ -74,11 +88,13 @@ const AddCoursesComponent = () => {
                 marginTop: "1%",
                 marginLeft: "2%",
             }}>
+                {courses.length === 0 ? "No Assignments added till now" : null }
                 {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
                     <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
                 </Link>
                 )}
             </div>
+            </Loader>
         </div>
     )
 }

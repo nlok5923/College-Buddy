@@ -65,12 +65,6 @@ const Register = () => {
 
   return (
     <div>
-      {/* <Modal title="Provide Info" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
-        <div className="stream-container">
-          <input type="text" placeholder="Enter institute name" name="name" onChange={(e) => handleInstituteInfo(e)} />
-          <textarea className="desc-textarea" type="text" placeholder="About inst" name="description" onChange={(e) => handleInstituteInfo(e)} />
-        </div>
-      </Modal> */}
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>

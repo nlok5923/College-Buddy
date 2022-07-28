@@ -15,8 +15,7 @@ contract InstituteFundsManager {
     LearnAndEarn laeContract;
     string[] allStreams;
     mapping(string => uint) streamBalance;
-    uint moduleCount = 1000000;
-    address distributor = 0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401;
+    uint256 moduleCount = 0;
 
     constructor(string memory _name) {
         fundsOwner = msg.sender;
@@ -34,7 +33,8 @@ contract InstituteFundsManager {
         // deposit shouldn't be done with zero fund 
         require(_noOfTokens != 0, "Can't deposit zero token");
         // min 200 tokens needed to post the advertisement
-        require(_noOfTokens >= 200, "Not enough tokens to advertise");
+        // no of token should be greater than 2 
+        require(_noOfTokens >= 2, "Not enough tokens to advertise");
         streamBalance[_streamCode] = streamBalance[_streamCode] + _noOfTokens; 
     }
 
@@ -51,18 +51,19 @@ contract InstituteFundsManager {
         laeContract.mint(address(this), 1000000000000000000 * 10000000);
     }
 
-    function addModule(uint _noOfModules, string memory _streamCode, uint256 _noOfTokens) public {
+    function addModule(uint _noOfModules, uint256 _noOfTokens) public {
         // minting a module will cost 100 tokens each
-        require(_noOfTokens >= _noOfModules * 100, "Not enough tokens transfered");
-        moduleCount = _noOfModules;
-        streamBalance[_streamCode] = streamBalance[_streamCode] + _noOfTokens;
+        // only two token per module 
+        require(_noOfTokens >= _noOfModules * 2, "Not enough tokens transfered");
+        moduleCount = moduleCount + _noOfModules;
     }
 
     function getReward() public {
         // currently completing a single module will incentivize user with 100 LAE tokens 
         require(moduleCount >= 1, "No more rewarding modules availaible");
         moduleCount = moduleCount - 1;
-        laeContract.transfer(msg.sender, 1000000000000000000 * 100);
+        // change the transfer amount to 2 tokens only 
+        laeContract.transfer(msg.sender, 1000000000000000000 * 2);
         // laeContract.mint(msg.sender, 1000000000000000000 * 100);
     }
 

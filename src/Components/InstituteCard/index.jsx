@@ -16,6 +16,7 @@ const PostCard = (props) => {
         q1: "",
         q2: ""
     });
+    // fDaixContract
 
     const [event, setEvent] = useState({
         name: '',
@@ -40,11 +41,19 @@ const PostCard = (props) => {
                 toast.error("Please connect metamask first");
                 setIsModalVisible(false);
             } else {
+                props.loadingState(true);
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
-                await contractInstance.depositFundsToStream(props.postData.streamInfo[0], "201");
+                // await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
+                // fDaixContract
+                let amt = 2;
+                let txn = await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(String(amt)));
+                txn.wait();
+                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo", "200");
+                streamTxn.wait();
+                props.loadingState(false);
                 setIsModalVisible(false);
+                toast.success("Post added successfully");
             }
         } catch (err) {
             console.log(err.message);
@@ -75,13 +84,21 @@ const PostCard = (props) => {
                 toast.error("Please connect metamask first");
                 setModalVisible(false);
             } else {
+                props.loadingState(true);
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                await contractData.laeContract.transfer(props.postData.address, String(100 * count * 1000000000000000000));
-                await contractInstance.addModule(count, "CSE", String(100 * count));
+                let amt = 2 * count;
+                let txn = await contractData.laeContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
+                txn.wait();
+                // await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(amt));
+                let addModuleTxn = await contractInstance.addModule(count, String(100 * count));
+                addModuleTxn.wait();
+                props.loadingState(false);
                 setModalVisible(false);
+                toast.success("Modules added successfully");
             }
         } catch(err) {
+            toast.error("Some error occurred");
             console.log(err.message);
         }
         setModalVisible(false);
@@ -94,15 +111,24 @@ const PostCard = (props) => {
                 toast.error("Please connect metamask first");
                 setEventModal(false);
             } else {
+                props.loadingState(true);
                 // taking 200 LAE from user to mint an event
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
-                await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo" , "201");
+                // await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
+                let amt = 2;
+                //! amount = 2
+                let txn = await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(String(amt)));
+                txn.wait();
+                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo" , "200");
+                depositTxn.wait();
                 console.log(" this is tream info ", props.postData.streamInfo[0])
+                props.loadingState(false);
+                toast.success("Event added successfully ");
                 setEventModal(false);
             }
         } catch (err) {
+            toast.error("Some error occurred");
             console.log(err.message);
         }
     }

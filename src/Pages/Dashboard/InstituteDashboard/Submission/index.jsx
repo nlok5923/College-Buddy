@@ -4,18 +4,27 @@ import { UserContext } from "../../../../Provider/UserProvider"
 import { useParams } from "react-router-dom"
 import { getSubmission, setMark } from "../../../../Services/InstituteUtilities"
 import { Button, Card } from "antd"
+import Loader from '../../../../Components/Loader/index'
+import toast, { Toaster } from 'react-hot-toast'
 
 const Submission = () => {
     const { user, isLoading } = useContext(UserContext)
     const { courseId, streamId } = useParams();
     const [submission, setSubmission] = useState([]);
     const [mark, setMarks] = useState(0);
+    const [loading, setIsLoading] = useState(false);
 
     const getAndSet = async () => {
-        console.log(streamId + " " + courseId);
-        let data = await getSubmission(user.uid, streamId, courseId)
-        console.log(" this is ubs data", data);
-        setSubmission(data);
+        try {
+            setIsLoading(true);
+            console.log(streamId + " " + courseId);
+            let data = await getSubmission(user.uid, streamId, courseId)
+            console.log(" this is ubs data", data);
+            setSubmission(data);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err.message);
+        }
     }
 
     useEffect(() => {
@@ -24,14 +33,20 @@ const Submission = () => {
 
     const markIt = async (id, studentId) => {
         try {
+            setIsLoading(true);
             await setMark(user.uid, streamId, courseId, id, mark, studentId);
+            setIsLoading(false);
+            toast.success("Successfully marked it !!");
         } catch (err) {
+            toast.error("Error while marking it");
             console.log(err.message);
         }
     }
 
     return (
         <div>
+            <Loader isLoading={loading}>
+            <Toaster />
             <h3 className="no-submission">
                 {submission.length === 0 ? "No Submissions yet " : " "}
             </h3>
@@ -39,7 +54,7 @@ const Submission = () => {
                 {submission.map((data, id) => {
                     return (
                         <div>
-                            <Card>
+                            <Card className="submission-container-card" extra={ data.marked ? <p> Marked </p> : <p> Not Marked </p>}>
                                 <Card.Meta title={"Assignment: #" + id + " Solution"} />
                                 <p className="submissions">{data.ans2}</p>
                                 <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
@@ -49,6 +64,7 @@ const Submission = () => {
                     )
                 })}
             </div>
+            </Loader>
         </div>
     )
 }

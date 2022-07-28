@@ -97,7 +97,8 @@ export const getSubmission = async (uid, streamId, courseId) => {
             data.push({
                 id: doc.id,
                 ans2: doc.data().ans2,
-                studentId: doc.data().studentId
+                studentId: doc.data().studentId,
+                marked: doc.data().marked ? doc.data().marked : false
             })
         })
         console.log(" these are all stream ", data);
@@ -110,11 +111,13 @@ export const getSubmission = async (uid, streamId, courseId) => {
 
 export const setMark = async (uid, streamId, courseId, subId, _mark, stdId) => {
     try {
+        console.log(uid + " " + streamId + " " + courseId + " " + subId + " " + _mark + " " + stdId);
         await db.collection('users').doc(uid).collection('streams').doc(streamId).collection('courses').doc(courseId).collection('submission').doc(subId).update({
-            mark: _mark
+            mark: _mark,
+            marked: true
         })
         let doc = await db.collection('users').doc(stdId).get();
-        let oldMark = doc.data().mark;
+        let oldMark = doc.data().mark || 0;
         await db.collection('users').doc(stdId).update({
             mark: String(parseInt(parseInt(oldMark) + parseInt(_mark)))            
         });

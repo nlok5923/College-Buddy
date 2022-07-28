@@ -7,6 +7,7 @@ import { ContractContext } from "../../../Provider/ContractProvider"
 import { ethers } from "ethers";
 import institueManager from '../../../Ethereum/InstituteFundsManager.json'
 import { Link, useHistory } from "react-router-dom";
+import Loader from "../../../Components/Loader/index"
 
 const AdvertiserDashboard = () => {
     const [instData, setInstData] = useState([]);
@@ -14,9 +15,11 @@ const AdvertiserDashboard = () => {
     const contractData = useContext(ContractContext);
     const history = useHistory();
     const [currentUserId, setCurrentUserId] = useState('');
+    const [loading, setIsLoading] = useState(false);
 
     const getAllInstitutes = async () => {
         try {
+            setIsLoading(true);
             let instituteInfo = [];
             let instituteData = await contractData.contract.getALlInstitutesManager();
             for (let i = 0; i < instituteData.length; i++) {
@@ -33,6 +36,7 @@ const AdvertiserDashboard = () => {
             }
             setInstData(instituteInfo);
             console.log("final institute data ", instituteInfo);
+            setIsLoading(false);
         } catch (err) {
             console.log(err.message);
         }
@@ -50,17 +54,37 @@ const AdvertiserDashboard = () => {
         }
     }, [user])
 
+    // const send = async () => {
+    //     try {
+    //         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+    //         let contractInstance = new ethers.Contract("0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00", contractAbi.abi, ethProvider.getSigner(0));
+    //         let amt = 10000;
+    //         await contractInstance.transfer("0xa7bc31db05BB5D085029F630dD6cC9161d422C7E", ethers.utils.parseEther(amt.toString()), {
+    //             gasLimit: 9000000
+    //         });
+    //     } catch(err) {
+    //         console.log(err.message);
+    //     }
+    // }
+
+    const setLoading = (loadingState) => {
+        setIsLoading(loadingState);
+    }
+
     return (
         <div>
+            <Loader isLoading = {loading}>
             <Link to={`/advertiser-dashboard/${currentUserId}`}>
-                <p className="poap-request">POAP requests</p>
+                <p className="poap-request">All POAP requests</p>
             </Link>
             <h3 className="no-inst">
                 {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
             </h3>
             <div className="page-container">
-                {instData.map((data, id) => <PostCard key={id} postData={data} />)}
+                {instData.map((data, id) => <PostCard loadingState = {setLoading} key={id} postData={data} />)}
             </div>
+            </Loader>
+            {/* <button onClick={() => send()} > Send </button> */}
         </div>
     )
 }

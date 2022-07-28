@@ -23,20 +23,17 @@ contract DistributeToken {
     IDAv1Library.InitData public idaV1;
 
     uint32 public constant INDEX_ID = 0;               // The IDA Index. Since this contract will only use one index, we'll hardcode it to "0".
-
+    mapping(address => uint128) public shareUnits;
     constructor(
         ISuperfluid _host,
         ISuperToken _spreaderToken
     ) {
 
-        // Ensure _spreaderToken is indeed a super token
         require(address(_host) == _spreaderToken.getHost(),"!superToken");
 
 
         spreaderToken = _spreaderToken;
 
-        // Initializing the host and agreement type in the idaV1 object so the object can have them on hand for enacting IDA functions
-        // Read more on initialization: https://docs.superfluid.finance/superfluid/developers/solidity-examples/solidity-libraries/idav1-library#importing-and-initialization
         idaV1 = IDAv1Library.InitData(
             _host,
             IInstantDistributionAgreementV1(
@@ -44,16 +41,10 @@ contract DistributeToken {
             )
         );
 
-        // Creates the IDA Index through which tokens will be distributed
         idaV1.createIndex(_spreaderToken, INDEX_ID);
 
     }
 
-    /**************************************************************************
-     * IDA Operations
-     *************************************************************************/
-
-    /// @notice Takes the entire balance of the designated spreaderToken in the contract and distributes it out to unit holders w/ IDA
     function distribute() public {
 
         uint256 spreaderTokenBalance = spreaderToken.balanceOf(address(this));
@@ -66,14 +57,10 @@ contract DistributeToken {
         );
 
         idaV1.distribute(spreaderToken, INDEX_ID, actualDistributionAmount);
-
     }
 
-    /// @notice lets an account gain a single distribution unit
-    /// @param subscriber subscriber address whose units are to be incremented
     function gainShare(address subscriber, uint units) public {
 
-        // Get current units subscriber holds
         (,,uint256 currentUnitsHeld,) = idaV1.getSubscription(
             spreaderToken,
             address(this),
@@ -81,21 +68,17 @@ contract DistributeToken {
             subscriber
         );
 
-        // Update to current amount + 1
         idaV1.updateSubscriptionUnits(
             spreaderToken,
             INDEX_ID,
             subscriber,
             uint128(currentUnitsHeld + units)
         );
-
+        shareUnits[subscriber] = uint128(currentUnitsHeld + units);
     }
 
-    /// @notice lets an account lose a single distribution unit
-    /// @param subscriber subscriber address whose units are to be decremented
     function loseShare(address subscriber, uint units) public {
 
-        // Get current units subscriber holds
         (,,uint256 currentUnitsHeld,) = idaV1.getSubscription(
             spreaderToken,
             address(this),
@@ -103,18 +86,15 @@ contract DistributeToken {
             subscriber
         );
 
-        // Update to current amount - 1 (reverts if currentUnitsHeld - 1 < 0, so basically if currentUnitsHeld = 0)
         idaV1.updateSubscriptionUnits(
             spreaderToken,
             INDEX_ID,
             subscriber,
             uint128(currentUnitsHeld - units)
         );
-
+        shareUnits[subscriber] = uint128(currentUnitsHeld - units);
     }
 
-    /// @notice allows an account to delete its entire subscription this contract
-    /// @param subscriber subscriber address whose subscription is to be deleted
     function deleteShares(address subscriber) public {
 
         idaV1.deleteSubscription(
@@ -123,7 +103,6 @@ contract DistributeToken {
             INDEX_ID,
             subscriber
         );
-
+        shareUnits[subscriber] = 0;
     }
-
 }
