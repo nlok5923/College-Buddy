@@ -1,3 +1,0 @@
-LAE token deployed to: 0x6577A4409013c772aF780B46FC05f52B69e51caf
-LAE super token at: 0xC76C2069Bb251ab6e3FDfDCd4399D3C91da74c04
-DistributeToken address: 0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401

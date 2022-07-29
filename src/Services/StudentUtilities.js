@@ -81,7 +81,8 @@ export const fetchEvent = async (instId) => {
                 name: doc.data().name,
                 description: doc.data().description,
                 link: doc.data().link,
-                advtId: doc.data().advtId
+                advtId: doc.data().advtId,
+                dnt: doc.data().dnt || "No date and time"
             })
         })
         return data;
@@ -108,7 +109,42 @@ export const claims = async (advtid, poapData, _address) => {
 export const getScore = async (uid) => {
     try {
         let data = await db.collection('users').doc(uid).get();
-        return data.data().mark;
+        return data.data().mark || 0;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const getShare = async (uid) => {
+    try {
+        let ref = await db.collection('users').get();
+        let sum = 0;
+        let studentScore = 0;
+        ref.forEach(async (doc) => {
+            if(doc.data().role === "STD") {
+                if(doc.data().mark) {
+                    sum += parseInt(doc.data().mark);
+                }
+
+                if(doc.id === uid) {
+                    studentScore = parseInt(doc.data().mark);
+                }
+            }
+        });
+
+        console.log(uid + " " + studentScore + " " + sum);
+        return parseFloat(studentScore / sum);
+
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const removeScore = async (uid) => {
+    try {
+        await db.collection('users').doc(uid).update({
+            mark: 0
+        });
     } catch (err) {
         console.log(err.message);
     }

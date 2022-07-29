@@ -15,3 +15,15 @@
         margin-left: 2%;
     }
 }
+
+input::file-selector-button {
+    font-weight: normal;
+    // padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
+    background: transparent;
+    border: none;
+    font-family: "montserrat";
+    padding-top: 12px;
+}
+

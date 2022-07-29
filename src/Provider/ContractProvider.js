@@ -6,6 +6,7 @@ import ProofOfAttendenceArtifact from '../Ethereum/ProofOfAttendence.json'
 import LearnAndEarnArtifact from '../Ethereum/LearnAndEarn.json'
 
 export const ContractContext = createContext("appContext");
+const sfContractAbi = [{"stateMutability":"payable","type":"fallback"},{"inputs":[{"internalType":"address","name":"initialAddress","type":"address"}],"name":"initializeProxy","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 const ContractProvider = (props) => {
 
   const [contract, setContract] = useState(null);
@@ -13,24 +14,26 @@ const ContractProvider = (props) => {
   const [idaContract, setIdaContract] = useState(null);
   const [laeContract, setLaeContractInstance] = useState(null);
   const [poaContract, setPOAContract] = useState(null);
+  const [fDaixContract, setfDaixContract] = useState(null);
 
-  // Compiled 10 Solidity files successfully
-  // Institute Funds manager contract address:  0xb9EC8eaF71f1bA70Bf4a06Eb145fc8fC438Dc944
-  // Factory contract address:  0xc339A2223Be14cFe6e85421078a49A8d48620437
-  const contractAddress = "0x620b75FA4fEbc1432f431D39D0eEe185B25cAd25"
-  const distributeTokenAddress = "0xb1B9ceEb2A1eE407caaf918830D37EC6bd0A8401"
+  const contractAddress = "0xb41E94534764E477775b495D3b93f6bd3716c8C8"
+  //! need to update it after deploying distributeToken
+  const distributeTokenAddress = "0x57d7aE3d557ED09d40f887a8Eb0CE2879D71A09f"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
   const poaContractAddress = "0x372aD2f2bC12146971991e09271f3ABce0d4604b"
+  const fDaixContractAddress = "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00"
   const _initEthers = async () => {
     let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
     let contractInstance = new ethers.Contract(contractAddress, InstituteFundsManagerFactoryArtifact.abi, ethProvider.getSigner(0));
     let distributeContractInstance = new ethers.Contract(distributeTokenAddress, DistributeTokencontractArtifact.abi, ethProvider.getSigner(0));
     let learnAndEarnContractInstance = new ethers.Contract(learnAndEarnTokenAddress, LearnAndEarnArtifact.abi, ethProvider.getSigner(0));
     let poaContractInstance = new ethers.Contract(poaContractAddress, ProofOfAttendenceArtifact.abi, ethProvider.getSigner(0))
+    let fDaixContractInstance = new ethers.Contract(fDaixContractAddress, LearnAndEarnArtifact.abi, ethProvider.getSigner(0))
     setContract(contractInstance);
     setIdaContract(distributeContractInstance);
     setLaeContractInstance(learnAndEarnContractInstance);
     setPOAContract(poaContractInstance);
+    setfDaixContract(fDaixContractInstance);
   }
   
   const _initApp = async () => {
@@ -56,7 +59,7 @@ const ContractProvider = (props) => {
   
   return (
     // eslint-disable-next-line react/prop-types
-    <ContractContext.Provider value = {{ contract, address, _initApp, idaContract, laeContract, poaContract }}> {props.children} </ContractContext.Provider>
+    <ContractContext.Provider value = {{ contract, address, _initApp, idaContract, laeContract, poaContract, fDaixContract, distributeTokenAddress }}> {props.children} </ContractContext.Provider>
   );
 };
 

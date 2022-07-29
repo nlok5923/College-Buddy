@@ -49,7 +49,6 @@ const Navbar = () => {
                             </Button>
                         </Link>
                     </li>
-
                     <li onClick={() => logOutUser()}>
                         <Link to="/">
                             <LogoutOutlined />  Logout

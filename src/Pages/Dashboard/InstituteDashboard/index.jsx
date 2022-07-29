@@ -8,6 +8,7 @@ import { ContractContext } from "../../../Provider/ContractProvider";
 import toast, { Toaster } from 'react-hot-toast'
 import { ethers } from "ethers";
 import instituteManager from '../../../Ethereum/InstituteFundsManager.json'
+import Loader from '../../../Components/Loader/index'
 
 const InstituteDashboard = () => {
     const contractData = useContext(ContractContext);
@@ -19,6 +20,7 @@ const InstituteDashboard = () => {
         name: "",
         description: ""
     })
+    const [loading, setIsLoading] = useState(false);
     const [streams, setStreams] = useState([]);
     const [instInfoModal, setInstInfoModal] = useState(false);
     const [inst, setInst] = useState({
@@ -88,12 +90,16 @@ const InstituteDashboard = () => {
                 toast.error("Please connect metamask first and make sure you init institute first !!");
             } else {
                 await AddStreams(user.uid, streamData.name, streamData.description);
+                setIsLoading(true);
                 let txn = await instituteContract.addStreams(streamData.description);
                 txn.wait();
+                setIsLoading(false);
+                toast.success("Stream added successfully !!");
                 window.location.reload();
             }
             setIsModalVisible(false);
         } catch (err) {
+            toast.error("Something bad happened !!");
             console.log("while adding streams", err.message);
         }
     }
@@ -117,20 +123,30 @@ const InstituteDashboard = () => {
     const initInstitute = async () => {
         try {
             if (contractData.contract) {
+                setIsLoading(true);
                 let txn = await contractData.contract.addInstitute(name, user.uid);
                 txn.wait();
+                setIsLoading(false);
+                toast.success("Institute added successfully !!");
                 window.location.reload();
             } else {
                 toast.error("Please connect metamask !!");
             }
         } catch (err) {
+            toast.error("Something bad happened !!");
             console.log(err.message);
         }
     }
 
     const handleInstOk = async () => {
-        await updateInstitute(user.uid, inst.name, inst.description);
-        setInstInfoModal(false);
+        try {
+            await updateInstitute(user.uid, inst.name, inst.description);
+            setInstInfoModal(false);
+            toast.success("Institute info updated successfully !!");
+        } catch (err) {
+            toast.error("Error updating institute info !!");
+            console.log(err.message);
+        }
     }
 
     const handleInstCancel = () => {
@@ -147,6 +163,7 @@ const InstituteDashboard = () => {
     return (
         <div>
             <Toaster />
+            <Loader isLoading={loading}>
             <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="stream-container">
                     <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />
@@ -207,6 +224,7 @@ const InstituteDashboard = () => {
                     </div>
                 </div>
             </div>
+            </Loader>
         </div>
     )
 }
