@@ -81,7 +81,8 @@ export const fetchEvent = async (instId) => {
                 name: doc.data().name,
                 description: doc.data().description,
                 link: doc.data().link,
-                advtId: doc.data().advtId
+                advtId: doc.data().advtId,
+                dnt: doc.data().dnt || "No date and time"
             })
         })
         return data;

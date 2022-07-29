@@ -44,12 +44,59 @@ export const fetchCourses = async (uid, streamId) => {
     try {
         let data = [];
         let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').get();
-        ref.forEach((doc) => {
-            data.push({
-                id: doc.id,
-                name: doc.data().name,
-                code: doc.data().code
+        ref.forEach(async (doc) => {
+            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(doc.id).collection('submission').get();
+            let isSubmitted = false;
+            console.log(uid)
+            subRef.forEach((subDoc) => {
+                if(subDoc.data().studentId === uid.trim()) {
+                    isSubmitted = true;
+                    console.log("matched ", subDoc.data().studentId);
+                }
+                console.log("other id ", subDoc.data().studentId);
             })
+            console.log("this is isbumit ", isSubmitted);
+
+            if(!isSubmitted) {
+                data.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    code: doc.data().code
+                })
+            }
+        })
+        console.log(" these are all courses ", data);
+        return data;
+    } catch (error) {
+        console.log(error.message);
+        console.log("Error while accessing all blogs");
+    }
+}
+
+export const fetchStudentCourses = async (uid, streamId, stdId) => {
+    try {
+        let data = [];
+        let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').get();
+        ref.forEach(async (doc) => {
+            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(doc.id).collection('submission').get();
+            let isSubmitted = false;
+            console.log(uid)
+            subRef.forEach((subDoc) => {
+                if(subDoc.data().studentId === stdId.trim()) {
+                    isSubmitted = true;
+                    console.log("matched ", subDoc.data().studentId);
+                }
+                console.log("other id ", subDoc.data().studentId);
+            })
+            console.log("this is isbumit ", isSubmitted);
+
+            if(!isSubmitted) {
+                data.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    code: doc.data().code
+                })
+            }
         })
         console.log(" these are all courses ", data);
         return data;

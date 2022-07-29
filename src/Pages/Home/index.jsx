@@ -4,6 +4,8 @@ import { UserContext } from "../../Provider/UserProvider"
 import Promotion from "./Components/Promotion/index"
 import "./Home.scss";
 import Footer from '../../Components/Footer/index'
+import Services from "./Components/Services/index";
+import Incentives from "./Components/Incentives/index";
 
 const Home = () => {
   const info = useContext(UserContext);
@@ -30,6 +32,8 @@ const Home = () => {
   return (
     <div>
       <Promotion />
+      <Services />
+      {/* <Incentives /> */}
       <Footer />
     </div>
   );

@@ -73,6 +73,7 @@ const PoapRequest = () => {
             </b>
             </h2>
             <div className="poap-page-query">
+                <Card>
                 {
                     req.map((data, id) => <Card className="poap-page-query-card" title={`Poap Request #${id + 1}`}
                         actions={[
@@ -110,6 +111,7 @@ const PoapRequest = () => {
                     </Card>
                     )
                 }
+                </Card>
             </div>
         </div>
         </Loader>

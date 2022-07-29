@@ -1,4 +1,4 @@
-import { Card, Modal } from 'antd';
+import { Card, Modal, Avatar, List, Space, Popover } from 'antd';
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../Provider/UserProvider';
 import { addPost, addModule, addEvent } from '../../Services/AdvertiserUtilities';
@@ -6,9 +6,15 @@ import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
 import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
-import { UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined } from "@ant-design/icons"
+import { UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined,  LikeOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons"
 
 const { Meta } = Card;
+const IconText = ({ icon, text }) => (
+    <Space>
+      {React.createElement(icon)}
+      {text}
+    </Space>
+  );
 const PostCard = (props) => {
     const contractData = useContext(ContractContext);
     const { user, isLoading } = useContext(UserContext);
@@ -21,7 +27,8 @@ const PostCard = (props) => {
     const [event, setEvent] = useState({
         name: '',
         description: '',
-        link: '',        
+        link: '',
+        dnt: ''
     })
 
     const [count, setCount] = useState(0);
@@ -97,7 +104,7 @@ const PostCard = (props) => {
                 setModalVisible(false);
                 toast.success("Modules added successfully");
             }
-        } catch(err) {
+        } catch (err) {
             toast.error("Some error occurred");
             console.log(err.message);
         }
@@ -106,7 +113,7 @@ const PostCard = (props) => {
 
     const handleEvent = async () => {
         try {
-            await addEvent(props.postData.instId, event.name, event.description, event.link, user.uid);
+            await addEvent(props.postData.instId, event.name, event.description, event.link, user.uid, event.dnt);
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
                 setEventModal(false);
@@ -120,7 +127,7 @@ const PostCard = (props) => {
                 //! amount = 2
                 let txn = await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(String(amt)));
                 txn.wait();
-                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo" , "200");
+                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo", "200");
                 depositTxn.wait();
                 console.log(" this is tream info ", props.postData.streamInfo[0])
                 props.loadingState(false);
@@ -138,18 +145,43 @@ const PostCard = (props) => {
         setEventModal(false);
     }
 
-    return <Card
-        hoverable
-        style={{
-            width: 240,
-        }}
-        cover={<img alt="post" src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`} />}
-        actions={[
-            <UsergroupAddOutlined onClick={() => setIsModalVisible(true)} key="promote" />,
-            <ScheduleOutlined  onClick={() => setModalVisible(true)} key="modules" />,
-            <VideoCameraOutlined onClick={() => setEventModal(true)} key='event' />
-          ]}
-    > <Toaster />
+    const onDateChange = (e) => {
+        setEvent({
+            ...event,
+            dnt: e.target.value
+        })
+    }
+
+    return <List.Item
+    key={props.postData.name}
+    actions={[
+       <Popover content={"Promote Advertisement"}>
+        <UsergroupAddOutlined style={{ fontSize: "25px" }} onClick={() => setIsModalVisible(true)} key="promote" />
+       </Popover>, 
+       <Popover content={"Add Modules"}>
+        <ScheduleOutlined style={{ fontSize: "22px" }} onClick={() => setModalVisible(true)} key="modules" />
+       </Popover>, 
+       <Popover content={"Promote Events"}>
+        <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
+       </Popover>
+    ]}
+    extra={
+        <img
+            width={272}
+            alt="logo"
+            src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`}
+        />
+    }
+>
+    <List.Item.Meta
+        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+        title={props.postData.displayName}
+        description={props.postData.address}
+    />
+    {props.postData.about}
+    {/* {item.content} */}
+
+    <Toaster />
         <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">
                 <input type="text" placeholder="Post name" name="title" onChange={(e) => handlePostInfo(e)} />
@@ -192,11 +224,71 @@ const PostCard = (props) => {
                     ...event,
                     [e.target.name]: e.target.value
                 })} />
+               <input type="datetime-local" name="datetime" onChange={(e) => onDateChange(e)} />
             </div>
         </Modal>
 
-        <Meta title={props.postData.name} description={props.postData.address} />
-    </Card>
+</List.Item>
+    
+    // <Card
+    //     hoverable
+    //     style={{
+    //         width: 240,
+    //     }}
+    //     cover={<img alt="post" src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`} />}
+        // actions={[
+        //     <UsergroupAddOutlined onClick={() => setIsModalVisible(true)} key="promote" />,
+        //     <ScheduleOutlined  onClick={() => setModalVisible(true)} key="modules" />,
+        //     <VideoCameraOutlined onClick={() => setEventModal(true)} key='event' />
+        //   ]}
+    // > <Toaster />
+    //     <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+    //         <div className="stream-container">
+    //             <input type="text" placeholder="Post name" name="title" onChange={(e) => handlePostInfo(e)} />
+    //             <input type="text" placeholder="Post description " name="description" onChange={(e) => handlePostInfo(e)} />
+    //             <input
+    //                 type="file"
+    //                 accept="image/*"
+    //                 onChange={(e) => handleImage(e)}
+    //             ></input>
+    //             <h3> Avalaible Streams</h3>
+    //             {props.postData.streamInfo.map((stream, id) => <p> {stream} </p>)}
+    //         </div>
+    //     </Modal>
+
+    //     <Modal title="Create tokenized module" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
+    //         <div className="stream-container">
+    //             <input type="text" placeholder="Enter question 1" name="q1" onChange={(e) => setModule({
+    //                 ...module,
+    //                 [e.target.name]: e.target.value
+    //             })} />
+    //             <input type="text" placeholder="Enter question 2" name="q2" onChange={(e) => setModule({
+    //                 ...module,
+    //                 [e.target.name]: e.target.value
+    //             })} />
+    //             <input type="number" placeholder="Enter number of modules" onChange={(e) => setCount(e.target.value)} />
+    //         </div>
+    //     </Modal>
+
+    //     <Modal title="Create POAP based event" visible={eventModal} onOk={() => handleEvent()} onCancel={() => handleModuleCancel()}>
+    //         <div className="stream-container">
+    //             <input type="text" placeholder="Event name" name="name" onChange={(e) => setEvent({
+    //                 ...event,
+    //                 [e.target.name]: e.target.value
+    //             })} />
+    //             <input type="text" placeholder="Event description" name="description" onChange={(e) => setEvent({
+    //                 ...event,
+    //                 [e.target.name]: e.target.value
+    //             })} />
+    //             <input type="text" placeholder="Event Link" name="link" onChange={(e) => setEvent({
+    //                 ...event,
+    //                 [e.target.name]: e.target.value
+    //             })} />
+    //         </div>
+    //     </Modal>
+
+    //     <Meta title={props.postData.name} description={props.postData.address} />
+    // </Card>
 };
 
 export default PostCard;

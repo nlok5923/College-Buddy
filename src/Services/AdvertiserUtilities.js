@@ -105,14 +105,15 @@ export const addModule = async (instId, _q1, _q2, _advtId) => {
     }
 }
 
-export const addEvent = async (instId, _name, _description, _link, _advtId) => {
+export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt) => {
     console.log(instId + " " + _name + " " + _description + " " + _link + " " + _advtId);
     try {
         await db.collection('users').doc(instId).collection('event').add({
             name: _name,
             description: _description,
             link: _link,
-            advtId: _advtId
+            advtId: _advtId,
+            dnt: _dnt
         });
     } catch (err) {
         console.log(err.message);
@@ -149,6 +150,18 @@ export const PoapClaimed = async (advtId, claimId) => {
             claimed: true
         });
     } catch(err) {
+        console.log(err.message);
+    }
+}
+
+export const getInstituteData = async (uid) => {
+    try {
+        let data = await db.collection('users').doc(uid).get();
+        return {
+            displayName: data.data().displayName,
+            about: data.data().description
+        }
+    } catch (err) {
         console.log(err.message);
     }
 }

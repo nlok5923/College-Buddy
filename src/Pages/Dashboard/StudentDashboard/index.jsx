@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
 import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore } from '../../../Services/StudentUtilities';
-import { fetchCourses, getModules } from '../../../Services/InstituteUtilities';
+import { fetchStudentCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
 import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled } from '@ant-design/icons';
 import { Avatar, List, Modal } from 'antd';
@@ -59,7 +59,7 @@ const StudentDashboard = () => {
     try {
       console.log(instId + " " + streamId);
       console.log(instId.length, " ", streamId.length);
-      let data = await fetchCourses(instId, streamId);
+      let data = await fetchStudentCourses(instId, streamId, user.uid);
       console.log("LAE data", data);
       setAssignments(data);
     } catch (err) {
@@ -273,151 +273,149 @@ const StudentDashboard = () => {
   return (
     <div>
       <Toaster />
-      <Loader isLoading = {loading}>
-      <div className="LAE">
-        <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
-          <div className="stream-container">
-            <input type="text" placeholder="Enter Institute Id" name="instId" onChange={(e) => setStudentData({
-              ...studentData,
-              [e.target.name]: e.target.value
-            })} />
-            <input type="text" placeholder="Enter Stream Id" name="streamId" onChange={(e) => setStudentData({
-              ...studentData,
-              [e.target.name]: e.target.value
-            })} />
-          </div>
-        </Modal>
+      <Loader isLoading={loading}>
+        <div className="LAE">
+          <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+            <div className="stream-container">
+              <input type="text" placeholder="Enter Institute Id" name="instId" onChange={(e) => setStudentData({
+                ...studentData,
+                [e.target.name]: e.target.value
+              })} />
+              <input type="text" placeholder="Enter Stream Id" name="streamId" onChange={(e) => setStudentData({
+                ...studentData,
+                [e.target.name]: e.target.value
+              })} />
+            </div>
+          </Modal>
 
-        <Modal title="Claim Poap" visible={poapClaimModal} onOk={() => handlePoapClaim()} onCancel={() => handleClaimCancel()}>
-          <div className="stream-container">
-            <input type="text" placeholder="Event name" name="name" onChange={(e) => setPoap({
-              ...poap,
-              [e.target.name]: e.target.value
-            })} />
-            <input type="text" placeholder="About Event" name="about" onChange={(e) => setPoap({
-              ...poap,
-              [e.target.name]: e.target.value
-            })} />
-            <input type="text" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
-              ...poap,
-              [e.target.name]: e.target.value
-            })} />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handlePoapImage(e)}
-            ></input>
-          </div>
-        </Modal>
+          <Modal title="Claim Poap" visible={poapClaimModal} onOk={() => handlePoapClaim()} onCancel={() => handleClaimCancel()}>
+            <div className="stream-container">
+              <input type="text" placeholder="Event name" name="name" onChange={(e) => setPoap({
+                ...poap,
+                [e.target.name]: e.target.value
+              })} />
+              <input type="text" placeholder="About Event" name="about" onChange={(e) => setPoap({
+                ...poap,
+                [e.target.name]: e.target.value
+              })} />
+              <input type="text" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
+                ...poap,
+                [e.target.name]: e.target.value
+              })} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handlePoapImage(e)}
+              ></input>
+            </div>
+          </Modal>
 
-        <div className="LAE-container">
-          <div className="LAE-container-bg">
-            <div className="LAE-container-inputarea-performance">
-              {islastDay && (
-                <p onClick={() => updateShare()}> Update Share </p>
-              )}
-              <p onClick={() => updateShare()}>
-                <EditOutlined />
-                <span>
-                  Update Share
-                </span>
-              </p>
-              <p> <RiseOutlined /> <span>
-                Score: {score}
-              </span>
-              </p>
-              <p> <MoneyCollectOutlined /> <span>
-                Balance: {balance} fDAIx
-              </span>
-              </p>
-              <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
-                <p> <TrophyOutlined /> <span>
-                  Your POA Wall
+          <div className="LAE-container">
+            <div className="LAE-container-bg">
+              <div className="LAE-container-inputarea-performance">
+                {islastDay && (
+                  <p onClick={() => updateShare()}>   <EditOutlined /> <span>
+                    Update Share
+                  </span>
+                  </p>
+                )}
+                <p> <RiseOutlined /> <span>
+                  Score: {score}
                 </span>
                 </p>
-              </Link>
+                <p> <MoneyCollectOutlined /> <span>
+                  Balance: {balance} fDAIx
+                </span>
+                </p>
+                <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
+                  <p> <TrophyOutlined /> <span>
+                    Your POA Wall
+                  </span>
+                  </p>
+                </Link>
+              </div>
+              <Card className='LAE-container-bg-card' title="All your assignments">
+                {
+                  assignments.map((data, id) => (
+                    <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
+                      <Button onClick={() => {
+                        window.location.href = data.code
+                      }}> Download Assignment </Button>
+                      <textarea className='assignment-ans-txtarea' placeholder='Enter ans for the assignment' name="ans2" onChange={(e) => handleChange(e)} /> <br /> <br />
+                      <Button onClick={() => handleAns(data.id)}> Submit </Button>
+                    </Card>
+                  ))
+                }
+              </Card>
             </div>
-            <Card className='LAE-container-bg-card' title="All your assignments">
-              {
-                assignments.map((data, id) => (
-                  <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
-                    <Button onClick={() => {
-                      window.location.href = data.code
-                    }}> Download Assignment </Button>
-                    <textarea className='assignment-ans-txtarea' placeholder='Enter ans for the assignment' name="ans2" onChange={(e) => handleChange(e)} /> <br /> <br />
-                    <Button onClick={() => handleAns(data.id)}> Submit </Button>
-                  </Card>
-                ))
-              }
-            </Card>
-          </div>
-          <div className="LAE-container-inputarea">
-            <Card title='All Advertisements'>
-              {adv.map((data, id) => {
-                return (
-                  <Card
-                    style={{
-                      width: 630,
-                    }}
-                    className="spn-modules"
-                    cover={
-                      <img
-                        alt="example"
-                        src={data.fileName}
+            <div className="LAE-container-inputarea">
+              <Card title='All Advertisements'>
+                {adv.map((data, id) => {
+                  return (
+                    <Card
+                      style={{
+                        width: 630,
+                      }}
+                      className="spn-modules"
+                      cover={
+                        <img
+                          alt="example"
+                          src={data.fileName}
+                        />
+                      }
+                    >
+                      <Meta
+                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                        title={data.name}
+                        description={data.description}
                       />
-                    }
-                  >
-                    <Meta
-                      avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                      title={data.name}
-                      description={data.description}
-                    />
-                  </Card>
-                )
-              })}
-              {events.map((data, id) => {
-                return (
-                  <Card style={{
-                    width: 630,
-                    marginTop: "3%"
-                  }}>
-                    <Meta
-                      avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                      title={data.name}
-                      description={data.description}
-                    />
-                    <button onClick={() => {
-                      setCurrentAdvtId(data.advtId);
-                      setPoapClaimModal(true);
-                    }} >
-                      Claim PAOP
-                    </button>
-                    <button onClick={() => {
-                      window.open(data.link, "_blank")
-                    }}>Event link</button>
-                  </Card>
-                )
-              })}
-            </Card>
-          </div>
+                    </Card>
+                  )
+                })}
+                {events.map((data, id) => {
+                  return (
+                    <Card style={{
+                      width: 630,
+                      marginTop: "3%"
+                    }}>
+                      <Meta
+                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                        title={data.name}
+                        description={data.description}
+                      />
+                      <p style={{ marginTop: "4%" }}>{data.dnt}</p>
+                      <button onClick={() => {
+                        setCurrentAdvtId(data.advtId);
+                        setPoapClaimModal(true);
+                      }} >
+                        Claim PAOP
+                      </button>
+                      <button onClick={() => {
+                        window.open(data.link, "_blank")
+                      }}>Event link</button>
+                    </Card>
+                  )
+                })}
+              </Card>
+            </div>
 
-          <div className='LAE-container-modules'>
-            <Card title="Sponsored Modules">
-              {
-                modules.map((data, id) => (
-                  <Card type="inner" className="course-sub-card">
-                    <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                    <input className="spn-modules" placeholder="Enter your answer here" />
-                    <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                    <input placeholder='Enter your answer here' /> <br />
-                    <Button className="spn-modules" onClick={() => handleModuleSubmit()}> Submit </Button>
-                  </Card>
-                ))
-              }
-            </Card>
+            <div className='LAE-container-modules'>
+              <Card title="Sponsored Modules">
+                {
+                  modules.map((data, id) => (
+                    <Card type="inner" className="course-sub-card">
+                      <h4 className="spn-modules"> Q1) {data.q1}</h4>
+                      <input className="spn-modules" placeholder="Enter your answer here" />
+                      <h4 className="spn-modules"> Q2) {data.q2} </h4>
+                      <input placeholder='Enter your answer here' /> <br />
+                      <Button className="spn-modules" onClick={() => handleModuleSubmit()}> Submit </Button>
+                    </Card>
+                  ))
+                }
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
       </Loader>
     </div>
   );
