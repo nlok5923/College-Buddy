@@ -165,3 +165,33 @@ export const getInstituteData = async (uid) => {
         console.log(err.message);
     }
 }
+
+export const getALlModuleResponses = async (uid) => {
+    try {
+         let responses = [];
+         let instituteRef = await db.collection('users').get();
+         instituteRef.forEach(async (doc, id) => {
+            let moduleRef = await db.collection('users').doc(doc.id).collection('module').get();
+            moduleRef.forEach(async (moduleDoc, moduleId) => {
+                let tempResponse = [];
+                if(moduleDoc.data().advtId === uid) {
+                    let responseRef = await db.collection('users').doc(doc.id).collection('module').doc(moduleDoc.id).collection('response').get();
+                    responseRef.forEach((responseDoc, responseId) => {
+                        tempResponse.push({
+                            id: responseDoc.id,
+                            ans1: responseDoc.data().q1,
+                            ans2: responseDoc.data().q2 
+                        })
+                    })
+                    responses.push({
+                        name: moduleDoc.data().name || "dummy",
+                        responses: tempResponse
+                    });
+                }
+            })
+         });
+         return responses;
+    } catch (err) {
+        console.log(err.message);
+    }
+}

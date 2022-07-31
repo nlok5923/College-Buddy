@@ -133,7 +133,7 @@ export const getShare = async (uid) => {
         });
 
         console.log(uid + " " + studentScore + " " + sum);
-        return parseFloat(studentScore / sum);
+        return parseFloat(studentScore / sum) * 100;
 
     } catch (err) {
         console.log(err.message);
@@ -147,5 +147,17 @@ export const removeScore = async (uid) => {
         });
     } catch (err) {
         console.log(err.message);
+    }
+}
+
+export const saveModuleResp = async (instId, moduleId, resp, studentId) => {
+    try {
+        await db.collection('users').doc(instId).collection('module').doc(moduleId).collection("response").add({
+            q1: resp.q1,
+            q2: resp.q2,
+            stdId: studentId
+        })
+    } catch (err) {
+        console.log(err);
     }
 }

@@ -183,16 +183,29 @@ export const getInstitute = async (uid) => {
     }
 }
 
-export const getModules = async (instId) => {
+export const getModules = async (instId, studentId) => {
     try {
         let data = [];
         let ref = await db.collection('users').doc(instId).collection('module').get();
-        ref.forEach((doc) => {
-            data.push({
-                id: doc.id,
-                q1: doc.data().q1,
-                q2: doc.data().q2,
+        ref.forEach(async (doc) => {
+            console.log("Calling it");
+            let moduleId = doc.id;
+            let moduleRef = await db.collection('users').doc(instId).collection('module').doc(moduleId).collection('response').get();
+            let isPresent = false;
+
+            moduleRef.forEach((data, id) => {
+                // console.log()
+                if(data.data().stdId === studentId) { isPresent = true; }
             })
+
+            if(!isPresent) {
+                console.log("why pushing ");
+                data.push({
+                    id: doc.id,
+                    q1: doc.data().q1,
+                    q2: doc.data().q2,
+                })
+            }
         })
         return data;
     } catch(err) {

@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
-import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore } from '../../../Services/StudentUtilities';
+import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore, saveModuleResp } from '../../../Services/StudentUtilities';
 import { fetchStudentCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
 import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled } from '@ant-design/icons';
@@ -28,6 +28,10 @@ const StudentDashboard = () => {
   const [courseId, setCourseId] = useState('');
   const [poapImage, setPoapImage] = useState(null);
   const [loading, setIsLoading] = useState(false);
+  const [resp, setResp] = useState({
+    q1: "",
+    q2: ""
+  });
   const [poap, setPoap] = useState({
     name: '',
     about: '',
@@ -73,8 +77,8 @@ const StudentDashboard = () => {
     setAdv(data);
   }
 
-  const getAllModules = async (id) => {
-    let data = await getModules(id);
+  const getAllModules = async (id, stdId) => {
+    let data = await getModules(id, stdId);
     console.log(" this is module data retreived ", data);
     setModules(data);
   }
@@ -102,7 +106,7 @@ const StudentDashboard = () => {
         console.log(" this is updated student data ", studentData);
         getAllAssignments(data.instId.trim(), data.streamId.trim());
         getAllAdvertisements(data.instId.trim());
-        getAllModules(data.instId.trim());
+        getAllModules(data.instId.trim(), user.uid);
         getAllEvents(data.instId.trim());
         getStudentScore(user.uid);
       } else {
@@ -172,14 +176,17 @@ const StudentDashboard = () => {
     }
   }
 
-  const handleModuleSubmit = async () => {
+  const handleModuleSubmit = async (moduleId) => {
     try {
       console.log(" this is institute contract ", instituteContract);
       if (instituteContract) {
+        console.log(" this is resp ", resp);
+        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.uid)
         setIsLoading(true);
         let txn = await instituteContract.getReward({ gasLimit: 9000000 });
-        txn.wait();
+        let rewardTxn = await txn.wait();
         setIsLoading(false);
+        window.location.reload();
       } else {
         toast.error("Please connect metamask ");
       }
@@ -252,10 +259,10 @@ const StudentDashboard = () => {
         // console.log(newShare + ' ' + oldShare);
         if (newShare > oldShare) {
           let txn = await contractData.idaContract.gainShare(contractData.address, newShare - oldShare);
-          txn.wait();
+          let shareTxn = await txn.wait();
         } else {
           let txn = await contractData.idaContract.loseShare(contractData.address, oldShare - newShare);
-          txn.wait();
+          let shareTxn = await txn.wait();
         }
         await removeScore(user.uid);
         setIsLoading(false);
@@ -324,12 +331,12 @@ const StudentDashboard = () => {
                 </span>
                 </p>
                 <p> <MoneyCollectOutlined /> <span>
-                  Balance: {balance} fDAIx
+                  Balance: {balance.toFixed(2)} fDAIx
                 </span>
                 </p>
                 <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
                   <p> <TrophyOutlined /> <span>
-                    Your POA Wall
+                    Your POA Tokens
                   </span>
                   </p>
                 </Link>
@@ -401,14 +408,23 @@ const StudentDashboard = () => {
 
             <div className='LAE-container-modules'>
               <Card title="Sponsored Modules">
-                {
+                { modules.length === 0 ? <p> 
+                No Sponsored modules ATM for you
+                </p>
+                : 
                   modules.map((data, id) => (
                     <Card type="inner" className="course-sub-card">
                       <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                      <input className="spn-modules" placeholder="Enter your answer here" />
+                      <input className="spn-modules" placeholder="Enter your answer here" name="q1" onClick={(e) => setResp({
+                        ...resp,
+                        [e.target.name]: e.target.value
+                      })}  />
                       <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                      <input placeholder='Enter your answer here' /> <br />
-                      <Button className="spn-modules" onClick={() => handleModuleSubmit()}> Submit </Button>
+                      <input placeholder='Enter your answer here' name="q2" onClick={(e) => setResp({
+                        ...resp,
+                        [e.target.name]: e.target.value
+                      })} /> <br />
+                      <Button className="spn-modules" onClick={() => handleModuleSubmit(data.id)}> Submit </Button>
                     </Card>
                   ))
                 }

@@ -10,8 +10,8 @@ contract InstituteFundsManagerFactory {
     
     instituteDetails[] public institutes;
 
-    function addInstitute(string memory _name, string memory _instId) public {
-        InstituteFundsManager newInstituteAddress = new InstituteFundsManager(_name);
+    function addInstitute(string memory _name, string memory _instId, address _owner) public {
+        InstituteFundsManager newInstituteAddress = new InstituteFundsManager(_name, _owner);
         institutes.push(instituteDetails(_name, newInstituteAddress, _instId));
     }
 

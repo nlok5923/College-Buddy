@@ -15,6 +15,8 @@ import Submission from "./Pages/Dashboard/InstituteDashboard/Submission";
 import ContractProvider from "./Provider/ContractProvider";
 import PoapRequest from './Pages/Dashboard/AdvertiserDashboard/PoapRequests/index'
 import POAWall from './Pages/Dashboard/StudentDashboard/POAWall/index'
+import SendSomeToken from './Pages/SendSomeToken/index'
+import ModuleResponse from "./Pages/Dashboard/AdvertiserDashboard/ModuleResponse";
 
 const App = () => {
   return (
@@ -36,6 +38,8 @@ const App = () => {
               <Route exact path="/student-dashboard/course/:courseId" component={CoursePage} />
               <Route exact path="/advertiser-dashboard/:advtId" component={PoapRequest} />
               <Route exact path="/student-dashboard/:stdId" component={POAWall} />
+              <Route exact path="/send" component={SendSomeToken} />
+              <Route exact path="/advertiser-dashboard/module/responses" component={ModuleResponse} />
             </Switch>
           </Router>
         </ContractProvider>

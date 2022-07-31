@@ -55,7 +55,7 @@ const PoapRequest = () => {
             });
             console.log(" these is res ", res.data.IpfsHash);
            let nftTxn = await contractData.poaContract.safeMint(data.address, res.data.IpfsHash)
-           nftTxn.wait();
+           let tn = await nftTxn.wait();
             setIsLoading(false);
             toast.success("Poap minted successfully");
         } catch (err) {

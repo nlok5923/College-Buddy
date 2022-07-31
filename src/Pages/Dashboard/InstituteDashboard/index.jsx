@@ -92,7 +92,7 @@ const InstituteDashboard = () => {
                 await AddStreams(user.uid, streamData.name, streamData.description);
                 setIsLoading(true);
                 let txn = await instituteContract.addStreams(streamData.description);
-                txn.wait();
+                let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Stream added successfully !!");
                 window.location.reload();
@@ -124,8 +124,9 @@ const InstituteDashboard = () => {
         try {
             if (contractData.contract) {
                 setIsLoading(true);
-                let txn = await contractData.contract.addInstitute(name, user.uid);
-                txn.wait();
+                // contractData.address is the institute's contract address
+                let txn = await contractData.contract.addInstitute(name, user.uid, contractData.address);
+                let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Institute added successfully !!");
                 window.location.reload();
@@ -186,7 +187,7 @@ const InstituteDashboard = () => {
                         <div className="dashboard-inst-container-inputarea-boxarea">
                             <h1>
                                 <b>
-                                    <strong>Add Streams</strong>
+                                    <strong>Init & Add Streams</strong>
                                 </b>
 
                                 <p>
@@ -201,17 +202,22 @@ const InstituteDashboard = () => {
                                     </button>
                                 </div>
                                 }
+                                <h4>Institute Id: {user ? user.uid: null}</h4>
                                 <List
+                                    style = {{ 
+                                        marginTop: "20px"
+                                     }}
                                     size="large"
                                     itemLayout="horizontal"
                                     dataSource={streams}
                                     renderItem={(item) => (
-                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
+                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<span>Stream Id: {item.id}</span>, <Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
                                             <List.Item.Meta
                                                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                                title={<a href="https://ant.design">{item.name}</a>}
+                                                title={<a>{item.name}</a>}
                                                 description={item.description}
                                             />
+                                            {/* <h5> {item.id} </h5> */}
                                         </List.Item>
                                     )}
                                 />

@@ -16,9 +16,9 @@ const ContractProvider = (props) => {
   const [poaContract, setPOAContract] = useState(null);
   const [fDaixContract, setfDaixContract] = useState(null);
 
-  const contractAddress = "0xb41E94534764E477775b495D3b93f6bd3716c8C8"
+  const contractAddress = "0x0180146ed33b8263d138b7b7ff878D020C3175d4"
   //! need to update it after deploying distributeToken
-  const distributeTokenAddress = "0x57d7aE3d557ED09d40f887a8Eb0CE2879D71A09f"
+  const distributeTokenAddress = "0x31F1574875DBf52b4A4dCfDD40BC47a2515A4F58"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
   const poaContractAddress = "0x372aD2f2bC12146971991e09271f3ABce0d4604b"
   const fDaixContractAddress = "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00"

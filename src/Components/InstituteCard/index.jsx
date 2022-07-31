@@ -6,7 +6,8 @@ import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
 import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
-import { UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined,  LikeOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons"
+import { FileDoneOutlined, UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined } from "@ant-design/icons"
+import { Link } from "react-router-dom"
 
 const { Meta } = Card;
 const IconText = ({ icon, text }) => (
@@ -54,10 +55,10 @@ const PostCard = (props) => {
                 // await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
                 // fDaixContract
                 let amt = 2;
-                let txn = await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(String(amt)));
-                txn.wait();
-                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo", "200");
-                streamTxn.wait();
+                let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
+                let receipt = await txn.wait();
+                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt));
+                let streamReceipt = streamTxn.wait();
                 props.loadingState(false);
                 setIsModalVisible(false);
                 toast.success("Post added successfully");
@@ -96,10 +97,10 @@ const PostCard = (props) => {
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
                 let amt = 2 * count;
                 let txn = await contractData.laeContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
-                txn.wait();
+                let receipt = await txn.wait();
                 // await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(amt));
-                let addModuleTxn = await contractInstance.addModule(count, String(100 * count));
-                addModuleTxn.wait();
+                let addModuleTxn = await contractInstance.addModule(count, String(2 * count));
+                let addModuleReceipt = await addModuleTxn.wait();
                 props.loadingState(false);
                 setModalVisible(false);
                 toast.success("Modules added successfully");
@@ -122,13 +123,12 @@ const PostCard = (props) => {
                 // taking 200 LAE from user to mint an event
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                // await contractData.laeContract.transfer(props.postData.address, String(200 * 1000000000000000000));
                 let amt = 2;
                 //! amount = 2
-                let txn = await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(String(amt)));
-                txn.wait();
-                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "yo", "200");
-                depositTxn.wait();
+                let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
+                let receipt = await txn.wait();
+                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt));
+                let depositTn = await depositTxn.wait();
                 console.log(" this is tream info ", props.postData.streamInfo[0])
                 props.loadingState(false);
                 toast.success("Event added successfully ");
@@ -163,7 +163,12 @@ const PostCard = (props) => {
        </Popover>, 
        <Popover content={"Promote Events"}>
         <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
-       </Popover>
+       </Popover>,
+       <Popover>
+        <Link to="/advertiser-dashboard/module/responses">
+        <FileDoneOutlined style={{ fontSize: "22px" }} key="responses" />
+        </Link>
+       </Popover>,
     ]}
     extra={
         <img

@@ -5,7 +5,7 @@ async function main() {
   // We get the contract to deploy to Gorli Testnet
   const DistributeToken = await ethers.getContractFactory("DistributeToken");
   const distributeTokenContract = await DistributeToken.deploy(
-    "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9",
+    "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9", // goerli host address no need to change here as well 
     "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00" // fDaix token address no need to change anything here 
   );
 
