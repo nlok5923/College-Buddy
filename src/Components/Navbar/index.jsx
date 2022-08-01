@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { ContractContext } from "../../Provider/ContractProvider";
 import { signOut } from '../../Services/Auth'
 import { UserContext } from "../../Provider/UserProvider";
+import { useMoralis } from "react-moralis";
 
 const Navbar = () => {
     const { user, isLoading } = useContext(UserContext);
@@ -14,11 +15,12 @@ const Navbar = () => {
     useEffect(() => {
         console.log(" this is contract ", contractData)
     }, [contractData])
+    const { logout, isAuthenticating } = useMoralis();
 
     const logOutUser = async () => {
         try {
-            signOut().then(() => {
-                window.location.href = '/';
+            logout().then(() => {
+                window.location.href = "/";
             })
         } catch(err) {
             console.log(err.message);

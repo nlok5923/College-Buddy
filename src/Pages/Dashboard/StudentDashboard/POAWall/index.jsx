@@ -53,6 +53,7 @@ const POAWall = () => {
         <div className="poa-wall">
             <h2> All your POA tokens are here </h2>
             <div className="poa-wall-container">
+                {poaData.length == 0 ? "No POAP issued till now" : null}
                 {poaData.map((data, id) => <POACard key={id} nftData={data} />)}
             </div>
         </div>

@@ -15,15 +15,16 @@ import toast, { Toaster } from "react-hot-toast"
 import { Link } from 'react-router-dom';
 import { isLastDayOfMonth } from '../../../Services/Utils'
 import Loader from '../../../Components/Loader';
+import { useMoralis } from "react-moralis"
 
 const StudentDashboard = () => {
-
+  const { authenticate, isAuthenticated, user } = useMoralis();
   const [adv, setAdv] = useState([]);
   const [islastDay, setIsLastDay] = useState(false);
   const contractData = useContext(ContractContext);
   const history = useHistory();
-  const info = useContext(UserContext);
-  const { user, isLoading } = info;
+  // const info = useContext(UserContext);
+  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
   const [courseId, setCourseId] = useState('');
   const [poapImage, setPoapImage] = useState(null);
@@ -63,7 +64,7 @@ const StudentDashboard = () => {
     try {
       console.log(instId + " " + streamId);
       console.log(instId.length, " ", streamId.length);
-      let data = await fetchStudentCourses(instId, streamId, user.uid);
+      let data = await fetchStudentCourses(instId, streamId, user.id);
       console.log("LAE data", data);
       setAssignments(data);
     } catch (err) {
@@ -94,8 +95,8 @@ const StudentDashboard = () => {
   }
 
   const getAndSetData = async () => {
-    if (user && user.uid) {
-      let data = await getStudent(user.uid);
+    if (user && user.id) {
+      let data = await getStudent(user.id);
       console.log("LAE", data);
       setStudentData({
         instId: data.instId.trim(),
@@ -106,9 +107,9 @@ const StudentDashboard = () => {
         console.log(" this is updated student data ", studentData);
         getAllAssignments(data.instId.trim(), data.streamId.trim());
         getAllAdvertisements(data.instId.trim());
-        getAllModules(data.instId.trim(), user.uid);
+        getAllModules(data.instId.trim(), user.id);
         getAllEvents(data.instId.trim());
-        getStudentScore(user.uid);
+        getStudentScore(user.id);
       } else {
         toast.error("Make sure to add inst Id and streamId ");
         // studentEnroll
@@ -118,12 +119,13 @@ const StudentDashboard = () => {
   }
 
   useEffect(() => {
+    console.log("called it ");
     getAndSetData()
     let today = new Date();
     if (isLastDayOfMonth(today)) {
       setIsLastDay(true);
     } else setIsLastDay(false);
-  }, [user, isLoading]);
+  }, [user]);
 
   const handleChange = (e) => {
     setAns({
@@ -167,7 +169,7 @@ const StudentDashboard = () => {
   const handleAns = async (courseId) => {
     try {
       setIsLoading(true);
-      await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.uid);
+      await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.id);
       toast.success("Ans submitted successfully !!");
       setIsLoading(false);
     } catch (err) {
@@ -181,7 +183,7 @@ const StudentDashboard = () => {
       console.log(" this is institute contract ", instituteContract);
       if (instituteContract) {
         console.log(" this is resp ", resp);
-        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.uid)
+        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.id)
         setIsLoading(true);
         let txn = await instituteContract.getReward({ gasLimit: 9000000 });
         let rewardTxn = await txn.wait();
@@ -198,7 +200,7 @@ const StudentDashboard = () => {
   const handleOk = async () => {
     try {
       setIsLoading(true);
-      await studentEnroll(user.uid, studentData.instId, studentData.streamId);
+      await studentEnroll(user.id, studentData.instId.trim(), studentData.streamId.trim());
       setIsModalVisible(false);
       setIsLoading(false);
       toast.success("Student data updated successfully");
@@ -251,7 +253,7 @@ const StudentDashboard = () => {
       // console.log("update share called ");
       if (contractData.address) {
         setIsLoading(true);
-        let newShare = await getShare(user.uid);
+        let newShare = await getShare(user.id);
         console.log("new share ", newShare)
         let oldShare = await contractData.idaContract.shareUnits(contractData.address);
         console.log("old share", oldShare);
@@ -264,7 +266,7 @@ const StudentDashboard = () => {
           let txn = await contractData.idaContract.loseShare(contractData.address, oldShare - newShare);
           let shareTxn = await txn.wait();
         }
-        await removeScore(user.uid);
+        await removeScore(user.id);
         setIsLoading(false);
         toast.success("Added your share too !!");
         window.location.reload();
@@ -334,7 +336,7 @@ const StudentDashboard = () => {
                   Balance: {balance.toFixed(2)} fDAIx
                 </span>
                 </p>
-                <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
+                <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
                   <p> <TrophyOutlined /> <span>
                     Your POA Tokens
                   </span>

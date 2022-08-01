@@ -9,8 +9,10 @@ import toast, { Toaster } from 'react-hot-toast'
 import { ethers } from "ethers";
 import instituteManager from '../../../Ethereum/InstituteFundsManager.json'
 import Loader from '../../../Components/Loader/index'
+import { useMoralis } from "react-moralis"
 
 const InstituteDashboard = () => {
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const contractData = useContext(ContractContext);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [name, setName] = useState('');
@@ -28,12 +30,12 @@ const InstituteDashboard = () => {
         description: ''
     })
 
-    const info = useContext(UserContext);
-    const { user, isLoading } = info;
+    // const info = useContext(UserContext);
+    // const { user, isLoading } = info;
 
     const getAllStreams = async () => {
         try {
-            let resp = await fetchStreams(user.uid);
+            let resp = await fetchStreams(user.id);
             console.log(resp);
             setStreams(resp);
         } catch (err) {
@@ -42,7 +44,7 @@ const InstituteDashboard = () => {
     }
 
     const getInstInfo = async () => {
-        let data = await getInstitute(user.uid);
+        let data = await getInstitute(user.id);
         console.log(" this is inst data ", data);
         if(!data) {
             setInstInfoModal(true);
@@ -50,10 +52,10 @@ const InstituteDashboard = () => {
     }
     useEffect(() => {
         getAllStreams();
-        if(user && !isLoading) {
+        if(user) {
             getInstInfo();
         }
-    }, [user, isLoading])
+    }, [user])
 
     const getInstituteContract = (_address) => {
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -89,7 +91,7 @@ const InstituteDashboard = () => {
             if (!instituteContract) {
                 toast.error("Please connect metamask first and make sure you init institute first !!");
             } else {
-                await AddStreams(user.uid, streamData.name, streamData.description);
+                await AddStreams(user.id, streamData.name, streamData.description);
                 setIsLoading(true);
                 let txn = await instituteContract.addStreams(streamData.description);
                 let receipt = await txn.wait();
@@ -125,7 +127,7 @@ const InstituteDashboard = () => {
             if (contractData.contract) {
                 setIsLoading(true);
                 // contractData.address is the institute's contract address
-                let txn = await contractData.contract.addInstitute(name, user.uid, contractData.address);
+                let txn = await contractData.contract.addInstitute(name, user.id, contractData.address);
                 let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Institute added successfully !!");
@@ -141,7 +143,7 @@ const InstituteDashboard = () => {
 
     const handleInstOk = async () => {
         try {
-            await updateInstitute(user.uid, inst.name, inst.description);
+            await updateInstitute(user.id, inst.name, inst.description);
             setInstInfoModal(false);
             toast.success("Institute info updated successfully !!");
         } catch (err) {
@@ -202,7 +204,7 @@ const InstituteDashboard = () => {
                                     </button>
                                 </div>
                                 }
-                                <h4>Institute Id: {user ? user.uid: null}</h4>
+                                <h4>Institute Id: {user ? user.id: null}</h4>
                                 <List
                                     style = {{ 
                                         marginTop: "20px"

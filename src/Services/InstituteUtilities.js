@@ -43,9 +43,21 @@ export const AddCourses = async (uid, streamId, _name, image) => {
 export const fetchCourses = async (uid, streamId) => {
     try {
         let data = [];
+        console.log("finnaly ye to aarray hona chahiye ", typeof data)
         let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').get();
+        console.log("this is ref size and ref", ref.size);
         ref.forEach(async (doc) => {
-            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(doc.id).collection('submission').get();
+                data.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    code: doc.data().code
+                })
+        })
+
+        console.log("before loop ", data);
+        let finalData = [];
+        for(let doc = 0; doc < data.length; doc++ ) {
+            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(data[doc].id).collection('submission').get();
             let isSubmitted = false;
             console.log(uid)
             subRef.forEach((subDoc) => {
@@ -58,15 +70,17 @@ export const fetchCourses = async (uid, streamId) => {
             console.log("this is isbumit ", isSubmitted);
 
             if(!isSubmitted) {
-                data.push({
-                    id: doc.id,
-                    name: doc.data().name,
-                    code: doc.data().code
+                // console.log("reached here and doc", doc.data().name);
+                finalData.push({
+                    id: data[doc].id,
+                    name: data[doc].name,
+                    code: data[doc].code
                 })
+                console.log("thisis type as well ", data)
             }
-        })
-        console.log(" these are all courses ", data);
-        return data;
+        }
+        console.log(" these are all courses ", finalData);
+        return finalData;
     } catch (error) {
         console.log(error.message);
         console.log("Error while accessing all blogs");

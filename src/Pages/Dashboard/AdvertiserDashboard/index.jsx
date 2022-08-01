@@ -9,10 +9,12 @@ import institueManager from '../../../Ethereum/InstituteFundsManager.json'
 import { Link, useHistory } from "react-router-dom";
 import Loader from "../../../Components/Loader/index"
 import { Avatar, List, Space, Card } from "antd"
+import { useMoralis } from "react-moralis"
 
 const AdvertiserDashboard = () => {
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const [instData, setInstData] = useState([]);
-    const { user, isLoading } = useContext(UserContext);
+    // const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
     const history = useHistory();
     const [currentUserId, setCurrentUserId] = useState('');
@@ -35,8 +37,8 @@ const AdvertiserDashboard = () => {
                     address: instituteData[i][1],
                     streamInfo: streams,
                     instId: instituteData[i][2],
-                    displayName: instData.displayName,
-                    about: instData.about
+                    displayName: instData.displayName || "None",
+                    about: instData.about || "Abhi kal hi bana"
                 });
             }
             setInstData(instituteInfo);
@@ -55,7 +57,7 @@ const AdvertiserDashboard = () => {
         console.log(" this is not running ", user);
         if (user) {
             console.log("updating", user);
-            setCurrentUserId(user.uid);
+            setCurrentUserId(user.id);
         }
     }, [user])
 

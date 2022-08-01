@@ -8,11 +8,13 @@ import Axios from 'axios';
 import { ContractContext } from "../../../../Provider/ContractProvider"
 import Loader from '../../../../Components/Loader/index'
 import toast, { Toaster } from 'react-hot-toast'
+import { useMoralis } from "react-moralis"
 
 // REACT_APP_PINATA_API_KEY="5dbd25d2575c28d30c75"
 // REACT_APP_PINATA_API_SECRET="31e6245d30d45e928d0bdc05fec2b83914663311976825e465d1a57fa1af5c7c"
 const PoapRequest = () => {
-    const { user, isLoading } = useContext(UserContext);
+    const { authenticate, isAuthenticated, user } = useMoralis();
+    // const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
     const { Meta } = Card;
     const [loading, setIsLoading] = useState(false);
@@ -21,7 +23,7 @@ const PoapRequest = () => {
         try {
             if(user) {
                 setIsLoading(true);
-                let data = await getAllClaims(user.uid);
+                let data = await getAllClaims(user.id);
                 console.log("all claims ", data);
                 setReq(data);
                 setIsLoading(false);

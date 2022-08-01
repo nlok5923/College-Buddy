@@ -8,6 +8,7 @@ import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
 import { FileDoneOutlined, UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined } from "@ant-design/icons"
 import { Link } from "react-router-dom"
+import { useMoralis } from "react-moralis"
 
 const { Meta } = Card;
 const IconText = ({ icon, text }) => (
@@ -17,8 +18,9 @@ const IconText = ({ icon, text }) => (
     </Space>
   );
 const PostCard = (props) => {
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const contractData = useContext(ContractContext);
-    const { user, isLoading } = useContext(UserContext);
+    // const { user, isLoading } = useContext(UserContext);
     const [module, setModule] = useState({
         q1: "",
         q2: ""
@@ -44,7 +46,7 @@ const PostCard = (props) => {
 
     const handleOk = async () => {
         try {
-            await addPost(props.postData.instId, cardData.title, cardData.description, image, user.uid);
+            await addPost(props.postData.instId, cardData.title, cardData.description, image, user.id);
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
                 setIsModalVisible(false);
@@ -57,7 +59,7 @@ const PostCard = (props) => {
                 let amt = 2;
                 let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
                 let receipt = await txn.wait();
-                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt));
+                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt), { gasLimit: 9000000 });
                 let streamReceipt = streamTxn.wait();
                 props.loadingState(false);
                 setIsModalVisible(false);
@@ -86,7 +88,7 @@ const PostCard = (props) => {
     //! also add time limit for advertisement as a property 
 
     const handleModuleLock = async () => {
-        await addModule(props.postData.instId, module.q1, module.q2, user.uid);
+        await addModule(props.postData.instId, module.q1, module.q2, user.id);
         try {
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
@@ -96,10 +98,10 @@ const PostCard = (props) => {
                 let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
                 let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
                 let amt = 2 * count;
-                let txn = await contractData.laeContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
+                let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)), { gasLimit: 9000000 });
                 let receipt = await txn.wait();
                 // await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(amt));
-                let addModuleTxn = await contractInstance.addModule(count, String(2 * count));
+                let addModuleTxn = await contractInstance.addModule(count, String(amt), { gasLimit: 9000000 });
                 let addModuleReceipt = await addModuleTxn.wait();
                 props.loadingState(false);
                 setModalVisible(false);
@@ -107,6 +109,8 @@ const PostCard = (props) => {
             }
         } catch (err) {
             toast.error("Some error occurred");
+            setModalVisible(false);
+            props.loadingState(false);
             console.log(err.message);
         }
         setModalVisible(false);
@@ -114,7 +118,7 @@ const PostCard = (props) => {
 
     const handleEvent = async () => {
         try {
-            await addEvent(props.postData.instId, event.name, event.description, event.link, user.uid, event.dnt);
+            await addEvent(props.postData.instId, event.name, event.description, event.link, user.id, event.dnt);
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
                 setEventModal(false);
@@ -127,7 +131,7 @@ const PostCard = (props) => {
                 //! amount = 2
                 let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
                 let receipt = await txn.wait();
-                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt));
+                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt), { gasLimit: 9000000 });
                 let depositTn = await depositTxn.wait();
                 console.log(" this is tream info ", props.postData.streamInfo[0])
                 props.loadingState(false);
@@ -136,6 +140,7 @@ const PostCard = (props) => {
             }
         } catch (err) {
             toast.error("Some error occurred");
+            setEventModal(false);
             console.log(err.message);
         }
     }
@@ -164,7 +169,7 @@ const PostCard = (props) => {
        <Popover content={"Promote Events"}>
         <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
        </Popover>,
-       <Popover>
+       <Popover content={"Student Responses"}>
         <Link to="/advertiser-dashboard/module/responses">
         <FileDoneOutlined style={{ fontSize: "22px" }} key="responses" />
         </Link>

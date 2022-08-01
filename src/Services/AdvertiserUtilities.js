@@ -158,7 +158,7 @@ export const getInstituteData = async (uid) => {
     try {
         let data = await db.collection('users').doc(uid).get();
         return {
-            displayName: data.data().displayName,
+            displayName: data.data().name || "dummy",
             about: data.data().description
         }
     } catch (err) {

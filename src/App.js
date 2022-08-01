@@ -17,12 +17,16 @@ import PoapRequest from './Pages/Dashboard/AdvertiserDashboard/PoapRequests/inde
 import POAWall from './Pages/Dashboard/StudentDashboard/POAWall/index'
 import SendSomeToken from './Pages/SendSomeToken/index'
 import ModuleResponse from "./Pages/Dashboard/AdvertiserDashboard/ModuleResponse";
+import { MoralisProvider } from "react-moralis"
 
+// REACT_APP_MORALIS_DAPP_URL=https://ohmovgeh2pjs.usemoralis.com:2053/server
+// REACT_APP_MORALIS_APP_ID=3zusiCfueaG7YPfeWMTcAyYER6TKyF7W40nTrL8R
 const App = () => {
   return (
     <div className="App">
       <UserProvider>
         <ContractProvider>
+          <MoralisProvider appId="3zusiCfueaG7YPfeWMTcAyYER6TKyF7W40nTrL8R" serverUrl="https://ohmovgeh2pjs.usemoralis.com:2053/server">
           <Router>
             <Navbar />
             <Switch>
@@ -42,6 +46,7 @@ const App = () => {
               <Route exact path="/advertiser-dashboard/module/responses" component={ModuleResponse} />
             </Switch>
           </Router>
+          </MoralisProvider>
         </ContractProvider>
       </UserProvider>
     </div>

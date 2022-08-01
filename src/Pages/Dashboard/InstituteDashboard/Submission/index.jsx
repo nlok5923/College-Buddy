@@ -6,9 +6,11 @@ import { getSubmission, setMark } from "../../../../Services/InstituteUtilities"
 import { Button, Card } from "antd"
 import Loader from '../../../../Components/Loader/index'
 import toast, { Toaster } from 'react-hot-toast'
+import { useMoralis } from "react-moralis"
 
 const Submission = () => {
-    const { user, isLoading } = useContext(UserContext)
+    const { authenticate, isAuthenticated, user } = useMoralis();
+    // const { user, isLoading } = useContext(UserContext)
     const { courseId, streamId } = useParams();
     const [submission, setSubmission] = useState([]);
     const [mark, setMarks] = useState(0);
@@ -18,7 +20,7 @@ const Submission = () => {
         try {
             setIsLoading(true);
             console.log(streamId + " " + courseId);
-            let data = await getSubmission(user.uid, streamId, courseId)
+            let data = await getSubmission(user.id, streamId, courseId)
             console.log(" this is ubs data", data);
             setSubmission(data);
             setIsLoading(false);
@@ -29,12 +31,12 @@ const Submission = () => {
 
     useEffect(() => {
         getAndSet();
-    }, [user, isLoading]);
+    }, [user]);
 
     const markIt = async (id, studentId) => {
         try {
             setIsLoading(true);
-            await setMark(user.uid, streamId, courseId, id, mark, studentId);
+            await setMark(user.id, streamId, courseId, id, mark, studentId);
             setIsLoading(false);
             toast.success("Successfully marked it !!");
         } catch (err) {

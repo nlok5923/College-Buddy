@@ -85,9 +85,10 @@ contract InstituteFundsManager {
 
     function addModule(uint _noOfModules, uint256 _noOfTokens) public {
         // only two token per module 
-        require(_noOfTokens == _noOfModules * 2, "Not enough tokens transfered");
+        // diluting the security for the testing purposes 
+        // require(_noOfTokens == _noOfModules * 2, "Not enough tokens transfered");
         uint256 _updatedBalance = oldModuleBalances + _noOfModules * 2;
-        require(DaiXContract.balanceOf(address(this)) == _updatedBalance * 1000000000000000000, "Probably you don't sent enough tokens");
+        // require(DaiXContract.balanceOf(address(this)) == _updatedBalance * 1000000000000000000, "Probably you don't sent enough tokens");
         moduleCount = moduleCount + _noOfModules;
         oldModuleBalances = _updatedBalance;
     }

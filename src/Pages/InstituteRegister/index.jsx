@@ -2,22 +2,23 @@
 import React, { useState, useContext, useEffect } from "react";
 import "./InstituteRegister.scss";
 import { useHistory } from "react-router-dom";
-import { SignInWithGoogle } from "../../Services/Auth"
+import { SignInWithGoogle, SignInWithMoralis } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
 import { Redirect } from "react-router-dom";
 import { Modal } from "antd"
 import { updateInstitute, getInstitute } from "../../Services/InstituteUtilities";
 import { ContractContext } from "../../Provider/ContractProvider";
+import { useMoralis } from "react-moralis";
 
 const Register = () => {
-  const  contractData = useContext(ContractContext);
+  const { authenticate, isAuthenticated, user } = useMoralis();
+  const contractData = useContext(ContractContext);
   const backgroundStyling = {
     backgroundImage: `url("asset/Login/Images/register-bg.png")`,
     backgroundRepeat: "no-repeat",
     height: "100vh",
     backgroundSize: "100% 100%",
   };
-
 
   const [inst, setInst] = useState({
     name: "",
@@ -29,7 +30,7 @@ const Register = () => {
   const history = useHistory();
 
   const handleOk = async () => {
-    await updateInstitute(user.uid, inst.name, inst.description);
+    await updateInstitute(user.id, inst.name, inst.description);
     setIsModalVisible(false);
     history.push("/institute-dashboard");
   }
@@ -38,20 +39,44 @@ const Register = () => {
     setIsModalVisible(false);
   }
 
-  const info = useContext(UserContext);
-  const { user, isLoading } = info;
+  // const info = useContext(UserContext);
+  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
 
+  // useEffect(() => {
+  //   if(user && !isLoading) {
+  //     history.push('/institute-dashboard');
+  //   }
+  // }, [user, isLoading]);
+
+  // const moralisSignIn = async () => {
+  //   try {
+  //     await SignInWithGoogle("INST");
+  //   } catch (err) {
+  //     console.log("Mishap ", err.message);
+  //   }
+  // }
+
+
   useEffect(() => {
-    if(user && !isLoading) {
+    if(user) {
+      console.log("authenticate ", user);
+      SignInWithMoralis(user.id, "INST")
       history.push('/institute-dashboard');
     }
-  }, [user, isLoading]);
+    console.log(" this is user data ", user);
+  }, [user]);
 
-  const googleSignIn = async () => {
+  const moralisSignIn = () => {
     try {
-      await SignInWithGoogle("INST");
-    } catch (err) {
+      // SignInWithGoogle("ADVT");
+      if(!isAuthenticated) {
+        authenticate();
+        console.log(user);
+      }
+      // if(user) {
+      // }
+    } catch(err) {
       console.log("Mishap ", err.message);
     }
   }
@@ -82,7 +107,7 @@ const Register = () => {
                 <img
                   src="/asset/Login/svg/google.svg"
                   alt="google"
-                  onClick={() => googleSignIn("INSTITUTE")}
+                  onClick={() => moralisSignIn("INSTITUTE")}
                 />
               </div>
               <img

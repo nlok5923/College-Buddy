@@ -4,17 +4,18 @@ import { Card } from "antd"
 import { UserContext } from "../../../../Provider/UserProvider"
 import { ContractContext } from "../../../../Provider/ContractProvider"
 import { getALlModuleResponses } from "../../../../Services/AdvertiserUtilities"
+import { useMoralis } from "react-moralis"
 
 const ModuleResponse = () => {
-    
-    const contractData = useContext(ContractContext);
-    const { user, isLoading } = useContext(UserContext);
+    const { authenticate, isAuthenticated, user } = useMoralis();
+    // const contractData = useContext(ContractContext);
+    // const { user, isLoading } = useContext(UserContext);
     const [responses, setResponses] = useState([]);
 
     const getResponses = async () => {
         try {
-            let responses = await getALlModuleResponses(user.uid);
-            console.log(user.uid);
+            let responses = await getALlModuleResponses(user.id);
+            console.log(user.id);
             console.log("there are responses", responses);
             setResponses(responses);
         } catch (err) {

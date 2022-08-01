@@ -3,8 +3,9 @@ import React, { useState, useContext, useEffect } from "react";
 import "./AdvertiserRegister.scss";
 import { message } from "antd";
 import { useHistory } from "react-router-dom";
-import { SignInWithGoogle } from "../../Services/Auth"
+import { SignInWithGoogle, SignInWithMoralis } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
+import { useMoralis } from "react-moralis";
 
 const Register = () => {
 
@@ -16,19 +17,29 @@ const Register = () => {
   };
 
   const history = useHistory();
-  const info = useContext(UserContext);
-  const { user, isLoading } = info;
+  // const info = useContext(UserContext);
+  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
+  const { authenticate, isAuthenticated, user } = useMoralis();
 
   useEffect(() => {
-    if(user && !isLoading) {
+    if(user) {
+      console.log("authenticate ", user);
+      SignInWithMoralis(user.id, "ADVT")
       history.push('/advertiser-dashboard');
     }
-  }, [user, isLoading]);
+    console.log(" this is user data ", user);
+  }, [user]);
 
-  const googleSignIn = () => {
+  const moralisSignIn = () => {
     try {
-      SignInWithGoogle("ADVT");
+      // SignInWithGoogle("ADVT");
+      if(!isAuthenticated) {
+        authenticate();
+        console.log(user);
+      }
+      // if(user) {
+      // }
     } catch(err) {
       console.log("Mishap ", err.message);
     }
@@ -53,7 +64,7 @@ const Register = () => {
                 <img
                   src="/asset/Login/svg/google.svg"
                   alt="google"
-                  onClick={() => googleSignIn("ADVERTISER")}
+                  onClick={() => moralisSignIn("ADVERTISER")}
                 />
               </div>
               <img
