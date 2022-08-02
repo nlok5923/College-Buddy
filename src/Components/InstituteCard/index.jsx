@@ -23,7 +23,8 @@ const PostCard = (props) => {
     // const { user, isLoading } = useContext(UserContext);
     const [module, setModule] = useState({
         q1: "",
-        q2: ""
+        q2: "",
+        name: "",        
     });
     // fDaixContract
 
@@ -88,7 +89,7 @@ const PostCard = (props) => {
     //! also add time limit for advertisement as a property 
 
     const handleModuleLock = async () => {
-        await addModule(props.postData.instId, module.q1, module.q2, user.id);
+        await addModule(props.postData.instId, module.q1, module.q2, user.id, module.name);
         try {
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
@@ -195,7 +196,7 @@ const PostCard = (props) => {
         <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">
                 <input type="text" placeholder="Post name" name="title" onChange={(e) => handlePostInfo(e)} />
-                <input type="text" placeholder="Post description " name="description" onChange={(e) => handlePostInfo(e)} />
+                <textarea className="desc-textarea" type="text" placeholder="Post Description" name="description" onChange={(e) => handlePostInfo(e)}  />
                 <input
                     type="file"
                     accept="image/*"
@@ -208,6 +209,10 @@ const PostCard = (props) => {
 
         <Modal title="Create tokenized module" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
             <div className="stream-container">
+                <input type="text" placeholder="Module name" name="name" onChange={(e) => setModule({
+                    ...module,
+                    [e.target.name]: e.target.value
+                })} />
                 <input type="text" placeholder="Enter question 1" name="q1" onChange={(e) => setModule({
                     ...module,
                     [e.target.name]: e.target.value

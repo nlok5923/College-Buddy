@@ -14,6 +14,14 @@ import { useMoralis } from "react-moralis"
 const AddCoursesComponent = () => {
     // const info = useContext(UserContext);
     // const { user, isLoading } = info;
+
+    const backgroundStyling = {
+        backgroundImage: `url("/asset/general/images/lfg-3.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     let { streamId } = useParams();
     const { authenticate, isAuthenticated, user } = useMoralis();
     const [courseData, setCourseData] = useState({ name: "" });
@@ -23,7 +31,7 @@ const AddCoursesComponent = () => {
 
     const getCourses = async () => {
         setIsLoading(true);
-        if(user && streamId) {
+        if (user && streamId) {
             console.log("this is user id and stream id ", user.id + " " + streamId)
             const data = await fetchCourses(user.id, streamId);
             // console.log("all keys", Object.keys(data))
@@ -72,37 +80,44 @@ const AddCoursesComponent = () => {
 
     return (
         <div>
-            <Loader isLoading = {loading} >
+            <Loader isLoading={loading} >
                 <Toaster />
-            <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
-                <div className="course-container">
-                    <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
-                    <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFile(e.target.files[0])}
-                ></input>
+                <div className="course-dashboard">
+                    <div className="course-dashboard-bg" style={backgroundStyling}>
+                        <h1> Manage assignments </h1>
+                        <p> Launch assignments for students  </p>
+                    </div>
+                    <div className="course-dashboard-content">
+                        <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+                            <div className="course-container">
+                                <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setFile(e.target.files[0])}
+                                ></input>
+                            </div>
+                        </Modal>
+                        <button type="primary" className="course-card-btn" shape="round" size={"large"} onClick={() => OpenModal()}>
+                        <FileAddOutlined /> Add Assignment
+                        </button>
+                        <div className="add-course-container" style={{
+                            display: "grid",
+                            width: "80%",
+                            gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
+                            gridColumnGap: "3vw",
+                            gridRowGap: "30px",
+                            marginTop: "1%",
+                            marginLeft: "2%",
+                        }}>
+                            {courses.length === 0 ? "No Assignments added till now" : null}
+                            {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
+                                <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
+                            </Link>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </Modal>
-            <Button type="primary" className="course-card-btn" shape="round" icon={<FileAddOutlined />} size={"large"} onClick={() => OpenModal()}>
-                Add Assignment
-            </Button>
-            <div className="add-course-container" style={{
-                display: "grid",
-                width: "80%",
-                gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
-                gridColumnGap: "3vw",
-                gridRowGap: "30px",
-                marginTop: "1%",
-                marginLeft: "2%",
-            }}>
-                {/* { courses.length } */}
-                {courses.length === 0 ? "No Assignments added till now" : null }
-                {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
-                    <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
-                </Link>
-                )}
-            </div>
             </Loader>
         </div>
     )

@@ -23,7 +23,7 @@ const Register = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
 
   useEffect(() => {
-    if(user) {
+    if (user) {
       console.log("authenticate ", user);
       SignInWithMoralis(user.id, "ADVT")
       history.push('/advertiser-dashboard');
@@ -34,13 +34,13 @@ const Register = () => {
   const moralisSignIn = () => {
     try {
       // SignInWithGoogle("ADVT");
-      if(!isAuthenticated) {
+      if (!isAuthenticated) {
         authenticate();
         console.log(user);
       }
       // if(user) {
       // }
-    } catch(err) {
+    } catch (err) {
       console.log("Mishap ", err.message);
     }
   }
@@ -62,18 +62,22 @@ const Register = () => {
               </h1>
               <div className="register-with-google">
                 <img
-                  src="/asset/Login/svg/google.svg"
-                  alt="google"
+                  src="/asset/general/images/moralis.png"
+                  alt="moralis"
+                  style={{
+                    width: "180px",
+                    height: "30px"
+                  }}
                   onClick={() => moralisSignIn("ADVERTISER")}
                 />
               </div>
               <img
-                 src="asset/Login/Images/divider.png"
+                src="asset/Login/Images/divider.png"
                 alt="divider"
                 className="register-divider"
               />
               <div className="register-input">
-                <form 
+                <form
                 // onSubmit={saveInfo}
                 >
                   <h3>
@@ -83,7 +87,7 @@ const Register = () => {
                     name="name"
                     type="text"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h3>
                     <b>Email address</b>
@@ -92,7 +96,7 @@ const Register = () => {
                     name="email"
                     type="email"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h3>
                     <b>Password</b>
@@ -101,7 +105,7 @@ const Register = () => {
                     name="password"
                     type="password"
                     required
-                    // onChange={handleInput}
+                  // onChange={handleInput}
                   />
                   <h5>
                     Creating an account means you’re okay with our Terms and

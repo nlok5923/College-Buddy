@@ -66,8 +66,21 @@ const PoapRequest = () => {
         }
     }
 
+    const backgroundStyling = {
+        backgroundImage: `url("/asset/general/images/lfg-2.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     return (
         <Loader isLoading={loading}>
+            <div className="poap-dashboard">
+                <div className="poap-dashboard-bg" style={backgroundStyling}>
+                <h1> POA requests</h1>
+                <p>Check the legitimacy and issue the POA tokens </p>
+                </div>
+                <div className="poap-dashboard-content">                    
         <div className="poap-page">
             <Toaster />
             <h2><b>
@@ -115,6 +128,8 @@ const PoapRequest = () => {
                 }
                 </Card>
             </div>
+        </div>
+        </div>
         </div>
         </Loader>
     )

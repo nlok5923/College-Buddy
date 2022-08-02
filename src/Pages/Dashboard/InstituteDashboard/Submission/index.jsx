@@ -45,10 +45,23 @@ const Submission = () => {
         }
     }
 
+    const backgroundStyling = {
+        backgroundImage: `url("/asset/general/images/lfg-4.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     return (
         <div>
             <Loader isLoading={loading}>
             <Toaster />
+            <div className="submission-dashboard">
+                <div className="submission-dashboard-bg" style={backgroundStyling}>
+                    <h1>Submissions here: </h1>
+                    <p> Mark and manage all submission here </p>
+                </div>
+                <div className="submission-dashboard-content">
             <h3 className="no-submission">
                 {submission.length === 0 ? "No Submissions yet " : " "}
             </h3>
@@ -65,6 +78,8 @@ const Submission = () => {
                         </div>
                     )
                 })}
+            </div>
+            </div>
             </div>
             </Loader>
         </div>

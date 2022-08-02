@@ -6,7 +6,7 @@ import { Card, Button } from 'antd'
 import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore, saveModuleResp } from '../../../Services/StudentUtilities';
 import { fetchStudentCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
-import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled } from '@ant-design/icons';
+import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled, FormOutlined } from '@ant-design/icons';
 import { Avatar, List, Modal } from 'antd';
 import { ethers } from 'ethers';
 import { ContractContext } from '../../../Provider/ContractProvider';
@@ -151,11 +151,22 @@ const StudentDashboard = () => {
         console.log(" this is institue address ", instituteAddress[0][1]);
         let contractInstance = new ethers.Contract(instituteAddress[0][1], InstititueManager.abi, ethProvider.getSigner(0));
         setContractInstance(contractInstance);
-        // 0xD649267Da6C1554CE62c8790Ff6C465aF108a167
-        // let balance = await contractData.fDaixContract.balanceOf("0xD649267Da6C1554CE62c8790Ff6C465aF108a167");
         let balance = await contractData.fDaixContract.balanceOf(contractData.address);
         console.log("Student balance ", parseInt(balance._hex));
         setBalance(parseInt(balance._hex) / 1000000000000000000);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  const registerStudent = async () => {
+    try {
+      if(contractData.contract) {
+        let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
+        let rewardTxn = await txn.wait();
+      } else {
+        toast.error("Please connect metamask first");
       }
     } catch (err) {
       console.log(err.message);
@@ -193,7 +204,9 @@ const StudentDashboard = () => {
         toast.error("Please connect metamask ");
       }
     } catch (err) {
+      toast.error("Some error occured");
       console.log(err.message);
+      setIsLoading(false);
     }
   }
 
@@ -279,6 +292,14 @@ const StudentDashboard = () => {
     }
   }
 
+  const handleModuleChange = (e) => {
+    setResp({
+      ...resp,
+      [e.target.name]: e.target.value
+    })
+    console.log(" this is updated resp ", resp);
+  }
+
   return (
     <div>
       <Toaster />
@@ -334,6 +355,11 @@ const StudentDashboard = () => {
                 </p>
                 <p> <MoneyCollectOutlined /> <span>
                   Balance: {balance.toFixed(2)} fDAIx
+                </span>
+                </p>
+                <p onClick={() => registerStudent()}>
+                <FormOutlined /> <span>
+                  Register Me
                 </span>
                 </p>
                 <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
@@ -392,7 +418,7 @@ const StudentDashboard = () => {
                         title={data.name}
                         description={data.description}
                       />
-                      <p style={{ marginTop: "4%" }}>{data.dnt}</p>
+                      <p style={{ marginTop: "4%" }}> <i> {data.dnt} </i> </p>
                       <button onClick={() => {
                         setCurrentAdvtId(data.advtId);
                         setPoapClaimModal(true);
@@ -417,12 +443,12 @@ const StudentDashboard = () => {
                   modules.map((data, id) => (
                     <Card type="inner" className="course-sub-card">
                       <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                      <input className="spn-modules" placeholder="Enter your answer here" name="q1" onClick={(e) => setResp({
+                      <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) => setResp({
                         ...resp,
                         [e.target.name]: e.target.value
                       })}  />
                       <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                      <input placeholder='Enter your answer here' name="q2" onClick={(e) => setResp({
+                      <input placeholder='Enter your answer here' name="q2" onChange={(e) => setResp({
                         ...resp,
                         [e.target.name]: e.target.value
                       })} /> <br />

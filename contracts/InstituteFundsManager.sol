@@ -25,6 +25,7 @@ contract InstituteFundsManager {
     mapping(string => uint) public oldStreamBalance;
     uint256 moduleCount = 0;
     uint256 oldModuleBalances = 0;
+    mapping(address => bool) private validStudents;
 
     constructor(string memory _name, address _instituteManagerAddress) {
         fundsOwner = _instituteManagerAddress;
@@ -35,6 +36,11 @@ contract InstituteFundsManager {
     modifier onlyOwner() {
         require(msg.sender == fundsOwner, "Can only be called from owner");
         _;
+    }
+
+    // just for now using the below function for registering the validate student addresses
+    function registerStudent() public {
+        validStudents[msg.sender] = true;
     }
 
     // contain all the streams 
@@ -96,7 +102,7 @@ contract InstituteFundsManager {
     // basically some how i need to keep track whether the person calling the function is actually a student 
     // till now this is the most vulnerable method to get attacked
     function getReward() public {
-        // currently completing a single module will incentivize user with 100 LAE tokens 
+        require(validStudents[msg.sender] == true, "Probably you are not a student");
         require(moduleCount >= 1, "No more rewarding modules availaible");
         moduleCount = moduleCount - 1;
         // change the transfer amount to 2 tokens only 

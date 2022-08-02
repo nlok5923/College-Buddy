@@ -47,22 +47,8 @@ const Register = () => {
   // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
 
-  // useEffect(() => {
-  //   if(user && !isLoading) {
-  //     history.push('/student-dashboard');
-  //   }
-  // }, [user, isLoading]);
-
-  // const moralisSignIn = async () => {
-  //   try {
-  //     await SignInWithGoogle("STD");
-  //   } catch (err) {
-  //     console.log("Mishap ", err.message);
-  //   }
-  // }
-
   useEffect(() => {
-    if(user) {
+    if (user) {
       console.log("authenticate ", user);
       SignInWithMoralis(user.id, "STD")
       history.push('/student-dashboard');
@@ -72,11 +58,11 @@ const Register = () => {
 
   const moralisSignIn = () => {
     try {
-      if(!isAuthenticated) {
+      if (!isAuthenticated) {
         authenticate();
         console.log(user);
       }
-    } catch(err) {
+    } catch (err) {
       console.log("Mishap ", err.message);
     }
   }
@@ -104,8 +90,12 @@ const Register = () => {
               </h1>
               <div className="register-with-google">
                 <img
-                  src="/asset/Login/svg/google.svg"
-                  alt="google"
+                  src="/asset/general/images/moralis.png"
+                  alt="moralis"
+                  style={{
+                    width: "180px",
+                    height: "30px"
+                  }}
                   onClick={() => moralisSignIn("INSTITUTE")}
                 />
               </div>

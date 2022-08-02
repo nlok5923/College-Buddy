@@ -105,8 +105,12 @@ const Register = () => {
               </h1>
               <div className="register-with-google">
                 <img
-                  src="/asset/Login/svg/google.svg"
-                  alt="google"
+                  src="/asset/general/images/moralis.png"
+                  alt="moralis"
+                  style = {{ 
+                    width: "180px",
+                    height: "30px"
+                   }}
                   onClick={() => moralisSignIn("INSTITUTE")}
                 />
               </div>

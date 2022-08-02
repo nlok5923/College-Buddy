@@ -152,6 +152,7 @@ export const removeScore = async (uid) => {
 
 export const saveModuleResp = async (instId, moduleId, resp, studentId) => {
     try {
+        console.log(" this is resp ", resp);
         await db.collection('users').doc(instId).collection('module').doc(moduleId).collection("response").add({
             q1: resp.q1,
             q2: resp.q2,

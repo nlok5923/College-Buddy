@@ -93,12 +93,13 @@ export const uploadPoapImage = async (location) => {
     }
 }
 
-export const addModule = async (instId, _q1, _q2, _advtId) => {
+export const addModule = async (instId, _q1, _q2, _advtId, _name) => {
     try {
         await db.collection('users').doc(instId).collection('module').add({
             q1: _q1,
             q2: _q2,
-            advtId: _advtId
+            advtId: _advtId,
+            name: _name
         })
     } catch (err) {
         console.log(err.message);
@@ -170,12 +171,14 @@ export const getALlModuleResponses = async (uid) => {
     try {
          let responses = [];
          let instituteRef = await db.collection('users').get();
-         instituteRef.forEach(async (doc, id) => {
-            let moduleRef = await db.collection('users').doc(doc.id).collection('module').get();
+         let instituteId = [];
+         instituteRef.forEach((doc, id) => instituteId.push(doc.id));
+         for (let instid of instituteId) {
+            let moduleRef = await db.collection('users').doc(instid).collection('module').get();
             moduleRef.forEach(async (moduleDoc, moduleId) => {
                 let tempResponse = [];
                 if(moduleDoc.data().advtId === uid) {
-                    let responseRef = await db.collection('users').doc(doc.id).collection('module').doc(moduleDoc.id).collection('response').get();
+                    let responseRef = await db.collection('users').doc(instid).collection('module').doc(moduleDoc.id).collection('response').get();
                     responseRef.forEach((responseDoc, responseId) => {
                         tempResponse.push({
                             id: responseDoc.id,
@@ -189,7 +192,27 @@ export const getALlModuleResponses = async (uid) => {
                     });
                 }
             })
-         });
+         }
+        //  instituteRef.forEach(async (doc, id) => {
+        //     let moduleRef = await db.collection('users').doc(doc.id).collection('module').get();
+        //     moduleRef.forEach(async (moduleDoc, moduleId) => {
+        //         let tempResponse = [];
+        //         if(moduleDoc.data().advtId === uid) {
+        //             let responseRef = await db.collection('users').doc(doc.id).collection('module').doc(moduleDoc.id).collection('response').get();
+        //             responseRef.forEach((responseDoc, responseId) => {
+        //                 tempResponse.push({
+        //                     id: responseDoc.id,
+        //                     ans1: responseDoc.data().q1,
+        //                     ans2: responseDoc.data().q2 
+        //                 })
+        //             })
+        //             responses.push({
+        //                 name: moduleDoc.data().name || "dummy",
+        //                 responses: tempResponse
+        //             });
+        //         }
+        //     })
+        //  });
          return responses;
     } catch (err) {
         console.log(err.message);
