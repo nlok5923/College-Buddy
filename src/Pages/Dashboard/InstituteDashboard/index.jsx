@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import './InstituteDashboard.scss'
-import { Avatar, List, Modal } from 'antd';
+import { Avatar, List, Modal, Popover } from 'antd';
 import { AddStreams, fetchStreams, updateInstitute, getInstitute } from "../../../Services/InstituteUtilities";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Link } from "react-router-dom";
@@ -193,7 +193,9 @@ const InstituteDashboard = () => {
                                 </b>
 
                                 <p>
+                                    <Popover content={address}>
                                     Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
+                                    </Popover>
                                 </p>
                             </h1>
                             <div className="dashboard-inst-input">
