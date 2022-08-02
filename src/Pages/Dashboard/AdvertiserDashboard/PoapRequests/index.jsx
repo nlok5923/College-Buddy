@@ -74,7 +74,7 @@ const PoapRequest = () => {
     };
 
     return (
-        <Loader isLoading={loading}>
+        <Loader isLoading={loading} message={"Loading all your POA..."}>
             <div className="poap-dashboard">
                 <div className="poap-dashboard-bg" style={backgroundStyling}>
                 <h1> POA requests</h1>

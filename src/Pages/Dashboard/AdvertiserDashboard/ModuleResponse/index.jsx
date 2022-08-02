@@ -45,7 +45,7 @@ const ModuleResponse = () => {
 
     return (
         <>
-        <Loader isLoading = {loadingState}>
+        <Loader isLoading = {loadingState} message={"Loading Responses..."} >
         <Toaster />
             <div className="module-dashboard">
                 <div className="module-dashboard-bg" style={backgroundStyling}>

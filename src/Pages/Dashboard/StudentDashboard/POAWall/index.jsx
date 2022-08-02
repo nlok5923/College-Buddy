@@ -56,7 +56,7 @@ const POAWall = () => {
     }, [contractData])
 
     return (
-        <Loader isLoading={loading}>
+        <Loader isLoading={loading} message={"Loading all your POA tokens"}>
             <div className="poa-dashboard">
                 <div className="poa-dashboard-bg" style={backgroundStyling}>
                     <h1> ALl your POA </h1>

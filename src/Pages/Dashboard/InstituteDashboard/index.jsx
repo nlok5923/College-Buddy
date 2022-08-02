@@ -166,7 +166,7 @@ const InstituteDashboard = () => {
     return (
         <div>
             <Toaster />
-            <Loader isLoading={loading}>
+            <Loader isLoading={loading} message={"Loading institute dashboard"}>
             <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="stream-container">
                     <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />

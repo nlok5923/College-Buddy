@@ -74,7 +74,7 @@ const AdvertiserDashboard = () => {
 
     return (
         <div>
-            <Loader isLoading={loading}>
+            <Loader isLoading={loading} message={"Loading advertiser dashboard"}>
                 <div className="advt-dashboard">
                     <div className="advt-dashboard-bg" style={backgroundStyling}>
                         <h1> See all the institutes</h1>

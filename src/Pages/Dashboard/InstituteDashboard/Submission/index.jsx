@@ -54,7 +54,7 @@ const Submission = () => {
 
     return (
         <div>
-            <Loader isLoading={loading}>
+            <Loader isLoading={loading} message={"Loading all submissions..."} >
             <Toaster />
             <div className="submission-dashboard">
                 <div className="submission-dashboard-bg" style={backgroundStyling}>

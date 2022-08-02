@@ -303,7 +303,7 @@ const StudentDashboard = () => {
   return (
     <div>
       <Toaster />
-      <Loader isLoading={loading}>
+      <Loader isLoading={loading} message={"Loading student dashboard"} >
         <div className="LAE">
           <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">

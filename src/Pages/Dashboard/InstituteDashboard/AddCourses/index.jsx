@@ -80,7 +80,7 @@ const AddCoursesComponent = () => {
 
     return (
         <div>
-            <Loader isLoading={loading} >
+            <Loader isLoading={loading} message={"Loading assignments dashboard"} >
                 <Toaster />
                 <div className="course-dashboard">
                     <div className="course-dashboard-bg" style={backgroundStyling}>
