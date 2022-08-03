@@ -1,7 +1,7 @@
 import { Card, Modal, Avatar, List, Space, Popover } from 'antd';
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../Provider/UserProvider';
-import { addPost, addModule, addEvent } from '../../Services/AdvertiserUtilities';
+import { addPost, addModule, addEvent, uploadPoapImage, getImageUrl } from '../../Services/AdvertiserUtilities';
 import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
 import { ContractContext } from '../../Provider/ContractProvider';
@@ -13,10 +13,10 @@ import { useMoralis } from "react-moralis"
 const { Meta } = Card;
 const IconText = ({ icon, text }) => (
     <Space>
-      {React.createElement(icon)}
-      {text}
+        {React.createElement(icon)}
+        {text}
     </Space>
-  );
+);
 const PostCard = (props) => {
     const { authenticate, isAuthenticated, user } = useMoralis();
     const contractData = useContext(ContractContext);
@@ -24,7 +24,7 @@ const PostCard = (props) => {
     const [module, setModule] = useState({
         q1: "",
         q2: "",
-        name: "",        
+        name: "",
     });
     // fDaixContract
 
@@ -34,7 +34,7 @@ const PostCard = (props) => {
         link: '',
         dnt: ''
     })
-
+    const [eventImage, setEventImage] = useState();
     const [count, setCount] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -60,7 +60,7 @@ const PostCard = (props) => {
                 let amt = 2;
                 let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
                 let receipt = await txn.wait();
-                let streamTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt), { gasLimit: 9000000 });
+                let streamTxn = await contractInstance.depositFundsToStream(String(amt), { gasLimit: 9000000 });
                 let streamReceipt = streamTxn.wait();
                 props.loadingState(false);
                 setIsModalVisible(false);
@@ -102,7 +102,7 @@ const PostCard = (props) => {
                 let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)), { gasLimit: 9000000 });
                 let receipt = await txn.wait();
                 // await contractData.fDaixContract.transfer(contractData.distributeTokenAddress, ethers.utils.parseEther(amt));
-                let addModuleTxn = await contractInstance.addModule(count, String(amt), { gasLimit: 9000000 });
+                let addModuleTxn = await contractInstance.addModule(String(count), String(amt), { gasLimit: 9000000 });
                 let addModuleReceipt = await addModuleTxn.wait();
                 props.loadingState(false);
                 setModalVisible(false);
@@ -119,25 +119,32 @@ const PostCard = (props) => {
 
     const handleEvent = async () => {
         try {
-            await addEvent(props.postData.instId, event.name, event.description, event.link, user.id, event.dnt);
-            if (!window.ethereum) {
-                toast.error("Please connect metamask first");
-                setEventModal(false);
+            let imageName = await uploadPoapImage(eventImage);
+            let imageUrl = await getImageUrl("itemimage", imageName);
+            console.log(" this is image url before uplaod ", imageUrl);
+            if (imageUrl) {
+                await addEvent(props.postData.instId, event.name, event.description, event.link, user.id, event.dnt, imageUrl);
+                if (!window.ethereum) {
+                    toast.error("Please connect metamask first");
+                    setEventModal(false);
+                } else {
+                    props.loadingState(true);
+                    // taking 200 LAE from user to mint an event
+                    let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+                    let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
+                    let amt = 2;
+                    //! amount = 2
+                    let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
+                    let receipt = await txn.wait();
+                    let depositTxn = await contractInstance.depositFundsToStream(String(amt), { gasLimit: 9000000 });
+                    let depositTn = await depositTxn.wait();
+                    console.log(" this is tream info ", props.postData.streamInfo[0])
+                    props.loadingState(false);
+                    toast.success("Event added successfully ");
+                    setEventModal(false);
+                }
             } else {
-                props.loadingState(true);
-                // taking 200 LAE from user to mint an event
-                let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
-                let contractInstance = new ethers.Contract(props.postData.address, instituteManager.abi, ethProvider.getSigner(0));
-                let amt = 2;
-                //! amount = 2
-                let txn = await contractData.fDaixContract.transfer(props.postData.address, ethers.utils.parseEther(String(amt)));
-                let receipt = await txn.wait();
-                let depositTxn = await contractInstance.depositFundsToStream(props.postData.streamInfo[0] ? props.postData.streamInfo[0] : "dummy", String(amt), { gasLimit: 9000000 });
-                let depositTn = await depositTxn.wait();
-                console.log(" this is tream info ", props.postData.streamInfo[0])
-                props.loadingState(false);
-                toast.success("Event added successfully ");
-                setEventModal(false);
+                toast.error("Image not uploaded yet");
             }
         } catch (err) {
             toast.error("Some error occurred");
@@ -158,45 +165,49 @@ const PostCard = (props) => {
         })
     }
 
-    return <List.Item
-    key={props.postData.name}
-    actions={[
-       <Popover content={"Promote Advertisement"}>
-        <UsergroupAddOutlined style={{ fontSize: "25px" }} onClick={() => setIsModalVisible(true)} key="promote" />
-       </Popover>, 
-       <Popover content={"Add Modules"}>
-        <ScheduleOutlined style={{ fontSize: "22px" }} onClick={() => setModalVisible(true)} key="modules" />
-       </Popover>, 
-       <Popover content={"Promote Events"}>
-        <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
-       </Popover>,
-       <Popover content={"Student Responses"}>
-        <Link to="/advertiser-dashboard/module/responses">
-        <FileDoneOutlined style={{ fontSize: "22px" }} key="responses" />
-        </Link>
-       </Popover>,
-    ]}
-    extra={
-        <img
-            width={272}
-            alt="logo"
-            src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`}
-        />
+    const handlEventImage = (e) => {
+        setEventImage(e.target.files[0]);
     }
->
-    <List.Item.Meta
-        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-        title={props.postData.displayName}
-        description={props.postData.address}
-    />
-    {props.postData.about}
-    {/* {item.content} */}
 
-    <Toaster />
+    return <List.Item
+        key={props.postData.name}
+        actions={[
+            <Popover content={"Promote Advertisement"}>
+                <UsergroupAddOutlined style={{ fontSize: "25px" }} onClick={() => setIsModalVisible(true)} key="promote" />
+            </Popover>,
+            <Popover content={"Add Modules"}>
+                <ScheduleOutlined style={{ fontSize: "22px" }} onClick={() => setModalVisible(true)} key="modules" />
+            </Popover>,
+            <Popover content={"Promote Events"}>
+                <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
+            </Popover>,
+            <Popover content={"Student Responses"}>
+                <Link to="/advertiser-dashboard/module/responses">
+                    <FileDoneOutlined style={{ fontSize: "22px" }} key="responses" />
+                </Link>
+            </Popover>,
+        ]}
+        extra={
+            <img
+                width={272}
+                alt="logo"
+                src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`}
+            />
+        }
+    >
+        <List.Item.Meta
+            avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+            title={props.postData.displayName}
+            description={props.postData.address}
+        />
+        {props.postData.about}
+        {/* {item.content} */}
+
+        <Toaster />
         <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">
                 <input type="text" placeholder="Post name" name="title" onChange={(e) => handlePostInfo(e)} />
-                <textarea className="desc-textarea" type="text" placeholder="Post Description" name="description" onChange={(e) => handlePostInfo(e)}  />
+                <textarea className="desc-textarea" type="text" placeholder="Post Description" name="description" onChange={(e) => handlePostInfo(e)} />
                 <input
                     type="file"
                     accept="image/*"
@@ -231,7 +242,7 @@ const PostCard = (props) => {
                     ...event,
                     [e.target.name]: e.target.value
                 })} />
-                <input type="text" placeholder="Event description" name="description" onChange={(e) => setEvent({
+                <textarea type="text" placeholder="Event description" className="desc-textarea" name="description" onChange={(e) => setEvent({
                     ...event,
                     [e.target.name]: e.target.value
                 })} />
@@ -239,71 +250,16 @@ const PostCard = (props) => {
                     ...event,
                     [e.target.name]: e.target.value
                 })} />
-               <input type="datetime-local" name="datetime" onChange={(e) => onDateChange(e)} />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlEventImage(e)}
+                ></input>
+                <input type="datetime-local" name="datetime" onChange={(e) => onDateChange(e)} />
             </div>
         </Modal>
 
-</List.Item>
-    
-    // <Card
-    //     hoverable
-    //     style={{
-    //         width: 240,
-    //     }}
-    //     cover={<img alt="post" src={`http://cdn.differencebetween.net/wp-content/uploads/2018/03/Difference-Between-Institute-and-University--768x520.jpg`} />}
-        // actions={[
-        //     <UsergroupAddOutlined onClick={() => setIsModalVisible(true)} key="promote" />,
-        //     <ScheduleOutlined  onClick={() => setModalVisible(true)} key="modules" />,
-        //     <VideoCameraOutlined onClick={() => setEventModal(true)} key='event' />
-        //   ]}
-    // > <Toaster />
-    //     <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
-    //         <div className="stream-container">
-    //             <input type="text" placeholder="Post name" name="title" onChange={(e) => handlePostInfo(e)} />
-    //             <input type="text" placeholder="Post description " name="description" onChange={(e) => handlePostInfo(e)} />
-    //             <input
-    //                 type="file"
-    //                 accept="image/*"
-    //                 onChange={(e) => handleImage(e)}
-    //             ></input>
-    //             <h3> Avalaible Streams</h3>
-    //             {props.postData.streamInfo.map((stream, id) => <p> {stream} </p>)}
-    //         </div>
-    //     </Modal>
-
-    //     <Modal title="Create tokenized module" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
-    //         <div className="stream-container">
-    //             <input type="text" placeholder="Enter question 1" name="q1" onChange={(e) => setModule({
-    //                 ...module,
-    //                 [e.target.name]: e.target.value
-    //             })} />
-    //             <input type="text" placeholder="Enter question 2" name="q2" onChange={(e) => setModule({
-    //                 ...module,
-    //                 [e.target.name]: e.target.value
-    //             })} />
-    //             <input type="number" placeholder="Enter number of modules" onChange={(e) => setCount(e.target.value)} />
-    //         </div>
-    //     </Modal>
-
-    //     <Modal title="Create POAP based event" visible={eventModal} onOk={() => handleEvent()} onCancel={() => handleModuleCancel()}>
-    //         <div className="stream-container">
-    //             <input type="text" placeholder="Event name" name="name" onChange={(e) => setEvent({
-    //                 ...event,
-    //                 [e.target.name]: e.target.value
-    //             })} />
-    //             <input type="text" placeholder="Event description" name="description" onChange={(e) => setEvent({
-    //                 ...event,
-    //                 [e.target.name]: e.target.value
-    //             })} />
-    //             <input type="text" placeholder="Event Link" name="link" onChange={(e) => setEvent({
-    //                 ...event,
-    //                 [e.target.name]: e.target.value
-    //             })} />
-    //         </div>
-    //     </Modal>
-
-    //     <Meta title={props.postData.name} description={props.postData.address} />
-    // </Card>
+    </List.Item>
 };
 
 export default PostCard;

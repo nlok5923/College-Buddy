@@ -1,4 +1,6 @@
-pragma solidity >0.4.23 <0.9.0;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.13;
+
 import "./InstituteFundsManager.sol";
 
 contract InstituteFundsManagerFactory {
@@ -10,8 +12,14 @@ contract InstituteFundsManagerFactory {
     
     instituteDetails[] public institutes;
 
-    function addInstitute(string memory _name, string memory _instId, address _owner) public {
-        InstituteFundsManager newInstituteAddress = new InstituteFundsManager(_name, _owner);
+    function addInstitute(
+        string memory _name, 
+        string memory _instId, 
+        address _owner,
+        ISuperfluid _host,
+        ISuperToken _spreaderToken
+        ) public {
+        InstituteFundsManager newInstituteAddress = new InstituteFundsManager(_name, _owner, _host, _spreaderToken);
         institutes.push(instituteDetails(_name, newInstituteAddress, _instId));
     }
 

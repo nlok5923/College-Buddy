@@ -82,7 +82,8 @@ export const fetchEvent = async (instId) => {
                 description: doc.data().description,
                 link: doc.data().link,
                 advtId: doc.data().advtId,
-                dnt: doc.data().dnt || "No date and time"
+                dnt: doc.data().dnt || "No date and time",
+                url: doc.data().url
             })
         })
         return data;
@@ -133,6 +134,7 @@ export const getShare = async (uid) => {
         });
 
         console.log(uid + " " + studentScore + " " + sum);
+        console.log("score in decimals ", parseFloat(studentScore / sum) * 100);
         return parseFloat(studentScore / sum) * 100;
 
     } catch (err) {
@@ -157,6 +159,16 @@ export const saveModuleResp = async (instId, moduleId, resp, studentId) => {
             q1: resp.q1,
             q2: resp.q2,
             stdId: studentId
+        })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export const register = async (stdId) => {
+    try {
+        await db.collection('users').doc(stdId).update({
+            isRegistered: true
         })
     } catch (err) {
         console.log(err);

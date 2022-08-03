@@ -106,7 +106,7 @@ export const addModule = async (instId, _q1, _q2, _advtId, _name) => {
     }
 }
 
-export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt) => {
+export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt, eventImageUrl) => {
     console.log(instId + " " + _name + " " + _description + " " + _link + " " + _advtId);
     try {
         await db.collection('users').doc(instId).collection('event').add({
@@ -114,7 +114,8 @@ export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt
             description: _description,
             link: _link,
             advtId: _advtId,
-            dnt: _dnt
+            dnt: _dnt,
+            url: eventImageUrl
         });
     } catch (err) {
         console.log(err.message);

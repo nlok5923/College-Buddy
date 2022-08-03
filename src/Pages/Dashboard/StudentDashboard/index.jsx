@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
-import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore, saveModuleResp } from '../../../Services/StudentUtilities';
+import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore, saveModuleResp, register } from '../../../Services/StudentUtilities';
 import { fetchStudentCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
 import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled, FormOutlined } from '@ant-design/icons';
@@ -100,7 +100,8 @@ const StudentDashboard = () => {
       console.log("LAE", data);
       setStudentData({
         instId: data.instId.trim(),
-        streamId: data.streamId.trim()
+        streamId: data.streamId.trim(),
+        isRegistered: data.isRegistered
       })
 
       if (data.instId && data.streamId) {
@@ -162,13 +163,21 @@ const StudentDashboard = () => {
 
   const registerStudent = async () => {
     try {
-      if(contractData.contract) {
-        let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
-        let rewardTxn = await txn.wait();
+      if(studentData.isRegistered) {
+        toast.error("You are already registered !!"); 
       } else {
-        toast.error("Please connect metamask first");
+        if (contractData.contract) {
+          let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
+          let rewardTxn = await txn.wait();
+          console.log(" this is used.id ", user.id);
+          await register(user.id);
+          toast.success("Student registration done");
+        } else {
+          toast.error("Please connect metamask first");
+        }
       }
     } catch (err) {
+      toast.error("Something bad happened");
       console.log(err.message);
     }
   }
@@ -183,6 +192,7 @@ const StudentDashboard = () => {
       await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.id);
       toast.success("Ans submitted successfully !!");
       setIsLoading(false);
+      getAllAssignments(studentData.instId, studentData.streamId);
     } catch (err) {
       toast.error("Some error occured");
       console.log(err.message);
@@ -194,12 +204,14 @@ const StudentDashboard = () => {
       console.log(" this is institute contract ", instituteContract);
       if (instituteContract) {
         console.log(" this is resp ", resp);
+        // let moduelCount = await instituteContract.getModuleCount();
+        // console.log(" this is module count ", parseInt(moduelCount._hex))
         await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.id)
         setIsLoading(true);
         let txn = await instituteContract.getReward({ gasLimit: 9000000 });
         let rewardTxn = await txn.wait();
         setIsLoading(false);
-        window.location.reload();
+        getAllModules(studentData.instId.trim(), user.id);
       } else {
         toast.error("Please connect metamask ");
       }
@@ -233,13 +245,17 @@ const StudentDashboard = () => {
       if (!contractData.contract) {
         toast.error("Please connect to metamask first");
       } else {
-        setIsLoading(true);
-        console.log(" this is address ", contractData.address);
-        await claims(currentAdvtId, poap, contractData.address);
-        setIsLoading(false);
-        toast.success("Claimed placed successfully !!");
+        if (poap.imageUrl) {
+          setIsLoading(true);
+          console.log(" this is address ", contractData.address);
+          await claims(currentAdvtId, poap, contractData.address);
+          setIsLoading(false);
+          toast.success("Claimed placed successfully !!");
+          setPoapClaimModal(false);
+        } else {
+          toast.error("Wait for image to be uploaded");
+        }
       }
-      setPoapClaimModal(false);
     } catch (err) {
       toast.error("Some error occured !!");
       console.log(err.message)
@@ -268,15 +284,15 @@ const StudentDashboard = () => {
         setIsLoading(true);
         let newShare = await getShare(user.id);
         console.log("new share ", newShare)
-        let oldShare = await contractData.idaContract.shareUnits(contractData.address);
+        let oldShare = await instituteContract.shareUnits(contractData.address);
         console.log("old share", oldShare);
         oldShare = parseInt(oldShare._hex);
         // console.log(newShare + ' ' + oldShare);
         if (newShare > oldShare) {
-          let txn = await contractData.idaContract.gainShare(contractData.address, newShare - oldShare);
+          let txn = await instituteContract.gainShare(contractData.address, newShare - oldShare);
           let shareTxn = await txn.wait();
         } else {
-          let txn = await contractData.idaContract.loseShare(contractData.address, oldShare - newShare);
+          let txn = await instituteContract.loseShare(contractData.address, oldShare - newShare);
           let shareTxn = await txn.wait();
         }
         await removeScore(user.id);
@@ -324,11 +340,11 @@ const StudentDashboard = () => {
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
-              <input type="text" placeholder="About Event" name="about" onChange={(e) => setPoap({
+              <textarea type="text" className="desc-textarea" placeholder="About Event" name="about" onChange={(e) => setPoap({
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
-              <input type="text" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
+              <textarea type="text" className="desc-textarea" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
@@ -357,19 +373,23 @@ const StudentDashboard = () => {
                   Balance: {balance.toFixed(2)} fDAIx
                 </span>
                 </p>
-                <p onClick={() => registerStudent()}>
-                <FormOutlined /> <span>
-                  Register Me
-                </span>
-                </p>
+                {/* {!(studentData.isRegistered) && */}
+                  <button onClick={() => registerStudent()}>
+                    <FormOutlined />
+                    <span>
+                      Register Me
+                    </span>
+                  </button>
                 <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
-                  <p> <TrophyOutlined /> <span>
-                    Your POA Tokens
-                  </span>
-                  </p>
+                  <button> <TrophyOutlined />
+                    <span>
+                      Your POA Tokens
+                    </span>
+                  </button>
                 </Link>
               </div>
               <Card className='LAE-container-bg-card' title="All your assignments">
+                {assignments.length === 0 ? "No assignments for you now " : null}
                 {
                   assignments.map((data, id) => (
                     <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
@@ -412,7 +432,14 @@ const StudentDashboard = () => {
                     <Card style={{
                       width: 630,
                       marginTop: "3%"
-                    }}>
+                    }}
+                      cover={
+                        <img
+                          alt="example"
+                          src={data.url || "Dummy"}
+                        />
+                      }
+                    >
                       <Meta
                         avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                         title={data.name}
@@ -436,17 +463,17 @@ const StudentDashboard = () => {
 
             <div className='LAE-container-modules'>
               <Card title="Sponsored Modules">
-                { modules.length === 0 ? <p> 
-                No Sponsored modules ATM for you
+                {modules.length === 0 ? <p>
+                  No Sponsored modules ATM for you
                 </p>
-                : 
+                  :
                   modules.map((data, id) => (
                     <Card type="inner" className="course-sub-card">
                       <h4 className="spn-modules"> Q1) {data.q1}</h4>
                       <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) => setResp({
                         ...resp,
                         [e.target.name]: e.target.value
-                      })}  />
+                      })} />
                       <h4 className="spn-modules"> Q2) {data.q2} </h4>
                       <input placeholder='Enter your answer here' name="q2" onChange={(e) => setResp({
                         ...resp,

@@ -24,6 +24,7 @@ const POAWall = () => {
                 let tokenCount = await contractData.poaContract.tokenCount();
                 tokenCount = parseInt(tokenCount._hex);
                 console.log(tokenCount);
+                let nftData = [];
                 for (let i = 0; i < tokenCount; i++) {
                     let nftUri = await contractData.poaContract.tokenURI(i);
                     let tokenOwner = await contractData.poaContract.ownerOf(i);
@@ -34,16 +35,15 @@ const POAWall = () => {
                     if (tokenOwner.toLowerCase() === contractData.address) {
                         console.log(" we are here as well ");
                         const { name, about, contribution, imageUrl } = nftMetaData.data;
-                        setPOAData([
-                            ...poaData, {
-                                name: name,
-                                about: about,
-                                contribution: contribution,
-                                imageUrl: imageUrl
-                            }
-                        ])
+                        nftData.push({
+                            name: name,
+                            about: about,
+                            contribution: contribution,
+                            imageUrl: imageUrl
+                        })
                     }
                 }
+                setPOAData(nftData);
                 setIsLoading(false);
             }
         } catch (err) {
