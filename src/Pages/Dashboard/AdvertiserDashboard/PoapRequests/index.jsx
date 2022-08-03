@@ -43,7 +43,7 @@ const PoapRequest = () => {
                 setIsLoading(true);
                 const res = await Axios({
                     method: "post",
-                    url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+                    url: process.env.REACT_APP_PINATA_API_URL,
                     data: JSON.stringify({
                         name: data.name,
                         contribution: data.contribution,
@@ -51,8 +51,8 @@ const PoapRequest = () => {
                         imageUrl: data.imageUrl
                     }),
                     headers: {
-                        'pinata_api_key': "5dbd25d2575c28d30c75",
-                        'pinata_secret_api_key': "31e6245d30d45e928d0bdc05fec2b83914663311976825e465d1a57fa1af5c7c",
+                        'pinata_api_key': process.env.REACT_APP_PINATA_API_KEY,
+                        'pinata_secret_api_key': process.env.REACT_APP_PINATA_API_SECRET,
                         "Content-Type": "Application/json"
                     },
                 });

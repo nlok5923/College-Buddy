@@ -19,14 +19,12 @@ import SendSomeToken from './Pages/SendSomeToken/index'
 import ModuleResponse from "./Pages/Dashboard/AdvertiserDashboard/ModuleResponse";
 import { MoralisProvider } from "react-moralis"
 
-// REACT_APP_MORALIS_DAPP_URL=https://ohmovgeh2pjs.usemoralis.com:2053/server
-// REACT_APP_MORALIS_APP_ID=3zusiCfueaG7YPfeWMTcAyYER6TKyF7W40nTrL8R
 const App = () => {
   return (
     <div className="App">
       <UserProvider>
         <ContractProvider>
-          <MoralisProvider appId="3zusiCfueaG7YPfeWMTcAyYER6TKyF7W40nTrL8R" serverUrl="https://ohmovgeh2pjs.usemoralis.com:2053/server">
+          <MoralisProvider appId={process.env.REACT_APP_MORALIS_APP_ID} serverUrl={process.env.REACT_APP_MORALIS_DAPP_URL}>
           <Router>
             <Navbar />
             <Switch>

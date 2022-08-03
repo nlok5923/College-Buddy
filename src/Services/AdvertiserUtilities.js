@@ -6,14 +6,21 @@ import 'firebase/firestore';
 
 if (!firebase.apps.length) {
     firebase.initializeApp({
-        apiKey: "AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ",
-        authDomain: "crypto-token-4e600.firebaseapp.com",
-        projectId: "crypto-token-4e600",
-        storageBucket: "crypto-token-4e600.appspot.com",
-        messagingSenderId: "860981544578",
-        appId: "1:860981544578:web:434c6e0167e973dd54169b"
+        apiKey: process.env.REACT_APP_APIKEY,
+        authDomain: process.env.REACT_APP_AUTHDOMAIN,
+        projectId: process.env.REACT_APP_PROJECTID,
+        storageBucket: process.env.REACT_APP_STORAGEBUCKET,
+        messagingSenderId: process.env.REACT_APP_MESSAGINGID,
+        appId: process.env.REACT_APP_APPID
     });
 }
+
+// REACT_APP_APIKEY=AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ
+// REACT_APP_AUTHDOMAIN=crypto-token-4e600.firebaseapp.com
+// REACT_APP_PROJECTID=crypto-token-4e600
+// REACT_APP_STORAGEBUCKET=crypto-token-4e600.appspot.com
+// REACT_APP_MESSAGINGID=860981544578
+// REACT_APP_APPID=1:860981544578:web:434c6e0167e973dd54169b
 
 const db = firebase.firestore();
 

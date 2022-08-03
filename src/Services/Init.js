@@ -6,12 +6,12 @@ import 'firebase/firestore';
 export const initializeApp = () => {
     if (!firebase.apps.length) {
         firebase.initializeApp({
-            apiKey: "AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ",
-            authDomain: "crypto-token-4e600.firebaseapp.com",
-            projectId: "crypto-token-4e600",
-            storageBucket: "crypto-token-4e600.appspot.com",
-            messagingSenderId: "860981544578",
-            appId: "1:860981544578:web:434c6e0167e973dd54169b"
+            apiKey: process.env.REACT_APP_APIKEY,
+            authDomain: process.env.REACT_APP_AUTHDOMAIN,
+            projectId: process.env.REACT_APP_PROJECTID,
+            storageBucket: process.env.REACT_APP_STORAGEBUCKET,
+            messagingSenderId: process.env.REACT_APP_MESSAGINGID,
+            appId: process.env.REACT_APP_APPID
         });
     }
 };

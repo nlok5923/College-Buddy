@@ -8,7 +8,7 @@ const laeAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D";
 const laexAddress = "0x6C1ae4ee999539BCb18e34C5822Df808d239b0C2"
 // let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
 let amt = 100000;
-const url = "https://eth-goerli.alchemyapi.io/v2/V5p1PckEwUqIq5s5rA2zvwRKH0V9Hslr";
+const url = process.env.REACT_APP_GOERLI_API_URL;
 const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
 // const sf = await Framework.create({
 //     chainId: 5,
@@ -16,7 +16,7 @@ const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
 //   });
 // const signer = sf.createSigner({
 //     privateKey:
-//       "e3f4cd385c1834aba7227db3b6468cf1805a2831463042781c529a1beacf9f25",
+//       "",
 //     provider: customHttpProvider
 //   });
 const approveToken = async () => {
@@ -25,8 +25,7 @@ const approveToken = async () => {
         provider: customHttpProvider
       });
     const signer = sf.createSigner({
-        privateKey:
-          "e3f4cd385c1834aba7227db3b6468cf1805a2831463042781c529a1beacf9f25",
+        privateKey: process.env.REACT_APP_GOERLI_PRIVATE_KEY,
         provider: customHttpProvider
       });
     let laeContractInstance = new ethers.Contract(laeAddress, laeArtifact.abi, signer);
@@ -39,8 +38,7 @@ const upgradeToken = async () => {
         provider: customHttpProvider
       });
     const signer = sf.createSigner({
-        privateKey:
-          "e3f4cd385c1834aba7227db3b6468cf1805a2831463042781c529a1beacf9f25",
+        privateKey: process.env.REACT_APP_GOERLI_PRIVATE_KEY,
         provider: customHttpProvider
       });
     const amtToUpgrade = ethers.utils.parseEther(amt.toString());
