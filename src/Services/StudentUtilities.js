@@ -135,7 +135,8 @@ export const getShare = async (uid) => {
 
         console.log(uid + " " + studentScore + " " + sum);
         console.log("score in decimals ", parseFloat(studentScore / sum) * 100);
-        return parseFloat(studentScore / sum) * 100;
+        // return parseFloat(studentScore / sum) * 100;
+        return 100;
 
     } catch (err) {
         console.log(err.message);

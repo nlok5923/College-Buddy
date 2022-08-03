@@ -99,7 +99,8 @@ const InstituteDashboard = () => {
                 let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Stream added successfully !!");
-                window.location.reload();
+                getAllStreams();
+                // window.location.reload();
             }
             setIsModalVisible(false);
         } catch (err) {
@@ -139,7 +140,8 @@ const InstituteDashboard = () => {
                 let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Institute added successfully !!");
-                window.location.reload();
+                getInstituteAddress();
+                // window.location.reload();
             } else {
                 toast.error("Please connect metamask !!");
             }

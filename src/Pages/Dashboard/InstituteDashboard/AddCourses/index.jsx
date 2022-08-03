@@ -63,7 +63,8 @@ const AddCoursesComponent = () => {
             setIsModalVisible(false);
             setIsLoading(false);
             toast.success("Assignment added successfully ");
-            window.location.reload();
+            getCourses();
+            // window.location.reload();
         } catch (err) {
             toast.error("Error happened while adding assignment");
             console.log(err.message);

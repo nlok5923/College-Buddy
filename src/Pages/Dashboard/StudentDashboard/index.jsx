@@ -20,9 +20,12 @@ import { useMoralis } from "react-moralis"
 const StudentDashboard = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
   const [adv, setAdv] = useState([]);
+  const owner = "0x52EDB0ba3448A1af1eF16f23cF43E08879B62fec";
   const [islastDay, setIsLastDay] = useState(false);
   const contractData = useContext(ContractContext);
   const history = useHistory();
+  const [instBalance, setInstBalance] = useState(0);
+  const [dbalance, setDbalance] = useState(0);
   // const info = useContext(UserContext);
   // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
@@ -56,6 +59,7 @@ const StudentDashboard = () => {
   const [score, setScore] = useState(0);
 
   const [assignments, setAssignments] = useState([]);
+  const [instAddress, setInstAddress] = useState('');
 
   const { Meta } = Card;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -150,11 +154,17 @@ const StudentDashboard = () => {
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
         let instituteAddress = getAddress(instituteData);
         console.log(" this is institue address ", instituteAddress[0][1]);
+        setInstAddress(instituteAddress[0][1]);
         let contractInstance = new ethers.Contract(instituteAddress[0][1], InstititueManager.abi, ethProvider.getSigner(0));
         setContractInstance(contractInstance);
         let balance = await contractData.fDaixContract.balanceOf(contractData.address);
         console.log("Student balance ", parseInt(balance._hex));
+        let dbalance = await contractData.fDaixContract.balanceOf(owner);
+        setDbalance(parseInt(dbalance._hex / 1000000000000000000));
+        console.log(" this is not called =---------------------------------------------------------");
         setBalance(parseInt(balance._hex) / 1000000000000000000);
+        let instbalance = await contractData.fDaixContract.balanceOf(instituteAddress[0][1]);
+        setInstBalance(parseInt(instbalance._hex) / 1000000000000000000);
       }
     } catch (err) {
       console.log(err.message);
@@ -169,6 +179,10 @@ const StudentDashboard = () => {
         if (contractData.contract) {
           let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
           let rewardTxn = await txn.wait();
+          let approveTxn = await instituteContract.approveSubscriptionForSubscriber(instAddress, { gasLimit: 9000000 });
+          // let approveTxn = await instituteContract.approveSubscriptionForSubscriber(owner, { gasLimit: 9000000 });
+          let approveTxnReceipt = await approveTxn.wait();
+          console.log(" this is approve txn receipt ", approveTxnReceipt);
           console.log(" this is used.id ", user.id);
           await register(user.id);
           toast.success("Student registration done");
@@ -283,11 +297,13 @@ const StudentDashboard = () => {
       if (contractData.address) {
         setIsLoading(true);
         let newShare = await getShare(user.id);
+        newShare = isNaN(newShare) ? 0: newShare;
         console.log("new share ", newShare)
         let oldShare = await instituteContract.shareUnits(contractData.address);
-        console.log("old share", oldShare);
+        console.log("old share", parseInt(oldShare._hex));
         oldShare = parseInt(oldShare._hex);
-        // console.log(newShare + ' ' + oldShare);
+        // newShare = 100;
+        console.log(newShare + ' ' + oldShare + ' ' + newShare);
         if (newShare > oldShare) {
           let txn = await instituteContract.gainShare(contractData.address, newShare - oldShare);
           let shareTxn = await txn.wait();
@@ -298,7 +314,7 @@ const StudentDashboard = () => {
         await removeScore(user.id);
         setIsLoading(false);
         toast.success("Added your share too !!");
-        window.location.reload();
+        getStudentScore();
       } else {
         toast.error("Please connect to metamask first");
       }
@@ -364,7 +380,7 @@ const StudentDashboard = () => {
                     Update Share
                   </span>
                   </p>
-                )}
+                 )}
                 <p> <RiseOutlined /> <span>
                   Score: {score}
                 </span>
@@ -373,17 +389,15 @@ const StudentDashboard = () => {
                   Balance: {balance.toFixed(2)} fDAIx
                 </span>
                 </p>
-                {/* {!(studentData.isRegistered) && */}
                   <button onClick={() => registerStudent()}>
-                    <FormOutlined />
-                    <span>
-                      Register Me
+                  <FormOutlined /> <span>
+                  Register Me
                     </span>
-                  </button>
+                  </button> <br />
                 <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
-                  <button> <TrophyOutlined />
-                    <span>
-                      Your POA Tokens
+                  <button>
+                  <TrophyOutlined /> <span>
+                  Your POA Tokens
                     </span>
                   </button>
                 </Link>

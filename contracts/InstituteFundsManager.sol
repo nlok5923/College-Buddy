@@ -171,7 +171,8 @@ contract InstituteFundsManager {
     }
 
     // below are mostly superfluid methods
-    function distribute() public onlyOwner {
+    // removed onlyOwner and diluted the security for now 
+    function distribute() public {
         uint256 spreaderTokenBalance = spreaderToken.balanceOf(address(this));
         (uint256 actualDistributionAmount,) = idaV1.ida.calculateDistribution(
             spreaderToken,
@@ -225,5 +226,9 @@ contract InstituteFundsManager {
             subscriber
         );
         shareUnits[subscriber] = 0;
+    }
+
+    function approveSubscriptionForSubscriber(address publisher) public {
+         idaV1.approveSubscription(spreaderToken, publisher, INDEX_ID);
     }
 }

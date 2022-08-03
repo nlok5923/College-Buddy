@@ -16,7 +16,8 @@ const ContractProvider = (props) => {
   const [poaContract, setPOAContract] = useState(null);
   const [fDaixContract, setfDaixContract] = useState(null);
 
-  const contractAddress = "0xadbf8AeAD6d5BDabe16cad8ca7851e93c3962445"
+  // change this address every time you deploy a factory like change it with new factory address
+  const contractAddress = "0xC8A26A607d4f0ecbA7176c1c2F54FcF3379F27C6"
   //! need to update it after deploying distributeToken
   const distributeTokenAddress = "0x31F1574875DBf52b4A4dCfDD40BC47a2515A4F58"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
