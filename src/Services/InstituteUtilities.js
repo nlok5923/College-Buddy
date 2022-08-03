@@ -6,12 +6,12 @@ import { handleUpload, getFileName, getImageUrl } from './AdvertiserUtilities'
 
 if (!firebase.apps.length) {
     firebase.initializeApp({
-        apiKey: "AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ",
-        authDomain: "crypto-token-4e600.firebaseapp.com",
-        projectId: "crypto-token-4e600",
-        storageBucket: "crypto-token-4e600.appspot.com",
-        messagingSenderId: "860981544578",
-        appId: "1:860981544578:web:434c6e0167e973dd54169b"
+        apiKey: process.env.REACT_APP_APIKEY,
+        authDomain: process.env.REACT_APP_AUTHDOMAIN,
+        projectId: process.env.REACT_APP_PROJECTID,
+        storageBucket: process.env.REACT_APP_STORAGEBUCKET,
+        messagingSenderId: process.env.REACT_APP_MESSAGINGID,
+        appId: process.env.REACT_APP_APPID
     });
 }
 
@@ -43,9 +43,21 @@ export const AddCourses = async (uid, streamId, _name, image) => {
 export const fetchCourses = async (uid, streamId) => {
     try {
         let data = [];
+        console.log("finnaly ye to aarray hona chahiye ", typeof data)
         let ref = await db.collection("users").doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').get();
+        console.log("this is ref size and ref", ref.size);
         ref.forEach(async (doc) => {
-            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(doc.id).collection('submission').get();
+                data.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    code: doc.data().code
+                })
+        })
+
+        console.log("before loop ", data);
+        let finalData = [];
+        for(let doc = 0; doc < data.length; doc++ ) {
+            let subRef = await db.collection('users').doc(uid.trim()).collection('streams').doc(streamId.trim()).collection('courses').doc(data[doc].id).collection('submission').get();
             let isSubmitted = false;
             console.log(uid)
             subRef.forEach((subDoc) => {
@@ -58,15 +70,17 @@ export const fetchCourses = async (uid, streamId) => {
             console.log("this is isbumit ", isSubmitted);
 
             if(!isSubmitted) {
-                data.push({
-                    id: doc.id,
-                    name: doc.data().name,
-                    code: doc.data().code
+                // console.log("reached here and doc", doc.data().name);
+                finalData.push({
+                    id: data[doc].id,
+                    name: data[doc].name,
+                    code: data[doc].code
                 })
+                console.log("thisis type as well ", data)
             }
-        })
-        console.log(" these are all courses ", data);
-        return data;
+        }
+        console.log(" these are all courses ", finalData);
+        return finalData;
     } catch (error) {
         console.log(error.message);
         console.log("Error while accessing all blogs");
@@ -183,16 +197,29 @@ export const getInstitute = async (uid) => {
     }
 }
 
-export const getModules = async (instId) => {
+export const getModules = async (instId, studentId) => {
     try {
         let data = [];
         let ref = await db.collection('users').doc(instId).collection('module').get();
-        ref.forEach((doc) => {
-            data.push({
-                id: doc.id,
-                q1: doc.data().q1,
-                q2: doc.data().q2,
+        ref.forEach(async (doc) => {
+            console.log("Calling it");
+            let moduleId = doc.id;
+            let moduleRef = await db.collection('users').doc(instId).collection('module').doc(moduleId).collection('response').get();
+            let isPresent = false;
+
+            moduleRef.forEach((data, id) => {
+                // console.log()
+                if(data.data().stdId === studentId) { isPresent = true; }
             })
+
+            if(!isPresent) {
+                console.log("why pushing ");
+                data.push({
+                    id: doc.id,
+                    q1: doc.data().q1,
+                    q2: doc.data().q2,
+                })
+            }
         })
         return data;
     } catch(err) {

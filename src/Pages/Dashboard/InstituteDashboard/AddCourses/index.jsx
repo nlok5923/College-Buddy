@@ -9,11 +9,21 @@ import { AddCourses, fetchCourses } from "../../../../Services/InstituteUtilitie
 import { Link } from "react-router-dom";
 import Loader from '../../../../Components/Loader/index'
 import toast, { Toaster } from 'react-hot-toast'
+import { useMoralis } from "react-moralis"
 
 const AddCoursesComponent = () => {
-    const info = useContext(UserContext);
-    const { user, isLoading } = info;
+    // const info = useContext(UserContext);
+    // const { user, isLoading } = info;
+
+    const backgroundStyling = {
+        backgroundImage: `url("/asset/general/images/lfg-3.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     let { streamId } = useParams();
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const [courseData, setCourseData] = useState({ name: "" });
     const [file, setFile] = useState(null);
     const [courses, setCourses] = useState([]);
@@ -21,15 +31,21 @@ const AddCoursesComponent = () => {
 
     const getCourses = async () => {
         setIsLoading(true);
-        const data = await fetchCourses(user.uid, streamId);
-        console.log(" these are the obtained courses ", data);
-        setCourses(data);
+        if (user && streamId) {
+            console.log("this is user id and stream id ", user.id + " " + streamId)
+            const data = await fetchCourses(user.id, streamId);
+            // console.log("all keys", Object.keys(data))
+            console.log(" these are the obtained courses ", JSON.stringify(data));
+            // console.log(" this is obtained data length ", data[0])
+            setCourses(data);
+        }
         setIsLoading(false);
     }
 
     useEffect(() => {
+        console.log(" this is called ");
         getCourses();
-    }, [user, isLoading])
+    }, [user])
 
 
     const handleModalChange = (e) => {
@@ -43,11 +59,12 @@ const AddCoursesComponent = () => {
     const handleOk = async () => {
         try {
             setIsLoading(true);
-            await AddCourses(user.uid, streamId, courseData.name, file);
+            await AddCourses(user.id, streamId, courseData.name, file);
             setIsModalVisible(false);
             setIsLoading(false);
             toast.success("Assignment added successfully ");
-            window.location.reload();
+            getCourses();
+            // window.location.reload();
         } catch (err) {
             toast.error("Error happened while adding assignment");
             console.log(err.message);
@@ -64,36 +81,44 @@ const AddCoursesComponent = () => {
 
     return (
         <div>
-            <Loader isLoading = {loading} >
+            <Loader isLoading={loading} message={"Loading assignments dashboard"} >
                 <Toaster />
-            <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
-                <div className="course-container">
-                    <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
-                    <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFile(e.target.files[0])}
-                ></input>
+                <div className="course-dashboard">
+                    <div className="course-dashboard-bg" style={backgroundStyling}>
+                        <h1> Manage assignments </h1>
+                        <p> Launch assignments for students  </p>
+                    </div>
+                    <div className="course-dashboard-content">
+                        <Modal title="Add Assignment" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+                            <div className="course-container">
+                                <input type="text" placeholder="Assignment name" name="name" onChange={(e) => handleModalChange(e)} />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setFile(e.target.files[0])}
+                                ></input>
+                            </div>
+                        </Modal>
+                        <button type="primary" className="course-card-btn" shape="round" size={"large"} onClick={() => OpenModal()}>
+                        <FileAddOutlined /> Add Assignment
+                        </button>
+                        <div className="add-course-container" style={{
+                            display: "grid",
+                            width: "80%",
+                            gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
+                            gridColumnGap: "3vw",
+                            gridRowGap: "30px",
+                            marginTop: "1%",
+                            marginLeft: "2%",
+                        }}>
+                            {courses.length === 0 ? "No Assignments added till now" : null}
+                            {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
+                                <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
+                            </Link>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </Modal>
-            <Button type="primary" className="course-card-btn" shape="round" icon={<FileAddOutlined />} size={"large"} onClick={() => OpenModal()}>
-                Add Assignment
-            </Button>
-            <div className="add-course-container" style={{
-                display: "grid",
-                width: "80%",
-                gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
-                gridColumnGap: "3vw",
-                gridRowGap: "30px",
-                marginTop: "1%",
-                marginLeft: "2%",
-            }}>
-                {courses.length === 0 ? "No Assignments added till now" : null }
-                {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
-                    <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
-                </Link>
-                )}
-            </div>
             </Loader>
         </div>
     )

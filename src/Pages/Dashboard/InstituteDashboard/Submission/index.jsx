@@ -6,9 +6,11 @@ import { getSubmission, setMark } from "../../../../Services/InstituteUtilities"
 import { Button, Card } from "antd"
 import Loader from '../../../../Components/Loader/index'
 import toast, { Toaster } from 'react-hot-toast'
+import { useMoralis } from "react-moralis"
 
 const Submission = () => {
-    const { user, isLoading } = useContext(UserContext)
+    const { authenticate, isAuthenticated, user } = useMoralis();
+    // const { user, isLoading } = useContext(UserContext)
     const { courseId, streamId } = useParams();
     const [submission, setSubmission] = useState([]);
     const [mark, setMarks] = useState(0);
@@ -18,7 +20,7 @@ const Submission = () => {
         try {
             setIsLoading(true);
             console.log(streamId + " " + courseId);
-            let data = await getSubmission(user.uid, streamId, courseId)
+            let data = await getSubmission(user.id, streamId, courseId)
             console.log(" this is ubs data", data);
             setSubmission(data);
             setIsLoading(false);
@@ -29,12 +31,12 @@ const Submission = () => {
 
     useEffect(() => {
         getAndSet();
-    }, [user, isLoading]);
+    }, [user]);
 
     const markIt = async (id, studentId) => {
         try {
             setIsLoading(true);
-            await setMark(user.uid, streamId, courseId, id, mark, studentId);
+            await setMark(user.id, streamId, courseId, id, mark, studentId);
             setIsLoading(false);
             toast.success("Successfully marked it !!");
         } catch (err) {
@@ -43,10 +45,23 @@ const Submission = () => {
         }
     }
 
+    const backgroundStyling = {
+        backgroundImage: `url("/asset/general/images/lfg-4.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     return (
         <div>
-            <Loader isLoading={loading}>
+            <Loader isLoading={loading} message={"Loading all submissions..."} >
             <Toaster />
+            <div className="submission-dashboard">
+                <div className="submission-dashboard-bg" style={backgroundStyling}>
+                    <h1>Submissions here: </h1>
+                    <p> Mark and manage all submission here </p>
+                </div>
+                <div className="submission-dashboard-content">
             <h3 className="no-submission">
                 {submission.length === 0 ? "No Submissions yet " : " "}
             </h3>
@@ -63,6 +78,8 @@ const Submission = () => {
                         </div>
                     )
                 })}
+            </div>
+            </div>
             </div>
             </Loader>
         </div>

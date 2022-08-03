@@ -1,0 +1,39 @@
+@import "../../../../Sass/imports";
+
+.responses-page {
+    display: block;
+    margin-left: 10%;
+    margin-top: 4%;
+}
+
+.module-dashboard { 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: rgba(89, 175, 255, 0.03);
+    margin: 0;
+    padding: 0;
+
+    &-bg {
+        width: 28%;
+  
+        h1 {
+          @include font-config(20px, 400, "montserrat", white);
+          margin-top: 27%;
+          margin-left: 10%;
+        }
+        p {
+          @include font-config(15px, 600, "montserrat", white);
+          margin-top: 5%;
+          width: 70%;
+          margin-left: 10%;
+          letter-spacing: 2px;
+          line-height: 20px;
+        }
+      }
+
+    &-content {
+        width: 60%;
+    }
+}

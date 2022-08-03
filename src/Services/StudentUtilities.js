@@ -6,12 +6,12 @@ import { getImageUrl } from './AdvertiserUtilities';
 
 if (!firebase.apps.length) {
     firebase.initializeApp({
-        apiKey: "AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ",
-        authDomain: "crypto-token-4e600.firebaseapp.com",
-        projectId: "crypto-token-4e600",
-        storageBucket: "crypto-token-4e600.appspot.com",
-        messagingSenderId: "860981544578",
-        appId: "1:860981544578:web:434c6e0167e973dd54169b"
+        apiKey: process.env.REACT_APP_APIKEY,
+        authDomain: process.env.REACT_APP_AUTHDOMAIN,
+        projectId: process.env.REACT_APP_PROJECTID,
+        storageBucket: process.env.REACT_APP_STORAGEBUCKET,
+        messagingSenderId: process.env.REACT_APP_MESSAGINGID,
+        appId: process.env.REACT_APP_APPID
     });
 }
 
@@ -82,7 +82,8 @@ export const fetchEvent = async (instId) => {
                 description: doc.data().description,
                 link: doc.data().link,
                 advtId: doc.data().advtId,
-                dnt: doc.data().dnt || "No date and time"
+                dnt: doc.data().dnt || "No date and time",
+                url: doc.data().url
             })
         })
         return data;
@@ -133,7 +134,9 @@ export const getShare = async (uid) => {
         });
 
         console.log(uid + " " + studentScore + " " + sum);
-        return parseFloat(studentScore / sum);
+        console.log("score in decimals ", parseFloat(studentScore / sum) * 100);
+        // return parseFloat(studentScore / sum) * 100;
+        return 100;
 
     } catch (err) {
         console.log(err.message);
@@ -147,5 +150,28 @@ export const removeScore = async (uid) => {
         });
     } catch (err) {
         console.log(err.message);
+    }
+}
+
+export const saveModuleResp = async (instId, moduleId, resp, studentId) => {
+    try {
+        console.log(" this is resp ", resp);
+        await db.collection('users').doc(instId).collection('module').doc(moduleId).collection("response").add({
+            q1: resp.q1,
+            q2: resp.q2,
+            stdId: studentId
+        })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export const register = async (stdId) => {
+    try {
+        await db.collection('users').doc(stdId).update({
+            isRegistered: true
+        })
+    } catch (err) {
+        console.log(err);
     }
 }

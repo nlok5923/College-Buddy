@@ -6,14 +6,21 @@ import 'firebase/firestore';
 
 if (!firebase.apps.length) {
     firebase.initializeApp({
-        apiKey: "AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ",
-        authDomain: "crypto-token-4e600.firebaseapp.com",
-        projectId: "crypto-token-4e600",
-        storageBucket: "crypto-token-4e600.appspot.com",
-        messagingSenderId: "860981544578",
-        appId: "1:860981544578:web:434c6e0167e973dd54169b"
+        apiKey: process.env.REACT_APP_APIKEY,
+        authDomain: process.env.REACT_APP_AUTHDOMAIN,
+        projectId: process.env.REACT_APP_PROJECTID,
+        storageBucket: process.env.REACT_APP_STORAGEBUCKET,
+        messagingSenderId: process.env.REACT_APP_MESSAGINGID,
+        appId: process.env.REACT_APP_APPID
     });
 }
+
+// REACT_APP_APIKEY=AIzaSyDN06Ty6p7YTPlOM8-FC0VARf0oJWKzjFQ
+// REACT_APP_AUTHDOMAIN=crypto-token-4e600.firebaseapp.com
+// REACT_APP_PROJECTID=crypto-token-4e600
+// REACT_APP_STORAGEBUCKET=crypto-token-4e600.appspot.com
+// REACT_APP_MESSAGINGID=860981544578
+// REACT_APP_APPID=1:860981544578:web:434c6e0167e973dd54169b
 
 const db = firebase.firestore();
 
@@ -93,19 +100,20 @@ export const uploadPoapImage = async (location) => {
     }
 }
 
-export const addModule = async (instId, _q1, _q2, _advtId) => {
+export const addModule = async (instId, _q1, _q2, _advtId, _name) => {
     try {
         await db.collection('users').doc(instId).collection('module').add({
             q1: _q1,
             q2: _q2,
-            advtId: _advtId
+            advtId: _advtId,
+            name: _name
         })
     } catch (err) {
         console.log(err.message);
     }
 }
 
-export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt) => {
+export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt, eventImageUrl) => {
     console.log(instId + " " + _name + " " + _description + " " + _link + " " + _advtId);
     try {
         await db.collection('users').doc(instId).collection('event').add({
@@ -113,7 +121,8 @@ export const addEvent = async (instId, _name, _description, _link, _advtId, _dnt
             description: _description,
             link: _link,
             advtId: _advtId,
-            dnt: _dnt
+            dnt: _dnt,
+            url: eventImageUrl
         });
     } catch (err) {
         console.log(err.message);
@@ -158,9 +167,61 @@ export const getInstituteData = async (uid) => {
     try {
         let data = await db.collection('users').doc(uid).get();
         return {
-            displayName: data.data().displayName,
+            displayName: data.data().name || "dummy",
             about: data.data().description
         }
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const getALlModuleResponses = async (uid) => {
+    try {
+         let responses = [];
+         let instituteRef = await db.collection('users').get();
+         let instituteId = [];
+         instituteRef.forEach((doc, id) => instituteId.push(doc.id));
+         for (let instid of instituteId) {
+            let moduleRef = await db.collection('users').doc(instid).collection('module').get();
+            moduleRef.forEach(async (moduleDoc, moduleId) => {
+                let tempResponse = [];
+                if(moduleDoc.data().advtId === uid) {
+                    let responseRef = await db.collection('users').doc(instid).collection('module').doc(moduleDoc.id).collection('response').get();
+                    responseRef.forEach((responseDoc, responseId) => {
+                        tempResponse.push({
+                            id: responseDoc.id,
+                            ans1: responseDoc.data().q1,
+                            ans2: responseDoc.data().q2 
+                        })
+                    })
+                    responses.push({
+                        name: moduleDoc.data().name || "dummy",
+                        responses: tempResponse
+                    });
+                }
+            })
+         }
+        //  instituteRef.forEach(async (doc, id) => {
+        //     let moduleRef = await db.collection('users').doc(doc.id).collection('module').get();
+        //     moduleRef.forEach(async (moduleDoc, moduleId) => {
+        //         let tempResponse = [];
+        //         if(moduleDoc.data().advtId === uid) {
+        //             let responseRef = await db.collection('users').doc(doc.id).collection('module').doc(moduleDoc.id).collection('response').get();
+        //             responseRef.forEach((responseDoc, responseId) => {
+        //                 tempResponse.push({
+        //                     id: responseDoc.id,
+        //                     ans1: responseDoc.data().q1,
+        //                     ans2: responseDoc.data().q2 
+        //                 })
+        //             })
+        //             responses.push({
+        //                 name: moduleDoc.data().name || "dummy",
+        //                 responses: tempResponse
+        //             });
+        //         }
+        //     })
+        //  });
+         return responses;
     } catch (err) {
         console.log(err.message);
     }

@@ -3,10 +3,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Card, Button } from 'antd'
-import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore } from '../../../Services/StudentUtilities';
+import { studentEnroll, getStudent, submitAns, fetchPost, fetchEvent, claims, getScore, getShare, removeScore, saveModuleResp, register } from '../../../Services/StudentUtilities';
 import { fetchStudentCourses, getModules } from '../../../Services/InstituteUtilities';
 import { getImageUrl, uploadPoapImage } from '../../../Services/AdvertiserUtilities';
-import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled } from '@ant-design/icons';
+import { EditOutlined, MoneyCollectOutlined, TrophyOutlined, RiseOutlined, MoneyCollectFilled, FormOutlined } from '@ant-design/icons';
 import { Avatar, List, Modal } from 'antd';
 import { ethers } from 'ethers';
 import { ContractContext } from '../../../Provider/ContractProvider';
@@ -15,19 +15,27 @@ import toast, { Toaster } from "react-hot-toast"
 import { Link } from 'react-router-dom';
 import { isLastDayOfMonth } from '../../../Services/Utils'
 import Loader from '../../../Components/Loader';
+import { useMoralis } from "react-moralis"
 
 const StudentDashboard = () => {
-
+  const { authenticate, isAuthenticated, user } = useMoralis();
   const [adv, setAdv] = useState([]);
+  const owner = "0x52EDB0ba3448A1af1eF16f23cF43E08879B62fec";
   const [islastDay, setIsLastDay] = useState(false);
   const contractData = useContext(ContractContext);
   const history = useHistory();
-  const info = useContext(UserContext);
-  const { user, isLoading } = info;
+  const [instBalance, setInstBalance] = useState(0);
+  const [dbalance, setDbalance] = useState(0);
+  // const info = useContext(UserContext);
+  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
   const [courseId, setCourseId] = useState('');
   const [poapImage, setPoapImage] = useState(null);
   const [loading, setIsLoading] = useState(false);
+  const [resp, setResp] = useState({
+    q1: "",
+    q2: ""
+  });
   const [poap, setPoap] = useState({
     name: '',
     about: '',
@@ -51,6 +59,7 @@ const StudentDashboard = () => {
   const [score, setScore] = useState(0);
 
   const [assignments, setAssignments] = useState([]);
+  const [instAddress, setInstAddress] = useState('');
 
   const { Meta } = Card;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,7 +68,7 @@ const StudentDashboard = () => {
     try {
       console.log(instId + " " + streamId);
       console.log(instId.length, " ", streamId.length);
-      let data = await fetchStudentCourses(instId, streamId, user.uid);
+      let data = await fetchStudentCourses(instId, streamId, user.id);
       console.log("LAE data", data);
       setAssignments(data);
     } catch (err) {
@@ -73,8 +82,8 @@ const StudentDashboard = () => {
     setAdv(data);
   }
 
-  const getAllModules = async (id) => {
-    let data = await getModules(id);
+  const getAllModules = async (id, stdId) => {
+    let data = await getModules(id, stdId);
     console.log(" this is module data retreived ", data);
     setModules(data);
   }
@@ -90,21 +99,22 @@ const StudentDashboard = () => {
   }
 
   const getAndSetData = async () => {
-    if (user && user.uid) {
-      let data = await getStudent(user.uid);
+    if (user && user.id) {
+      let data = await getStudent(user.id);
       console.log("LAE", data);
       setStudentData({
         instId: data.instId.trim(),
-        streamId: data.streamId.trim()
+        streamId: data.streamId.trim(),
+        isRegistered: data.isRegistered
       })
 
       if (data.instId && data.streamId) {
         console.log(" this is updated student data ", studentData);
         getAllAssignments(data.instId.trim(), data.streamId.trim());
         getAllAdvertisements(data.instId.trim());
-        getAllModules(data.instId.trim());
+        getAllModules(data.instId.trim(), user.id);
         getAllEvents(data.instId.trim());
-        getStudentScore(user.uid);
+        getStudentScore(user.id);
       } else {
         toast.error("Make sure to add inst Id and streamId ");
         // studentEnroll
@@ -114,12 +124,13 @@ const StudentDashboard = () => {
   }
 
   useEffect(() => {
+    console.log("called it ");
     getAndSetData()
     let today = new Date();
     if (isLastDayOfMonth(today)) {
       setIsLastDay(true);
     } else setIsLastDay(false);
-  }, [user, isLoading]);
+  }, [user]);
 
   const handleChange = (e) => {
     setAns({
@@ -143,15 +154,44 @@ const StudentDashboard = () => {
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
         let instituteAddress = getAddress(instituteData);
         console.log(" this is institue address ", instituteAddress[0][1]);
+        setInstAddress(instituteAddress[0][1]);
         let contractInstance = new ethers.Contract(instituteAddress[0][1], InstititueManager.abi, ethProvider.getSigner(0));
         setContractInstance(contractInstance);
-        // 0xD649267Da6C1554CE62c8790Ff6C465aF108a167
-        // let balance = await contractData.fDaixContract.balanceOf("0xD649267Da6C1554CE62c8790Ff6C465aF108a167");
         let balance = await contractData.fDaixContract.balanceOf(contractData.address);
         console.log("Student balance ", parseInt(balance._hex));
+        let dbalance = await contractData.fDaixContract.balanceOf(owner);
+        setDbalance(parseInt(dbalance._hex / 1000000000000000000));
+        console.log(" this is not called =---------------------------------------------------------");
         setBalance(parseInt(balance._hex) / 1000000000000000000);
+        let instbalance = await contractData.fDaixContract.balanceOf(instituteAddress[0][1]);
+        setInstBalance(parseInt(instbalance._hex) / 1000000000000000000);
       }
     } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  const registerStudent = async () => {
+    try {
+      if(studentData.isRegistered) {
+        toast.error("You are already registered !!"); 
+      } else {
+        if (contractData.contract) {
+          let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
+          let rewardTxn = await txn.wait();
+          let approveTxn = await instituteContract.approveSubscriptionForSubscriber(instAddress, { gasLimit: 9000000 });
+          // let approveTxn = await instituteContract.approveSubscriptionForSubscriber(owner, { gasLimit: 9000000 });
+          let approveTxnReceipt = await approveTxn.wait();
+          console.log(" this is approve txn receipt ", approveTxnReceipt);
+          console.log(" this is used.id ", user.id);
+          await register(user.id);
+          toast.success("Student registration done");
+        } else {
+          toast.error("Please connect metamask first");
+        }
+      }
+    } catch (err) {
+      toast.error("Something bad happened");
       console.log(err.message);
     }
   }
@@ -163,35 +203,43 @@ const StudentDashboard = () => {
   const handleAns = async (courseId) => {
     try {
       setIsLoading(true);
-      await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.uid);
+      await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.id);
       toast.success("Ans submitted successfully !!");
       setIsLoading(false);
+      getAllAssignments(studentData.instId, studentData.streamId);
     } catch (err) {
       toast.error("Some error occured");
       console.log(err.message);
     }
   }
 
-  const handleModuleSubmit = async () => {
+  const handleModuleSubmit = async (moduleId) => {
     try {
       console.log(" this is institute contract ", instituteContract);
       if (instituteContract) {
+        console.log(" this is resp ", resp);
+        // let moduelCount = await instituteContract.getModuleCount();
+        // console.log(" this is module count ", parseInt(moduelCount._hex))
+        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.id)
         setIsLoading(true);
         let txn = await instituteContract.getReward({ gasLimit: 9000000 });
-        txn.wait();
+        let rewardTxn = await txn.wait();
         setIsLoading(false);
+        getAllModules(studentData.instId.trim(), user.id);
       } else {
         toast.error("Please connect metamask ");
       }
     } catch (err) {
+      toast.error("Some error occured");
       console.log(err.message);
+      setIsLoading(false);
     }
   }
 
   const handleOk = async () => {
     try {
       setIsLoading(true);
-      await studentEnroll(user.uid, studentData.instId, studentData.streamId);
+      await studentEnroll(user.id, studentData.instId.trim(), studentData.streamId.trim());
       setIsModalVisible(false);
       setIsLoading(false);
       toast.success("Student data updated successfully");
@@ -211,13 +259,17 @@ const StudentDashboard = () => {
       if (!contractData.contract) {
         toast.error("Please connect to metamask first");
       } else {
-        setIsLoading(true);
-        console.log(" this is address ", contractData.address);
-        await claims(currentAdvtId, poap, contractData.address);
-        setIsLoading(false);
-        toast.success("Claimed placed successfully !!");
+        if (poap.imageUrl) {
+          setIsLoading(true);
+          console.log(" this is address ", contractData.address);
+          await claims(currentAdvtId, poap, contractData.address);
+          setIsLoading(false);
+          toast.success("Claimed placed successfully !!");
+          setPoapClaimModal(false);
+        } else {
+          toast.error("Wait for image to be uploaded");
+        }
       }
-      setPoapClaimModal(false);
     } catch (err) {
       toast.error("Some error occured !!");
       console.log(err.message)
@@ -244,23 +296,25 @@ const StudentDashboard = () => {
       // console.log("update share called ");
       if (contractData.address) {
         setIsLoading(true);
-        let newShare = await getShare(user.uid);
+        let newShare = await getShare(user.id);
+        newShare = isNaN(newShare) ? 0: newShare;
         console.log("new share ", newShare)
-        let oldShare = await contractData.idaContract.shareUnits(contractData.address);
-        console.log("old share", oldShare);
+        let oldShare = await instituteContract.shareUnits(contractData.address);
+        console.log("old share", parseInt(oldShare._hex));
         oldShare = parseInt(oldShare._hex);
-        // console.log(newShare + ' ' + oldShare);
+        // newShare = 100;
+        console.log(newShare + ' ' + oldShare + ' ' + newShare);
         if (newShare > oldShare) {
-          let txn = await contractData.idaContract.gainShare(contractData.address, newShare - oldShare);
-          txn.wait();
+          let txn = await instituteContract.gainShare(contractData.address, newShare - oldShare);
+          let shareTxn = await txn.wait();
         } else {
-          let txn = await contractData.idaContract.loseShare(contractData.address, oldShare - newShare);
-          txn.wait();
+          let txn = await instituteContract.loseShare(contractData.address, oldShare - newShare);
+          let shareTxn = await txn.wait();
         }
-        await removeScore(user.uid);
+        await removeScore(user.id);
         setIsLoading(false);
         toast.success("Added your share too !!");
-        window.location.reload();
+        getStudentScore();
       } else {
         toast.error("Please connect to metamask first");
       }
@@ -270,10 +324,18 @@ const StudentDashboard = () => {
     }
   }
 
+  const handleModuleChange = (e) => {
+    setResp({
+      ...resp,
+      [e.target.name]: e.target.value
+    })
+    console.log(" this is updated resp ", resp);
+  }
+
   return (
     <div>
       <Toaster />
-      <Loader isLoading={loading}>
+      <Loader isLoading={loading} message={"Loading student dashboard"} >
         <div className="LAE">
           <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">
@@ -294,11 +356,11 @@ const StudentDashboard = () => {
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
-              <input type="text" placeholder="About Event" name="about" onChange={(e) => setPoap({
+              <textarea type="text" className="desc-textarea" placeholder="About Event" name="about" onChange={(e) => setPoap({
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
-              <input type="text" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
+              <textarea type="text" className="desc-textarea" placeholder="Your Contributions/Learning" name="contribution" onChange={(e) => setPoap({
                 ...poap,
                 [e.target.name]: e.target.value
               })} />
@@ -318,23 +380,30 @@ const StudentDashboard = () => {
                     Update Share
                   </span>
                   </p>
-                )}
+                 )}
                 <p> <RiseOutlined /> <span>
                   Score: {score}
                 </span>
                 </p>
                 <p> <MoneyCollectOutlined /> <span>
-                  Balance: {balance} fDAIx
+                  Balance: {balance.toFixed(2)} fDAIx
                 </span>
                 </p>
-                <Link to={`/student-dashboard/${user ? user.uid : "/"}`}>
-                  <p> <TrophyOutlined /> <span>
-                    Your POA Wall
-                  </span>
-                  </p>
+                  <button onClick={() => registerStudent()}>
+                  <FormOutlined /> <span>
+                  Register Me
+                    </span>
+                  </button> <br />
+                <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
+                  <button>
+                  <TrophyOutlined /> <span>
+                  Your POA Tokens
+                    </span>
+                  </button>
                 </Link>
               </div>
               <Card className='LAE-container-bg-card' title="All your assignments">
+                {assignments.length === 0 ? "No assignments for you now " : null}
                 {
                   assignments.map((data, id) => (
                     <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
@@ -377,13 +446,20 @@ const StudentDashboard = () => {
                     <Card style={{
                       width: 630,
                       marginTop: "3%"
-                    }}>
+                    }}
+                      cover={
+                        <img
+                          alt="example"
+                          src={data.url || "Dummy"}
+                        />
+                      }
+                    >
                       <Meta
                         avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                         title={data.name}
                         description={data.description}
                       />
-                      <p style={{ marginTop: "4%" }}>{data.dnt}</p>
+                      <p style={{ marginTop: "4%" }}> <i> {data.dnt} </i> </p>
                       <button onClick={() => {
                         setCurrentAdvtId(data.advtId);
                         setPoapClaimModal(true);
@@ -401,14 +477,23 @@ const StudentDashboard = () => {
 
             <div className='LAE-container-modules'>
               <Card title="Sponsored Modules">
-                {
+                {modules.length === 0 ? <p>
+                  No Sponsored modules ATM for you
+                </p>
+                  :
                   modules.map((data, id) => (
                     <Card type="inner" className="course-sub-card">
                       <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                      <input className="spn-modules" placeholder="Enter your answer here" />
+                      <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) => setResp({
+                        ...resp,
+                        [e.target.name]: e.target.value
+                      })} />
                       <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                      <input placeholder='Enter your answer here' /> <br />
-                      <Button className="spn-modules" onClick={() => handleModuleSubmit()}> Submit </Button>
+                      <input placeholder='Enter your answer here' name="q2" onChange={(e) => setResp({
+                        ...resp,
+                        [e.target.name]: e.target.value
+                      })} /> <br />
+                      <Button className="spn-modules" onClick={() => handleModuleSubmit(data.id)}> Submit </Button>
                     </Card>
                   ))
                 }

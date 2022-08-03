@@ -15,12 +15,16 @@ import Submission from "./Pages/Dashboard/InstituteDashboard/Submission";
 import ContractProvider from "./Provider/ContractProvider";
 import PoapRequest from './Pages/Dashboard/AdvertiserDashboard/PoapRequests/index'
 import POAWall from './Pages/Dashboard/StudentDashboard/POAWall/index'
+import SendSomeToken from './Pages/SendSomeToken/index'
+import ModuleResponse from "./Pages/Dashboard/AdvertiserDashboard/ModuleResponse";
+import { MoralisProvider } from "react-moralis"
 
 const App = () => {
   return (
     <div className="App">
       <UserProvider>
         <ContractProvider>
+          <MoralisProvider appId={process.env.REACT_APP_MORALIS_APP_ID} serverUrl={process.env.REACT_APP_MORALIS_DAPP_URL}>
           <Router>
             <Navbar />
             <Switch>
@@ -36,8 +40,11 @@ const App = () => {
               <Route exact path="/student-dashboard/course/:courseId" component={CoursePage} />
               <Route exact path="/advertiser-dashboard/:advtId" component={PoapRequest} />
               <Route exact path="/student-dashboard/:stdId" component={POAWall} />
+              <Route exact path="/send" component={SendSomeToken} />
+              <Route exact path="/advertiser-dashboard/module/responses" component={ModuleResponse} />
             </Switch>
           </Router>
+          </MoralisProvider>
         </ContractProvider>
       </UserProvider>
     </div>

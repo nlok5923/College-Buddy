@@ -24,6 +24,13 @@ contract DistributeToken {
 
     uint32 public constant INDEX_ID = 0;               // The IDA Index. Since this contract will only use one index, we'll hardcode it to "0".
     mapping(address => uint128) public shareUnits;
+    address public owner = 0xc1C6805B857Bef1f412519C4A842522431aFed39; 
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor(
         ISuperfluid _host,
         ISuperToken _spreaderToken
@@ -45,7 +52,7 @@ contract DistributeToken {
 
     }
 
-    function distribute() public {
+    function distribute() public onlyOwner {
 
         uint256 spreaderTokenBalance = spreaderToken.balanceOf(address(this));
 

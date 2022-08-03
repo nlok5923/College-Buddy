@@ -18,7 +18,7 @@ contract ProofOfAttendence is ERC721, ERC721URIStorage, Ownable {
         return "https://gateway.pinata.cloud/ipfs/";
     }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to, string memory uri) public {
         tokenCount++;
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();

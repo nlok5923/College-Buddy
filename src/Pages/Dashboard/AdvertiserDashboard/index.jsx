@@ -9,10 +9,12 @@ import institueManager from '../../../Ethereum/InstituteFundsManager.json'
 import { Link, useHistory } from "react-router-dom";
 import Loader from "../../../Components/Loader/index"
 import { Avatar, List, Space, Card } from "antd"
+import { useMoralis } from "react-moralis"
 
 const AdvertiserDashboard = () => {
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const [instData, setInstData] = useState([]);
-    const { user, isLoading } = useContext(UserContext);
+    // const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
     const history = useHistory();
     const [currentUserId, setCurrentUserId] = useState('');
@@ -35,8 +37,8 @@ const AdvertiserDashboard = () => {
                     address: instituteData[i][1],
                     streamInfo: streams,
                     instId: instituteData[i][2],
-                    displayName: instData.displayName,
-                    about: instData.about
+                    displayName: instData.displayName || "None",
+                    about: instData.about || "Abhi kal hi bana"
                 });
             }
             setInstData(instituteInfo);
@@ -55,66 +57,57 @@ const AdvertiserDashboard = () => {
         console.log(" this is not running ", user);
         if (user) {
             console.log("updating", user);
-            setCurrentUserId(user.uid);
+            setCurrentUserId(user.id);
         }
     }, [user])
-
-    // const send = async () => {
-    //     try {
-    //         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
-    //         let contractInstance = new ethers.Contract("0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00", contractAbi.abi, ethProvider.getSigner(0));
-    //         let amt = 10000;
-    //         await contractInstance.transfer("0xa7bc31db05BB5D085029F630dD6cC9161d422C7E", ethers.utils.parseEther(amt.toString()), {
-    //             gasLimit: 9000000
-    //         });
-    //     } catch(err) {
-    //         console.log(err.message);
-    //     }
-    // }
 
     const setLoading = (loadingState) => {
         setIsLoading(loadingState);
     }
 
+    const backgroundStyling = {
+        backgroundImage: `url("asset/general/images/lfg-1.png")`,
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        backgroundSize: "100% 100%",
+    };
+
     return (
-        <div
-        // style={{
-        //     backgroundImage: `url(asset/general/images/bg.png)`,
-        //     backgroundRepeat: "no-repeat",
-        //     backgroundSize: "100% 100%",
-        //     height: "95vh"
-        // }}
-        >
-            <Loader isLoading={loading}>
-                <Link to={`/advertiser-dashboard/${currentUserId}`}>
-                    <p className="poap-request">All POAP requests</p>
-                </Link>
-                <h3 className="no-inst">
-                    {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
-                </h3>
-                {/* <div className="page-container">
-                    {instData.map((data, id) => <PostCard loadingState={setLoading} key={id} postData={data} />)}
-                </div> */}
-                <div className="inst-list">
-                    <Card>
-                        <List
-                            itemLayout="vertical"
-                            size="large"
-                            dataSource={instData}
-                            pagination={{
-                                onChange: (page) => {
-                                    console.log(page);
-                                },
-                                pageSize: 3,
-                            }}
-                            renderItem={(item, id) => (
-                                <PostCard loadingState={setLoading} key={id} postData={item} />
-                            )}
-                        />
-                    </Card>
+        <div>
+            <Loader isLoading={loading} message={"Loading advertiser dashboard"}>
+                <div className="advt-dashboard">
+                    <div className="advt-dashboard-bg" style={backgroundStyling}>
+                        <h1> See all the institutes</h1>
+                        <p>Choose among which institute you need to promote your advertisement </p>
+                    </div>
+                    <div className="advt-dashboard-content">
+                        <Link to={`/advertiser-dashboard/${currentUserId}`}>
+                            <p className="poap-request">All POAP requests</p>
+                        </Link>
+                        <h3 className="no-inst">
+                            {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
+                        </h3>
+                        <div className="inst-list">
+                            <Card>
+                                <List
+                                    itemLayout="vertical"
+                                    size="large"
+                                    dataSource={instData}
+                                    pagination={{
+                                        onChange: (page) => {
+                                            console.log(page);
+                                        },
+                                        pageSize: 3,
+                                    }}
+                                    renderItem={(item, id) => (
+                                        <PostCard loadingState={setLoading} key={id} postData={item} />
+                                    )}
+                                />
+                            </Card>
+                        </div>
+                    </div>
                 </div>
             </Loader>
-            {/* <button onClick={() => send()} > Send </button> */}
         </div>
     )
 }

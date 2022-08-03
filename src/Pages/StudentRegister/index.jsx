@@ -2,14 +2,15 @@
 import React, { useState, useContext, useEffect } from "react";
 import "./StudentRegister.scss";
 import { useHistory } from "react-router-dom";
-import { SignInWithGoogle } from "../../Services/Auth"
+import { SignInWithGoogle, SignInWithMoralis } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
 import { Redirect } from "react-router-dom";
 import { Modal } from "antd"
 import { studentEnroll, getStudent } from "../../Services/StudentUtilities";
+import { useMoralis } from "react-moralis"
 
 const Register = () => {
-
+  const { authenticate, isAuthenticated, user } = useMoralis();
   const history = useHistory();
   const backgroundStyling = {
     backgroundImage: `url("asset/Login/Images/register-bg.png")`,
@@ -26,7 +27,7 @@ const Register = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleOk = async () => {
-    await studentEnroll(user.uid, studentData.instId, studentData.streamId);
+    await studentEnroll(user.id, studentData.instId, studentData.streamId);
     setIsModalVisible(false);
     history.push('/student-dashboard');
   }
@@ -42,19 +43,25 @@ const Register = () => {
     })
   }
 
-  const info = useContext(UserContext);
-  const { user, isLoading } = info;
+  // const info = useContext(UserContext);
+  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
 
   useEffect(() => {
-    if(user && !isLoading) {
+    if (user) {
+      console.log("authenticate ", user);
+      SignInWithMoralis(user.id, "STD")
       history.push('/student-dashboard');
     }
-  }, [user, isLoading]);
+    console.log(" this is user data ", user);
+  }, [user]);
 
-  const googleSignIn = async () => {
+  const moralisSignIn = () => {
     try {
-      await SignInWithGoogle("STD");
+      if (!isAuthenticated) {
+        authenticate();
+        console.log(user);
+      }
     } catch (err) {
       console.log("Mishap ", err.message);
     }
@@ -83,9 +90,13 @@ const Register = () => {
               </h1>
               <div className="register-with-google">
                 <img
-                  src="/asset/Login/svg/google.svg"
-                  alt="google"
-                  onClick={() => googleSignIn("INSTITUTE")}
+                  src="/asset/general/images/moralis.png"
+                  alt="moralis"
+                  style={{
+                    width: "180px",
+                    height: "30px"
+                  }}
+                  onClick={() => moralisSignIn("INSTITUTE")}
                 />
               </div>
               <img

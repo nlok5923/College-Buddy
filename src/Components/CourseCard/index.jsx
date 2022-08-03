@@ -21,7 +21,7 @@ const CourseCard = (props) => {
             >
                 <Meta
                     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                    title={"Assignment: " + "#" + props.cardId}
+                    title={"Assignment: " + props.postData.name}
                     description={props.postData.id}
                 />
             </Card>

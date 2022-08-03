@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import './InstituteDashboard.scss'
-import { Avatar, List, Modal } from 'antd';
+import { Avatar, List, Modal, Popover } from 'antd';
 import { AddStreams, fetchStreams, updateInstitute, getInstitute } from "../../../Services/InstituteUtilities";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Link } from "react-router-dom";
@@ -9,8 +9,10 @@ import toast, { Toaster } from 'react-hot-toast'
 import { ethers } from "ethers";
 import instituteManager from '../../../Ethereum/InstituteFundsManager.json'
 import Loader from '../../../Components/Loader/index'
+import { useMoralis } from "react-moralis"
 
 const InstituteDashboard = () => {
+    const { authenticate, isAuthenticated, user } = useMoralis();
     const contractData = useContext(ContractContext);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [name, setName] = useState('');
@@ -28,12 +30,12 @@ const InstituteDashboard = () => {
         description: ''
     })
 
-    const info = useContext(UserContext);
-    const { user, isLoading } = info;
+    // const info = useContext(UserContext);
+    // const { user, isLoading } = info;
 
     const getAllStreams = async () => {
         try {
-            let resp = await fetchStreams(user.uid);
+            let resp = await fetchStreams(user.id);
             console.log(resp);
             setStreams(resp);
         } catch (err) {
@@ -42,7 +44,7 @@ const InstituteDashboard = () => {
     }
 
     const getInstInfo = async () => {
-        let data = await getInstitute(user.uid);
+        let data = await getInstitute(user.id);
         console.log(" this is inst data ", data);
         if(!data) {
             setInstInfoModal(true);
@@ -50,10 +52,10 @@ const InstituteDashboard = () => {
     }
     useEffect(() => {
         getAllStreams();
-        if(user && !isLoading) {
+        if(user) {
             getInstInfo();
         }
-    }, [user, isLoading])
+    }, [user])
 
     const getInstituteContract = (_address) => {
         let ethProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -63,10 +65,12 @@ const InstituteDashboard = () => {
 
     const getInstituteAddress = async () => {
         try {
-            let data = await contractData.contract.getALlInstitutesManager();
-            console.log("resp from bc", data);
-            setInstAddress(data[0][1]);
-            getInstituteContract(data[0][1]);
+            if(contractData.contract) {
+                let data = await contractData.contract.getALlInstitutesManager();
+                console.log("resp from bc", data);
+                setInstAddress(data[0][1]);
+                getInstituteContract(data[0][1]);
+            }
         } catch (err) {
             console.log(err.message);
         }
@@ -89,13 +93,14 @@ const InstituteDashboard = () => {
             if (!instituteContract) {
                 toast.error("Please connect metamask first and make sure you init institute first !!");
             } else {
-                await AddStreams(user.uid, streamData.name, streamData.description);
+                await AddStreams(user.id, streamData.name, streamData.description);
                 setIsLoading(true);
                 let txn = await instituteContract.addStreams(streamData.description);
-                txn.wait();
+                let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Stream added successfully !!");
-                window.location.reload();
+                getAllStreams();
+                // window.location.reload();
             }
             setIsModalVisible(false);
         } catch (err) {
@@ -124,11 +129,19 @@ const InstituteDashboard = () => {
         try {
             if (contractData.contract) {
                 setIsLoading(true);
-                let txn = await contractData.contract.addInstitute(name, user.uid);
-                txn.wait();
+                // contractData.address is the institute's address which will be the owner
+                let txn = await contractData.contract.addInstitute(
+                    name, 
+                    user.id, 
+                    contractData.address,
+                    "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9",
+                    "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00" 
+                    );
+                let receipt = await txn.wait();
                 setIsLoading(false);
                 toast.success("Institute added successfully !!");
-                window.location.reload();
+                getInstituteAddress();
+                // window.location.reload();
             } else {
                 toast.error("Please connect metamask !!");
             }
@@ -140,7 +153,7 @@ const InstituteDashboard = () => {
 
     const handleInstOk = async () => {
         try {
-            await updateInstitute(user.uid, inst.name, inst.description);
+            await updateInstitute(user.id, inst.name, inst.description);
             setInstInfoModal(false);
             toast.success("Institute info updated successfully !!");
         } catch (err) {
@@ -163,7 +176,7 @@ const InstituteDashboard = () => {
     return (
         <div>
             <Toaster />
-            <Loader isLoading={loading}>
+            <Loader isLoading={loading} message={"Loading institute dashboard"}>
             <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
                 <div className="stream-container">
                     <input type="text" placeholder="Stream name" name="name" onChange={(e) => handleStreamInfo(e)} />
@@ -186,11 +199,13 @@ const InstituteDashboard = () => {
                         <div className="dashboard-inst-container-inputarea-boxarea">
                             <h1>
                                 <b>
-                                    <strong>Add Streams</strong>
+                                    <strong>Init & Add Streams</strong>
                                 </b>
 
                                 <p>
+                                    <Popover content={address}>
                                     Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
+                                    </Popover>
                                 </p>
                             </h1>
                             <div className="dashboard-inst-input">
@@ -201,17 +216,22 @@ const InstituteDashboard = () => {
                                     </button>
                                 </div>
                                 }
+                                <h4>Institute Id: {user ? user.id: null}</h4>
                                 <List
+                                    style = {{ 
+                                        marginTop: "20px"
+                                     }}
                                     size="large"
                                     itemLayout="horizontal"
                                     dataSource={streams}
                                     renderItem={(item) => (
-                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
+                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<span>Stream Id: {item.id}</span>, <Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
                                             <List.Item.Meta
                                                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                                title={<a href="https://ant.design">{item.name}</a>}
+                                                title={<a>{item.name}</a>}
                                                 description={item.description}
                                             />
+                                            {/* <h5> {item.id} </h5> */}
                                         </List.Item>
                                     )}
                                 />
