@@ -20,7 +20,7 @@ const Promotion = () => {
                         <h2>
                             Learn <br />
                             And <br />
-                            Earn Token 🤑
+                            Earn Token 
                         </h2>
                         <p>
                             Complete your daily assignments with great efficiency
@@ -38,7 +38,9 @@ const Promotion = () => {
                     </div>
                 </div>
                 <div>
-                    <img src="/assets/images/home/girl.png" alt="" />
+                    <img style={{
+                        marginLeft: "25.4%"
+                    }} src="/asset/general/images/template.png" alt="template" />
                 </div>
             </div>
         </div>

@@ -16,6 +16,9 @@ import { Link } from 'react-router-dom';
 import { isLastDayOfMonth } from '../../../Services/Utils'
 import Loader from '../../../Components/Loader';
 import { useMoralis } from "react-moralis"
+import ScoreGuage from "../../../Components/Gauge/index"
+import AssignmentCard from '../../../Components/AssignmentCard';
+import ModuleCard from '../../../Components/Module';
 
 const StudentDashboard = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
@@ -202,6 +205,7 @@ const StudentDashboard = () => {
 
   const handleAns = async (courseId) => {
     try {
+      console.log(" this is ans and courseid ", ans.ans2 , "  ", courseId);
       setIsLoading(true);
       await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.id);
       toast.success("Ans submitted successfully !!");
@@ -216,6 +220,7 @@ const StudentDashboard = () => {
   const handleModuleSubmit = async (moduleId) => {
     try {
       console.log(" this is institute contract ", instituteContract);
+      console.log("module id ", moduleId + " " + " this is respon " + resp);
       if (instituteContract) {
         console.log(" this is resp ", resp);
         // let moduelCount = await instituteContract.getModuleCount();
@@ -324,7 +329,7 @@ const StudentDashboard = () => {
     }
   }
 
-  const handleModuleChange = (e) => {
+  const handleModuleResp = (e) => {
     setResp({
       ...resp,
       [e.target.name]: e.target.value
@@ -375,20 +380,13 @@ const StudentDashboard = () => {
           <div className="LAE-container">
             <div className="LAE-container-bg">
               <div className="LAE-container-inputarea-performance">
+                <ScoreGuage score={0.2} />
                 {islastDay && (
                   <p onClick={() => updateShare()}>   <EditOutlined /> <span>
                     Update Share
                   </span>
                   </p>
                  )}
-                <p> <RiseOutlined /> <span>
-                  Score: {score}
-                </span>
-                </p>
-                <p> <MoneyCollectOutlined /> <span>
-                  Balance: {balance.toFixed(2)} fDAIx
-                </span>
-                </p>
                   <button onClick={() => registerStudent()}>
                   <FormOutlined /> <span>
                   Register Me
@@ -402,23 +400,17 @@ const StudentDashboard = () => {
                   </button>
                 </Link>
               </div>
-              <Card className='LAE-container-bg-card' title="All your assignments">
+              <Card className='LAE-container-bg-card' style={{ fontFamily: "montserrat" }} title="All your assignments">
                 {assignments.length === 0 ? "No assignments for you now " : null}
                 {
                   assignments.map((data, id) => (
-                    <Card type="inner" className="course-sub-card" title={`Assignment: ${data.name}`} >
-                      <Button onClick={() => {
-                        window.location.href = data.code
-                      }}> Download Assignment </Button>
-                      <textarea className='assignment-ans-txtarea' placeholder='Enter ans for the assignment' name="ans2" onChange={(e) => handleChange(e)} /> <br /> <br />
-                      <Button onClick={() => handleAns(data.id)}> Submit </Button>
-                    </Card>
+                    <AssignmentCard key={id} data={data} handleAnsSubmit = {(assignId) => handleAns(assignId)} handleAnsChange = {(e) => handleChange(e)} />
                   ))
                 }
               </Card>
             </div>
             <div className="LAE-container-inputarea">
-              <Card title='All Advertisements'>
+              <Card style={{ fontFamily: "montserrat", fontWeight: "bolder" }} title='Your Feed'>
                 {adv.map((data, id) => {
                   return (
                     <Card
@@ -459,7 +451,7 @@ const StudentDashboard = () => {
                         title={data.name}
                         description={data.description}
                       />
-                      <p style={{ marginTop: "4%" }}> <i> {data.dnt} </i> </p>
+                      <p style={{ marginTop: "4%" }}> <i> { data.dnt.slice(11, 16) + " | " + data.dnt.slice(0, 10)} </i> </p>
                       <button onClick={() => {
                         setCurrentAdvtId(data.advtId);
                         setPoapClaimModal(true);
@@ -476,25 +468,25 @@ const StudentDashboard = () => {
             </div>
 
             <div className='LAE-container-modules'>
-              <Card title="Sponsored Modules">
+            <p className="LAE-container-modules-balance">
+               <MoneyCollectOutlined /> <span>
+                  incentives Received: {balance.toFixed(2)} fDAIx
+                </span>
+                </p>
+              <Card style={{ fontFamily: "montserrat" }} title="Sponsored Modules">
                 {modules.length === 0 ? <p>
                   No Sponsored modules ATM for you
                 </p>
                   :
                   modules.map((data, id) => (
-                    <Card type="inner" className="course-sub-card">
-                      <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                      <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) => setResp({
-                        ...resp,
-                        [e.target.name]: e.target.value
-                      })} />
-                      <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                      <input placeholder='Enter your answer here' name="q2" onChange={(e) => setResp({
-                        ...resp,
-                        [e.target.name]: e.target.value
-                      })} /> <br />
-                      <Button className="spn-modules" onClick={() => handleModuleSubmit(data.id)}> Submit </Button>
-                    </Card>
+                    // <Card type="inner" className="course-sub-card">
+                    //   <h4 className="spn-modules"> Q1) {data.q1}</h4>
+                    //   <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) =>handleModuleResp(e)} />
+                    //   <h4 className="spn-modules"> Q2) {data.q2} </h4>
+                    //   <input placeholder='Enter your answer here' name="q2" onChange={(e) => handleModuleResp(e)} /> <br />
+                    //   <Button className="spn-modules" onClick={() => handleModuleSubmit(data.id)}> Submit </Button>
+                    // </Card>
+                    <ModuleCard handleModuleAns={(e) => handleModuleResp(e)} data={data} handleSubmit = {(moduleId) => handleModuleSubmit(moduleId)} />
                   ))
                 }
               </Card>
