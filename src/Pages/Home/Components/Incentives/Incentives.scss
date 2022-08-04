@@ -1,0 +1,43 @@
+.benefits {
+    height: 105vh;
+    background-size: 100% 100%;
+
+    &-heading h1 {
+        font-size: 60px;
+        line-height: 55px;
+        color: #4D6DE3;
+        font-weight: 700;
+    }
+
+    h1 {
+        padding-top: 10%;
+        text-align: center;
+    }
+
+    &-container {
+        display: flex;
+        flex-direction: row;
+        width: 90%;
+        margin: 0 auto 0 7%;
+        justify-content: space-around;
+        align-items: center;
+
+        &-students, &-institutes {
+            width: 33vw;
+
+            h2 {
+                padding-top: 10px;
+                font-size: 45px;
+                line-height: 30px;
+                color: #4D6DE3;
+                font-weight: 700;
+            }
+
+            p {
+                font-family: "montserrat";
+                font-size: 20px;
+                font-weight: 500;
+            }
+        }
+    }
+}

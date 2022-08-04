@@ -6,6 +6,7 @@ import "./Home.scss";
 import Footer from '../../Components/Footer/index'
 import Services from "./Components/Services/index";
 import Incentives from "./Components/Incentives/index";
+import AdvertiserFacilities from "./Components/Facilities";
 
 const Home = () => {
   const info = useContext(UserContext);
@@ -33,7 +34,8 @@ const Home = () => {
     <div>
       <Promotion />
       <Services />
-      {/* <Incentives /> */}
+      <Incentives />
+      <AdvertiserFacilities />
       <Footer />
     </div>
   );
