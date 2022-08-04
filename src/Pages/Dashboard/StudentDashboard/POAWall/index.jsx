@@ -4,6 +4,7 @@ import { ContractContext } from "../../../../Provider/ContractProvider"
 import Axios from 'axios'
 import POACard from "../../../../Components/POACard"
 import Loader from "../../../../Components/Loader"
+import POANFTCard from "../../../../Components/NFTCard"
 
 const POAWall = () => {
     const contractData = useContext(ContractContext);
@@ -67,7 +68,8 @@ const POAWall = () => {
                         <h2> All your POA tokens are here </h2>
                         <div className="poa-wall-container">
                             {poaData.length == 0 ? "No POAP issued till now" : null}
-                            {poaData.map((data, id) => <POACard key={id} nftData={data} />)}
+                            {/* <POANFTCard /> */}
+                            {poaData.map((data, id) => <POANFTCard key={id} nftData={data} />)}
                         </div>
                     </div>
                 </div>

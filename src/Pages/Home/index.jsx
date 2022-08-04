@@ -7,11 +7,13 @@ import Footer from '../../Components/Footer/index'
 import Services from "./Components/Services/index";
 import Incentives from "./Components/Incentives/index";
 import AdvertiserFacilities from "./Components/Facilities";
+// import { ContractContext } from "../../Provider/ContractProvider";
 
 const Home = () => {
   const info = useContext(UserContext);
   const { user, isLoading } = info;
   const [redirect, setRedirect] = useState(null);
+  // const contractData = useContext(ContractContext);
 
   useEffect(() => {
     console.log(user);
