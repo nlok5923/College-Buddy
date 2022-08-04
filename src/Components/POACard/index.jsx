@@ -9,6 +9,7 @@ const POACard = (props) => {
         <Card
             style={{
                 width: 300,
+                fontFamily: "montserrat"
             }}
             cover={
                 <img

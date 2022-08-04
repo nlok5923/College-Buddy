@@ -380,7 +380,7 @@ const StudentDashboard = () => {
           <div className="LAE-container">
             <div className="LAE-container-bg">
               <div className="LAE-container-inputarea-performance">
-                <ScoreGuage score={0.2} />
+                <ScoreGuage score={parseFloat(parseInt(score) / 100)} />
                 {islastDay && (
                   <p onClick={() => updateShare()}>   <EditOutlined /> <span>
                     Update Share
