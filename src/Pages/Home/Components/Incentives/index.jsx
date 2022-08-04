@@ -42,6 +42,10 @@ const Incentives = () => {
                     </ul>
                     </div>
 
+                    <div>
+                        <img src="/asset/general/images/LAE.png" className="rotate-logo" alt="logo" />
+                    </div>
+
                     <div className="benefits-container-students">
                         <img style={{
                             height:"90px",

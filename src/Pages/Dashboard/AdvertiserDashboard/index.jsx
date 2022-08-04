@@ -84,9 +84,8 @@ const AdvertiserDashboard = () => {
                         <Link to={`/advertiser-dashboard/${currentUserId}`}>
                             <p className="poap-request">All POAP requests</p>
                         </Link>
-                        <h3 className="no-inst">
-                            {instData.length === 0 ? "No institutes registered or check are you connected or not " : ''}
-                        </h3>
+                        {/* .no-institutes */}
+                        {instData.length === 0 ? <h3 className="no-institutes"> No institutes registered or check are you connected or not  </h3> : null}
                         <div className="inst-list">
                             <Card>
                                 <List

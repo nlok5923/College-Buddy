@@ -11,10 +11,6 @@
     }
 }
 
-.no-inst {
-    text-align: center;
-}
-
 .poap-request {
     background-color: rgba(49, 156, 255, 1);
     color: white !important;
@@ -66,4 +62,11 @@
     &-content {
         width: 60%;
     }
+}
+
+.no-institutes {
+    text-align: center;
+    margin-top: 30%;
+    color: #cacccf;
+    font-size: 40px;
 }

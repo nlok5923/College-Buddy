@@ -111,7 +111,7 @@ const AddCoursesComponent = () => {
                             marginTop: "1%",
                             marginLeft: "2%",
                         }}>
-                            {courses.length === 0 ? "No Assignments added till now" : null}
+                            {courses.length === 0 ?  <h3 className="no-assignments"> No Assignments added till now </h3> :  null }
                             {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
                                 <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
                             </Link>

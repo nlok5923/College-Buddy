@@ -192,8 +192,8 @@ const InstituteDashboard = () => {
             <div className="dashboard-inst">
                 <div className="dashboard-inst-container">
                     <div className="dashboard-inst-container-bg" style={backgroundStyling}>
-                        <h1>Hey Institute</h1>
-                        <p>Add some streams</p>
+                        <h1>Hey Thanks for coming</h1>
+                        <p>Here you can manage your institute streams</p>
                     </div>
                     <div className="dashboard-inst-container-inputarea">
                         <div className="dashboard-inst-container-inputarea-boxarea">
@@ -216,7 +216,7 @@ const InstituteDashboard = () => {
                                     </button>
                                 </div>
                                 }
-                                <h4>Institute Id: {user ? user.id: null}</h4>
+                                <h4 className="inst-id">Institute Id: {user ? user.id: null}</h4>
                                 <List
                                     style = {{ 
                                         marginTop: "20px"

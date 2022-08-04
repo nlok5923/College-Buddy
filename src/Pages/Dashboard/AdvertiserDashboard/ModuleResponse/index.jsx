@@ -66,15 +66,17 @@ const ModuleResponse = () => {
                             dataSource={responses}
                             renderItem={(item) => (
                                 <Card
-                                   style={{ marginTop: "30px" }}
+                                   style={{ marginTop: "30px", fontFamily: "montserrat" }}
                                    title={"Module name: " + item.name}
                                 >
                                     {item.responses.map((data, id) => (
                                         <Card>
-                                            <h3> Response for question 1 </h3>
-                                             {data.ans1} 
-                                            <h3> Response for question 2 </h3>
-                                            <p> {data.ans2} </p>
+                                            <h3 className="resp"> Response for question 1 </h3>
+                                            <p className="res">
+                                            {data.ans1} 
+                                                </p>
+                                            <h3 className="resp"> Response for question 2 </h3>
+                                            <p className="res"> {data.ans2} </p>
                                         </Card>
                                     ))}
                                     </Card>

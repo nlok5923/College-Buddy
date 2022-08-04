@@ -62,9 +62,7 @@ const Submission = () => {
                     <p> Mark and manage all submission here </p>
                 </div>
                 <div className="submission-dashboard-content">
-            <h3 className="no-submission">
-                {submission.length === 0 ? "No Submissions yet " : " "}
-            </h3>
+            {submission.length === 0 ? <h3 className="no-submission"> No Submission yet </h3> :  null}
             <div className="submission-container">
                 {submission.map((data, id) => {
                     return (

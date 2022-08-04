@@ -8,9 +8,11 @@ import { Redirect } from "react-router-dom";
 import { Modal } from "antd"
 import { studentEnroll, getStudent } from "../../Services/StudentUtilities";
 import { useMoralis } from "react-moralis"
+import { ContractContext } from "../../Provider/ContractProvider";
 
 const Register = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
+  const contractData = useContext(ContractContext);
   const history = useHistory();
   const backgroundStyling = {
     backgroundImage: `url("asset/Login/Images/register-bg.png")`,
@@ -43,8 +45,6 @@ const Register = () => {
     })
   }
 
-  // const info = useContext(UserContext);
-  // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
 
   useEffect(() => {
