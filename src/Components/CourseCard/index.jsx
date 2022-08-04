@@ -8,6 +8,7 @@ const CourseCard = (props) => {
     return (
         <div>
             <Card
+               className="course-card"
                 style={{
                     width: 300,
                     padding: "10px"
@@ -23,7 +24,9 @@ const CourseCard = (props) => {
                     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                     title={"Assignment: " + props.postData.name}
                     description={props.postData.id}
+                    style={{ fontWeight: "bold" }}
                 />
+                <button className="resp-btn"> &#8594; </button>
             </Card>
         </div>
     )
