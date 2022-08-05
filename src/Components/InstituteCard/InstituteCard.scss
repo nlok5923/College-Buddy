@@ -1,0 +1,24 @@
+.add-module {
+    border-radius: 10px;
+    font-family: "montserrat";
+    color: #ffffff;
+    background: rgba(49, 156, 255, 1);
+    padding: 5px 16px;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0px 1px 4px 0px rgba(98, 98, 98, 0.25);
+    margin-top: 3%;
+    letter-spacing: 2px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.module-btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.delete-module-btn {
+   background:#f72307 !important;
+}

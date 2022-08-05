@@ -60,9 +60,9 @@ const StudentDashboard = () => {
   const [balance, setBalance] = useState(0);
   const [currentAdvtId, setCurrentAdvtId] = useState('');
   const [score, setScore] = useState(0);
-
   const [assignments, setAssignments] = useState([]);
   const [instAddress, setInstAddress] = useState('');
+  const [moduleResp, setModuleResp] = useState([]);
 
   const { Meta } = Card;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -87,7 +87,7 @@ const StudentDashboard = () => {
 
   const getAllModules = async (id, stdId) => {
     let data = await getModules(id, stdId);
-    console.log(" this is module data retreived ", data);
+    console.log(" this is module data retreived --------------------------------------------------", data);
     setModules(data);
   }
 
@@ -180,6 +180,7 @@ const StudentDashboard = () => {
         toast.error("You are already registered !!");
       } else {
         if (contractData.contract) {
+          setIsLoading(true);
           let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
           let rewardTxn = await txn.wait();
           let approveTxn = await instituteContract.approveSubscriptionForSubscriber(instAddress, { gasLimit: 9000000 });
@@ -189,6 +190,7 @@ const StudentDashboard = () => {
           console.log(" this is used.id ", user.id);
           await register(user.id);
           toast.success("Student registration done");
+          setIsLoading(false);
         } else {
           toast.error("Please connect metamask first");
         }
@@ -217,20 +219,22 @@ const StudentDashboard = () => {
     }
   }
 
-  const handleModuleSubmit = async (moduleId) => {
+  const handleModuleSubmit = async (moduleId, moduleResp) => {
+    console.log(" this is module id ", moduleId);
+    console.log(" this is module resp ", moduleResp);
     try {
       console.log(" this is institute contract ", instituteContract);
-      console.log("module id ", moduleId + " " + " this is respon " + resp);
+      // console.log("module id ", moduleId + " " + " this is respon " + resp);
       if (instituteContract) {
-        console.log(" this is resp ", resp);
+        // console.log(" this is resp ", resp);
         // let moduelCount = await instituteContract.getModuleCount();
         // console.log(" this is module count ", parseInt(moduelCount._hex))
-        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), resp, user.id)
+        await saveModuleResp(studentData.instId.trim(), moduleId.trim(), moduleResp, user.id)
         setIsLoading(true);
         let txn = await instituteContract.getReward({ gasLimit: 9000000 });
         let rewardTxn = await txn.wait();
+        await getAllModules(studentData.instId.trim(), user.id);
         setIsLoading(false);
-        getAllModules(studentData.instId.trim(), user.id);
       } else {
         toast.error("Please connect metamask ");
       }
@@ -329,13 +333,9 @@ const StudentDashboard = () => {
     }
   }
 
-  const handleModuleResp = (e) => {
-    setResp({
-      ...resp,
-      [e.target.name]: e.target.value
-    })
-    console.log(" this is updated resp ", resp);
-  }
+  // const handleMultiModuleResp = () => {
+
+  // }
 
   return (
     <div>
@@ -482,7 +482,8 @@ const StudentDashboard = () => {
                 </h3>
                   :
                   modules.map((data, id) => (
-                    <ModuleCard handleModuleAns={(e) => handleModuleResp(e)} data={data} handleSubmit={(moduleId) => handleModuleSubmit(moduleId)} />
+                    <ModuleCard 
+                     data={data} handleSubmit={(moduleId, moduleResp) => handleModuleSubmit(moduleId, moduleResp)} />
                   ))
                 }
               </Card>

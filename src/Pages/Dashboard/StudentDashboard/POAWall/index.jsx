@@ -60,15 +60,15 @@ const POAWall = () => {
         <Loader isLoading={loading} message={"Loading all your POA tokens"}>
             <div className="poa-dashboard">
                 <div className="poa-dashboard-bg" style={backgroundStyling}>
-                    <h1> ALl your POA </h1>
+                    <h1> All your POA </h1>
                     <p> Use this POA as a proof of attendence </p>
                 </div>
                 <div className="poa-dashboard-content">
                     <div className="poa-wall">
-                        <h2> All your POA tokens are here </h2>
+                        {poaData.length === 0 ? <h3 className="no-poa">
+                            No POA issued to you
+                        </h3> : <h2> All your POA tokens are here </h2>}
                         <div className="poa-wall-container">
-                            {poaData.length == 0 ? "No POAP issued till now" : null}
-                            {/* <POANFTCard /> */}
                             {poaData.map((data, id) => <POANFTCard key={id} nftData={data} />)}
                         </div>
                     </div>

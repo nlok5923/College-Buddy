@@ -1,20 +1,33 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import './Module.scss'
 import { UploadOutlined } from "@ant-design/icons"
 
 const ModuleCard = (props) => {
-    return (
-        <div className="module-card">
-            <h1> Module: Name </h1>
-            <div className="module-card-inputarea">
-                <h4> 1) {props.data.q1} </h4>
-                <input type="text" placeholder="Enter your answer here" name="q1" onChange={(e) => props.handleModuleAns(e)} />
-                <h4> 2) {props.data.q2} </h4>
-                <input type="text" placeholder='Enter your answer here' name="q2" onChange={(e) => props.handleModuleAns(e)} />
-            </div>
-            <button onClick={() => props.handleSubmit(props.data.id)} className="module-card-submit"> <UploadOutlined /> Submit </button>
-        </div>
-    )
+
+  const [moduleResp, setModuleResp] = useState([]);
+
+  const handleModuleResp = (moduleId, e) => {
+    let oldResponseData = [...moduleResp];
+    oldResponseData[moduleId - 1] = e.target.value
+    setModuleResp(oldResponseData);
+    console.log(" updating response ", oldResponseData);
+  }
+
+  return (
+    <div className="module-card">
+      <h1> Module: {props.data.name} </h1>
+      <div className="module-card-inputarea">
+        {props.data.questions.map((question, id) => (
+          <>
+            <h4> {++id + ") " + question}  </h4>
+            <input type="text" placeholder="Enter your answer here" onChange={(e) => handleModuleResp(id, e)} />
+          </>
+        ))
+        }
+      </div>
+      <button  className="module-card-submit" onClick={() => props.handleSubmit(props.data.id, moduleResp)}> <UploadOutlined /> Submit </button>
+    </div>
+  )
 }
 
 export default ModuleCard;

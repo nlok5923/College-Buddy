@@ -202,22 +202,19 @@ export const getModules = async (instId, studentId) => {
         let data = [];
         let ref = await db.collection('users').doc(instId).collection('module').get();
         ref.forEach(async (doc) => {
-            console.log("Calling it");
             let moduleId = doc.id;
+            console.log(" this is module ",doc.data());
             let moduleRef = await db.collection('users').doc(instId).collection('module').doc(moduleId).collection('response').get();
             let isPresent = false;
 
             moduleRef.forEach((data, id) => {
-                // console.log()
                 if(data.data().stdId === studentId) { isPresent = true; }
             })
 
             if(!isPresent) {
-                console.log("why pushing ");
                 data.push({
                     id: doc.id,
-                    q1: doc.data().q1,
-                    q2: doc.data().q2,
+                    questions: doc.data().questions
                 })
             }
         })
