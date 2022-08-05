@@ -10,8 +10,6 @@ import toast, { Toaster } from "react-hot-toast"
 
 const ModuleResponse = () => {
     const { authenticate, isAuthenticated, user } = useMoralis();
-    // const contractData = useContext(ContractContext);
-    // const { user, isLoading } = useContext(UserContext);
     const [responses, setResponses] = useState([]);
     const [loadingState, setLoadingState] = useState(false);
 
@@ -45,47 +43,51 @@ const ModuleResponse = () => {
 
     return (
         <>
-        <Loader isLoading = {loadingState} message={"Loading Responses..."} >
-        <Toaster />
-            <div className="module-dashboard">
-                <div className="module-dashboard-bg" style={backgroundStyling}>
-                    <h1> Module responses </h1>
-                    <p> Manager and walk take walk over responses </p>
-                </div>
-                <div className="module-dashboard-content">
-                    <div className="responses-page">
-                        <List
-                            itemLayout="vertical"
-                            size="large"
-                            pagination={{
-                                onChange: (page) => {
-                                    console.log(page);
-                                },
-                                pageSize: 2,
-                            }}
-                            dataSource={responses}
-                            renderItem={(item) => (
-                                <Card
-                                   style={{ marginTop: "30px", fontFamily: "montserrat" }}
-                                   title={"Module name: " + item.name}
-                                >
-                                    {item.responses.map((data, id) => (
-                                        <Card>
-                                            <h3 className="resp"> Response for question 1 </h3>
-                                            <p className="res">
-                                            {data.ans1} 
-                                                </p>
-                                            <h3 className="resp"> Response for question 2 </h3>
-                                            <p className="res"> {data.ans2} </p>
-                                        </Card>
-                                    ))}
+            <Loader isLoading={loadingState} message={"Loading Responses..."} >
+                <Toaster />
+                <div className="module-dashboard">
+                    <div className="module-dashboard-bg" style={backgroundStyling}>
+                        <h1> Module responses </h1>
+                        <p> Manager and walk take walk over responses </p>
+                    </div>
+                    <div className="module-dashboard-content">
+                        <div className="responses-page">
+                            <List
+                                itemLayout="vertical"
+                                size="large"
+                                pagination={{
+                                    onChange: (page) => {
+                                        console.log(page);
+                                    },
+                                    pageSize: 1,
+                                }}
+                                dataSource={responses}
+                                renderItem={(item) => (
+                                    <Card
+                                        style={{ marginTop: "30px", fontFamily: "montserrat" }}
+                                        title={"Module name: " + item.name}
+                                    >
+                                        {item.responses.map((data, id) => (
+                                            <Card>
+                                                {data.answers.map((res, id) => {
+                                                    return (
+                                                        <>
+                                                            <h3 className="resp"> Response for question {++id} </h3>
+                                                            <p className="res">
+                                                                {res}
+                                                            </p>
+                                                        </>
+                                                    )
+                                                })}
+                                            </Card>
+                                        ))}
                                     </Card>
                                 )}
-                                />
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Loader>
+            </Loader>
         </>
     )
 }

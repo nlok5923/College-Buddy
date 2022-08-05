@@ -1,4 +1,5 @@
 import { Card, Modal, Avatar, List, Space, Popover } from 'antd';
+import './InstituteCard.scss'
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../Provider/UserProvider';
 import { addPost, addModule, addEvent, uploadPoapImage, getImageUrl } from '../../Services/AdvertiserUtilities';
@@ -6,7 +7,7 @@ import { ethers } from 'ethers';
 import instituteManager from "../../Ethereum/InstituteFundsManager.json"
 import { ContractContext } from '../../Provider/ContractProvider';
 import toast, { Toaster } from "react-hot-toast"
-import { FileDoneOutlined, UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined } from "@ant-design/icons"
+import { FileDoneOutlined, UsergroupAddOutlined, ScheduleOutlined, VideoCameraOutlined, AppstoreAddOutlined, MinusSquareOutlined } from "@ant-design/icons"
 import { Link } from "react-router-dom"
 import { useMoralis } from "react-moralis"
 
@@ -26,7 +27,32 @@ const PostCard = (props) => {
         q2: "",
         name: "",
     });
-    // fDaixContract
+
+    const [multiModule, setMultiModule] = useState([]);
+
+    const handleMutliModuleChange = (questionIndex, e) => {
+        let oldQuestions = [...multiModule];
+        console.log(" this is question index ", questionIndex + "   " + oldQuestions.length);
+        oldQuestions[questionIndex - 1].q = e.target.value;
+        setMultiModule(oldQuestions);
+    }
+
+    const [moduleName, setModuleName] = useState('');
+
+    const handleAddQuestion = () => {
+        let oldModuleData = [...multiModule];
+        oldModuleData.push({
+            q: ''
+        });
+        console.log(" updating the multimodule data ", multiModule);
+        setMultiModule(oldModuleData);
+    }
+
+    const handleDeleteQuestion = () => {
+        let oldModuleData = [...multiModule];
+        oldModuleData = oldModuleData.slice(0, -1);
+        setMultiModule(oldModuleData);
+    }
 
     const [event, setEvent] = useState({
         name: '',
@@ -44,6 +70,7 @@ const PostCard = (props) => {
         description: ""
     })
     const [image, setImage] = useState(null);
+    // const 
 
     const handleOk = async () => {
         try {
@@ -89,7 +116,8 @@ const PostCard = (props) => {
     //! also add time limit for advertisement as a property 
 
     const handleModuleLock = async () => {
-        await addModule(props.postData.instId, module.q1, module.q2, user.id, module.name);
+        console.log(" this is mutli module data ", multiModule);
+        await addModule(props.postData.instId, multiModule, user.id, moduleName);
         try {
             if (!window.ethereum) {
                 toast.error("Please connect metamask first");
@@ -218,21 +246,29 @@ const PostCard = (props) => {
             </div>
         </Modal>
 
+        {/* handleAddQuestion */}
+
         <Modal title="Create tokenized module" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
             <div className="stream-container">
-                <input type="text" placeholder="Module name" name="name" onChange={(e) => setModule({
-                    ...module,
-                    [e.target.name]: e.target.value
-                })} />
-                <input type="text" placeholder="Enter question 1" name="q1" onChange={(e) => setModule({
-                    ...module,
-                    [e.target.name]: e.target.value
-                })} />
-                <input type="text" placeholder="Enter question 2" name="q2" onChange={(e) => setModule({
-                    ...module,
-                    [e.target.name]: e.target.value
-                })} />
                 <input type="number" placeholder="Enter number of modules" onChange={(e) => setCount(e.target.value)} />
+                <input type="text" placeholder="Module name" name="name" onChange={(e) => setModuleName(e.target.value)} />
+                {multiModule.map((data, id) => {
+                    return (
+                        <input 
+                        type="text" 
+                        placeholder={"Enter question " + (++id)}
+                        onChange={(e) => handleMutliModuleChange(id, e)}
+                        />  
+                    )
+                })}
+                <div className='module-btn'>
+                <button className="add-module delete-module-btn" onClick={() => handleDeleteQuestion()}>
+                    <MinusSquareOutlined />
+                </button> 
+                <button className="add-module" onClick={() => handleAddQuestion()}>
+                    <AppstoreAddOutlined />
+                </button>   
+                </div>
             </div>
         </Modal>
 

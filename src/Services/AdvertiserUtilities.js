@@ -100,14 +100,15 @@ export const uploadPoapImage = async (location) => {
     }
 }
 
-export const addModule = async (instId, _q1, _q2, _advtId, _name) => {
+export const addModule = async (instId, _moduleQuestions, _advtId, _name) => {
     try {
+        console.log(' this is module questions ', _moduleQuestions);
+        let moduleQuestions = _moduleQuestions.map((data) => data.q);
         await db.collection('users').doc(instId).collection('module').add({
-            q1: _q1,
-            q2: _q2,
+            questions: moduleQuestions, 
             advtId: _advtId,
             name: _name
-        })
+        });
     } catch (err) {
         console.log(err.message);
     }
@@ -190,8 +191,7 @@ export const getALlModuleResponses = async (uid) => {
                     responseRef.forEach((responseDoc, responseId) => {
                         tempResponse.push({
                             id: responseDoc.id,
-                            ans1: responseDoc.data().q1,
-                            ans2: responseDoc.data().q2 
+                            answers: responseDoc.data().answers,
                         })
                     })
                     responses.push({
