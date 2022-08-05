@@ -73,3 +73,17 @@
 .dashboard-container-1 img {
     height: 400px;
 }
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    } 
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+.rotating-logo {
+    animation: rotate infinite 3s;  
+}

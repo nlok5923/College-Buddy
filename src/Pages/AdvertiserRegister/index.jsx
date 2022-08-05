@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { SignInWithGoogle, SignInWithMoralis } from "../../Services/Auth"
 import { UserContext } from "../../Provider/UserProvider";
 import { useMoralis } from "react-moralis";
+import toast, { Toaster } from "react-hot-toast"
 
 const Register = () => {
 
@@ -45,8 +46,17 @@ const Register = () => {
     }
   }
 
+  const handleSubmit = () => {
+    try {
+      toast.error("Email based auth is under work please use moralis for auth :)");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
   return (
     <div>
+      <Toaster />
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
@@ -57,7 +67,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Register to LAE</strong>
+                  <strong>Welcome to LAE platform</strong>
                 </b>
               </h1>
               <div className="register-with-google">
@@ -111,7 +121,7 @@ const Register = () => {
                     Creating an account means you’re okay with our Terms and
                     <a href="shit"> Privacy Policy</a>
                   </h5>
-                  <button type="submit">
+                  <button type="submit" onClick={() => handleSubmit()}>
                     Create Account
                   </button>
                 </form>

@@ -62,15 +62,13 @@ const Submission = () => {
                     <p> Mark and manage all submission here </p>
                 </div>
                 <div className="submission-dashboard-content">
-            <h3 className="no-submission">
-                {submission.length === 0 ? "No Submissions yet " : " "}
-            </h3>
+            {submission.length === 0 ? <h3 className="no-submission"> No Submission yet </h3> :  null}
             <div className="submission-container">
                 {submission.map((data, id) => {
                     return (
                         <div>
                             <Card className="submission-container-card" extra={ data.marked ? <p> Marked </p> : <p> Not Marked </p>}>
-                                <Card.Meta title={"Assignment: #" + id + " Solution"} />
+                                <Card.Meta title={"Assignment: #" + id + " Submission"} />
                                 <p className="submissions">{data.ans2}</p>
                                 <input type="number" placeholder="Enter marks out of 10" onChange={(e) => setMarks(e.target.value)} />
                                 <button onClick={(e) => markIt(data.id, data.studentId)}> Mark it </button>

@@ -176,8 +176,8 @@ const StudentDashboard = () => {
 
   const registerStudent = async () => {
     try {
-      if(studentData.isRegistered) {
-        toast.error("You are already registered !!"); 
+      if (studentData.isRegistered) {
+        toast.error("You are already registered !!");
       } else {
         if (contractData.contract) {
           let txn = await instituteContract.registerStudent({ gasLimit: 9000000 });
@@ -205,7 +205,7 @@ const StudentDashboard = () => {
 
   const handleAns = async (courseId) => {
     try {
-      console.log(" this is ans and courseid ", ans.ans2 , "  ", courseId);
+      console.log(" this is ans and courseid ", ans.ans2, "  ", courseId);
       setIsLoading(true);
       await submitAns(studentData.instId, studentData.streamId, courseId, ans.ans2, user.id);
       toast.success("Ans submitted successfully !!");
@@ -302,7 +302,7 @@ const StudentDashboard = () => {
       if (contractData.address) {
         setIsLoading(true);
         let newShare = await getShare(user.id);
-        newShare = isNaN(newShare) ? 0: newShare;
+        newShare = isNaN(newShare) ? 0 : newShare;
         console.log("new share ", newShare)
         let oldShare = await instituteContract.shareUnits(contractData.address);
         console.log("old share", parseInt(oldShare._hex));
@@ -386,25 +386,28 @@ const StudentDashboard = () => {
                     Update Share
                   </span>
                   </p>
-                 )}
-                  <button onClick={() => registerStudent()}>
+                )}
+                <button onClick={() => registerStudent()}>
                   <FormOutlined /> <span>
-                  Register Me
-                    </span>
-                  </button> <br />
+                    Register Me
+                  </span>
+                </button> <br />
                 <Link to={`/student-dashboard/${user ? user.id : "/"}`}>
                   <button>
-                  <TrophyOutlined /> <span>
-                  Your POA Tokens
+                    <TrophyOutlined /> <span>
+                      Your POA Tokens
                     </span>
                   </button>
                 </Link>
               </div>
               <Card className='LAE-container-bg-card' style={{ fontFamily: "montserrat" }} title="All your assignments">
-                {assignments.length === 0 ? "No assignments for you now " : null}
+                {assignments.length === 0 ? <h3 className="no-work">
+                  No assignments for you now
+                </h3>
+                  : null}
                 {
                   assignments.map((data, id) => (
-                    <AssignmentCard key={id} data={data} handleAnsSubmit = {(assignId) => handleAns(assignId)} handleAnsChange = {(e) => handleChange(e)} />
+                    <AssignmentCard key={id} data={data} handleAnsSubmit={(assignId) => handleAns(assignId)} handleAnsChange={(e) => handleChange(e)} />
                   ))
                 }
               </Card>
@@ -451,7 +454,7 @@ const StudentDashboard = () => {
                         title={data.name}
                         description={data.description}
                       />
-                      <p style={{ marginTop: "4%" }}> <i> { data.dnt.slice(11, 16) + " | " + data.dnt.slice(0, 10)} </i> </p>
+                      <p style={{ marginTop: "4%" }}> <i> {data.dnt.slice(11, 16) + " | " + data.dnt.slice(0, 10)} </i> </p>
                       <button onClick={() => {
                         setCurrentAdvtId(data.advtId);
                         setPoapClaimModal(true);
@@ -468,25 +471,18 @@ const StudentDashboard = () => {
             </div>
 
             <div className='LAE-container-modules'>
-            <p className="LAE-container-modules-balance">
-               <MoneyCollectOutlined /> <span>
+              <p className="LAE-container-modules-balance">
+                <MoneyCollectOutlined /> <span>
                   incentives Received: {balance.toFixed(2)} fDAIx
                 </span>
-                </p>
+              </p>
               <Card style={{ fontFamily: "montserrat" }} title="Sponsored Modules">
-                {modules.length === 0 ? <p>
+                {modules.length === 0 ? <h3 className="no-modules">
                   No Sponsored modules ATM for you
-                </p>
+                </h3>
                   :
                   modules.map((data, id) => (
-                    // <Card type="inner" className="course-sub-card">
-                    //   <h4 className="spn-modules"> Q1) {data.q1}</h4>
-                    //   <input className="spn-modules" placeholder="Enter your answer here" name="q1" onChange={(e) =>handleModuleResp(e)} />
-                    //   <h4 className="spn-modules"> Q2) {data.q2} </h4>
-                    //   <input placeholder='Enter your answer here' name="q2" onChange={(e) => handleModuleResp(e)} /> <br />
-                    //   <Button className="spn-modules" onClick={() => handleModuleSubmit(data.id)}> Submit </Button>
-                    // </Card>
-                    <ModuleCard handleModuleAns={(e) => handleModuleResp(e)} data={data} handleSubmit = {(moduleId) => handleModuleSubmit(moduleId)} />
+                    <ModuleCard handleModuleAns={(e) => handleModuleResp(e)} data={data} handleSubmit={(moduleId) => handleModuleSubmit(moduleId)} />
                   ))
                 }
               </Card>

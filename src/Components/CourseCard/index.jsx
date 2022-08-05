@@ -8,7 +8,7 @@ const CourseCard = (props) => {
     return (
         <div>
             <Card
-               className="course-card"
+                className="course-card"
                 style={{
                     width: 300,
                     padding: "10px"

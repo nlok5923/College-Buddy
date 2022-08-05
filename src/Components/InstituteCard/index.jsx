@@ -173,17 +173,17 @@ const PostCard = (props) => {
         key={props.postData.name}
         actions={[
             <Popover content={"Promote Advertisement"}>
-                <UsergroupAddOutlined style={{ fontSize: "25px" }} onClick={() => setIsModalVisible(true)} key="promote" />
+                <UsergroupAddOutlined style={{ fontSize: "30px" }} onClick={() => setIsModalVisible(true)} key="promote" />
             </Popover>,
             <Popover content={"Add Modules"}>
-                <ScheduleOutlined style={{ fontSize: "22px" }} onClick={() => setModalVisible(true)} key="modules" />
+                <ScheduleOutlined style={{ fontSize: "30px" }} onClick={() => setModalVisible(true)} key="modules" />
             </Popover>,
             <Popover content={"Promote Events"}>
-                <VideoCameraOutlined style={{ fontSize: "22px" }} onClick={() => setEventModal(true)} key='event' />
+                <VideoCameraOutlined style={{ fontSize: "30px" }} onClick={() => setEventModal(true)} key='event' />
             </Popover>,
             <Popover content={"Student Responses"}>
                 <Link to="/advertiser-dashboard/module/responses">
-                    <FileDoneOutlined style={{ fontSize: "22px" }} key="responses" />
+                    <FileDoneOutlined style={{ fontSize: "30px" }} key="responses" />
                 </Link>
             </Popover>,
         ]}

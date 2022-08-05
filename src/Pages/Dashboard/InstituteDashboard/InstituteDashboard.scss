@@ -66,6 +66,7 @@
           text-align: center;
           font-size: 15px;
           padding: 5px 15px;
+          margin-top: -0.1%;
         }
       }
     }
@@ -91,10 +92,18 @@
   margin-top: 3%;
   width: 25vw;
   height: auto;
+
+  span {
+    color: #9a9da1;
+  }
 }
 
 .dashboard-inst-input {
   margin-top: 4%;
+
+  h4 {
+    font-weight: 700;
+  }
 
   button {
     border-radius: 10px;
@@ -124,4 +133,8 @@
         width: 30vw;
         margin-top: 1%;
     }
+}
+
+.inst-id {
+  margin-left: 9%;
 }

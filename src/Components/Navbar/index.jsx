@@ -31,7 +31,7 @@ const Navbar = () => {
         <>
             <div className="navbar">
                 <Link to="/" className="brand-name">
-                    <span className="brand-name-blue">LAE</span>
+                    <span className="brand-name-blue"> <img style={{ display: "inline-block", marginTop: "-1px", height:"30px", width: "40px" }} src="/asset/general/images/LAE.png" alt="LAE logo" /> LAE</span>
                 </Link>
                 <ul className="nav-items">
                     <li>

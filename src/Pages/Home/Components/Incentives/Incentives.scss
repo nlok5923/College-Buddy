@@ -18,9 +18,14 @@
         display: flex;
         flex-direction: row;
         width: 90%;
-        margin: 0 auto 0 7%;
+        margin: 0 auto 0 auto;
         justify-content: space-around;
         align-items: center;
+
+        img {
+            height: 95px;
+            width: 100px;
+        }
 
         &-students, &-institutes {
             width: 33vw;
@@ -40,4 +45,18 @@
             }
         }
     }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    } 
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+.rotate-logo {
+    animation: rotate infinite 3s;  
 }
