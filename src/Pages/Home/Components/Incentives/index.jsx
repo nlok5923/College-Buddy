@@ -8,7 +8,7 @@ const Incentives = () => {
             <div
                 className="benefits"
                 style={{
-                    backgroundImage: `url(asset/general/images/bg-1.png)`,
+                    backgroundImage: `url(/asset/general/images/bg-1.png)`,
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "100vw 100%"
                 }}
@@ -25,7 +25,7 @@ const Incentives = () => {
                         <img  style={{
                             height:"90px",
                             width: "90px"
-                        }} src="asset/general/images/teaching.png" alt="teaching" />
+                        }} src="/asset/general/images/teaching.png" alt="teaching" />
                         <h2>
                             For Institutes
                             </h2>
@@ -50,7 +50,7 @@ const Incentives = () => {
                         <img style={{
                             height:"90px",
                             width: "90px"
-                        }} src="asset/general/images/money.png" alt="money" />
+                        }} src="/asset/general/images/money.png" alt="money" />
                         <h2> 
                         For Students
                             </h2>

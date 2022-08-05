@@ -7,7 +7,7 @@ const Promotion = () => {
         <div
             className="dashboard-container-1"
             style={{
-                backgroundImage: `url(asset/Home/Images/top-new.png)`,
+                backgroundImage: `url(/asset/Home/Images/top-new.png)`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "100% 100%"
             }}

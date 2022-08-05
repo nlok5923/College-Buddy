@@ -66,7 +66,7 @@ const AdvertiserDashboard = () => {
     }
 
     const backgroundStyling = {
-        backgroundImage: `url("asset/general/images/lfg-1.png")`,
+        backgroundImage: `url("/asset/general/images/lfg-1.png")`,
         backgroundRepeat: "no-repeat",
         height: "100vh",
         backgroundSize: "100% 100%",
