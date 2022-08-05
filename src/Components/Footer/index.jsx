@@ -16,7 +16,7 @@ const Footer = () => {
           <div className="footer-container">
             <div className="footer-container-logo">
               <h1>LAE</h1>
-              <p>San Fransisco, CA 329831, USA.. +1 82398321</p>
+              <p>Ahmedabad Gandhinagar 382421, India +918871719893</p>
 
               <h2>Privacy policy</h2>
               <h2>Terms of service</h2>

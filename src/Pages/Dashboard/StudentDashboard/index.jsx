@@ -454,7 +454,7 @@ const StudentDashboard = () => {
                         title={data.name}
                         description={data.description}
                       />
-                      <p style={{ marginTop: "4%" }}> <i> {data.dnt.slice(11, 16) + " | " + data.dnt.slice(0, 10)} </i> </p>
+                      <p style={{ marginTop: "4%", fontSize: "12px" }}> <i> {data.dnt.slice(11, 16) + " | " + data.dnt.slice(0, 10)} </i> </p>
                       <button onClick={() => {
                         setCurrentAdvtId(data.advtId);
                         setPoapClaimModal(true);
