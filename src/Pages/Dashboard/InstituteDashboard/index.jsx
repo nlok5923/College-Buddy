@@ -81,7 +81,7 @@ const InstituteDashboard = () => {
     }, [contractData])
 
     const backgroundStyling = {
-        backgroundImage: `url("asset/Registration/institute/stream-bg.png")`,
+        backgroundImage: `url("/asset/Registration/institute/stream-bg.png")`,
         backgroundRepeat: "no-repeat",
         height: "100vh",
         backgroundSize: "100% 100%",

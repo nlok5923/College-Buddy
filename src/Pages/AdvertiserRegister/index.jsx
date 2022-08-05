@@ -11,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast"
 const Register = () => {
 
   const backgroundStyling = {
-    backgroundImage: `url("asset/Login/Images/register-bg.png")`,
+    backgroundImage: `url("/asset/Login/Images/register-bg.png")`,
     backgroundRepeat: "no-repeat",
     height: "100vh",
     backgroundSize: "100% 100%",
@@ -82,7 +82,7 @@ const Register = () => {
                 />
               </div>
               <img
-                src="asset/Login/Images/divider.png"
+                src="/asset/Login/Images/divider.png"
                 alt="divider"
                 className="register-divider"
               />
