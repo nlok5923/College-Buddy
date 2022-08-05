@@ -226,3 +226,20 @@ export const getModules = async (instId, studentId) => {
         console.log(err.message);
     }
 }
+
+export const deleteAssignment = async (instId, streamId, assignmentId) => {
+    try {
+        await db.collection('users').doc(instId).collection('streams').doc(streamId).collection('courses').doc(assignmentId).delete();
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export const deleteBranch = async (instId, streamId) => {
+    try {
+        console.log(" this is inst id and stream id ", instId + "  " + streamId);
+        await db.collection('users').doc(instId).collection('streams').doc(streamId).delete();
+    } catch (err) {
+        console.log(err.message);
+    }
+}

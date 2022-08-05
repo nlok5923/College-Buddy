@@ -1,11 +1,11 @@
 .course-card {
     font-family: "montserrat";
+
     button {
         background: rgba(89, 175, 255, 1);
         border-radius: 50%;
-        color: #FFFFFF;
-        font-size: 10px;
-        margin-left: 90%;
+        font-size: 12px;
+        // margin-left: 90%;
         font-weight: 100;
         padding: 10px 12px;
         border: none;
@@ -14,4 +14,16 @@
         text-align: center;
         display: block;
     }
+
+    &-btn-align {
+        margin-top: 5%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.delete-btn {
+    background: #f72307 !important;
+    margin-left: 0 !important;
 }

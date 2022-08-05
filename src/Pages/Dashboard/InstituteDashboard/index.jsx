@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import './InstituteDashboard.scss'
 import { Avatar, List, Modal, Popover } from 'antd';
-import { AddStreams, fetchStreams, updateInstitute, getInstitute } from "../../../Services/InstituteUtilities";
+import { AddStreams, fetchStreams, updateInstitute, getInstitute, deleteBranch } from "../../../Services/InstituteUtilities";
 import { UserContext } from "../../../Provider/UserProvider";
 import { Link } from "react-router-dom";
 import { ContractContext } from "../../../Provider/ContractProvider";
@@ -10,6 +10,7 @@ import { ethers } from "ethers";
 import instituteManager from '../../../Ethereum/InstituteFundsManager.json'
 import Loader from '../../../Components/Loader/index'
 import { useMoralis } from "react-moralis"
+import { DeleteOutlined } from "@ant-design/icons"
 
 const InstituteDashboard = () => {
     const { authenticate, isAuthenticated, user } = useMoralis();
@@ -81,7 +82,7 @@ const InstituteDashboard = () => {
     }, [contractData])
 
     const backgroundStyling = {
-        backgroundImage: `url("/asset/Registration/institute/stream-bg.png")`,
+        backgroundImage: `url("/asset/Registration/institute/stream-bg1.png")`,
         backgroundRepeat: "no-repeat",
         height: "100vh",
         backgroundSize: "100% 100%",
@@ -173,6 +174,19 @@ const InstituteDashboard = () => {
           })
     }
 
+    const deleteStream = async (streamId) => {
+        try {
+            setIsLoading(true);
+            await deleteBranch(user.id, streamId);
+            getAllStreams();
+            setIsLoading(false);
+            toast.success("deleted stream");
+        } catch (err) {
+            toast.error('Error deleting stream');
+            console.log(err.message);
+        }
+    }
+
     return (
         <div>
             <Toaster />
@@ -224,14 +238,19 @@ const InstituteDashboard = () => {
                                     size="large"
                                     itemLayout="horizontal"
                                     dataSource={streams}
+                                    pagination={{
+                                        onChange: (page) => {
+                                          console.log(page);
+                                        },
+                                        pageSize: 5,
+                                      }}
                                     renderItem={(item) => (
-                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<span>Stream Id: {item.id}</span>, <Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>]}>
+                                        <List.Item style={{ fontFamily: "montserrat", fontSize: "20px" }} actions={[<span>Stream Id: {item.id}</span>, <Link to={`/institute-dashboard/${item.id}`}> Add Assignments </Link>, <h4 onClick={() => deleteStream(item.id)}> <DeleteOutlined />  </h4>]}>
                                             <List.Item.Meta
                                                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                                                 title={<a>{item.name}</a>}
                                                 description={item.description}
                                             />
-                                            {/* <h5> {item.id} </h5> */}
                                         </List.Item>
                                     )}
                                 />

@@ -5,7 +5,7 @@ import { Button, Modal } from 'antd'
 import { DownloadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { UserContext } from "../../../../Provider/UserProvider";
 import { useParams } from "react-router-dom";
-import { AddCourses, fetchCourses } from "../../../../Services/InstituteUtilities";
+import { AddCourses, fetchCourses, deleteAssignment } from "../../../../Services/InstituteUtilities";
 import { Link } from "react-router-dom";
 import Loader from '../../../../Components/Loader/index'
 import toast, { Toaster } from 'react-hot-toast'
@@ -112,9 +112,16 @@ const AddCoursesComponent = () => {
                             marginLeft: "2%",
                         }}>
                             {courses.length === 0 ?  <h3 className="no-assignments"> No Assignments added till now </h3> :  null }
-                            {courses.map((data, id) => <Link to={`/institute-dashboard/${streamId}/${data.id}`} >
-                                <CourseCard style={{ marginLeft: "10px", padding: "10px" }} key={id} postData={data} cardId={id + 1} />
-                            </Link>
+                            {courses.map((data, id) => 
+                                <CourseCard 
+                                style={{ marginLeft: "10px", padding: "10px" }} 
+                                key={id}  
+                                postData={data} 
+                                cardId={id + 1} 
+                                instId = {user.id}
+                                streamId = {streamId}
+                                fetchCourses = {() => getCourses()}
+                                />
                             )}
                         </div>
                     </div>
