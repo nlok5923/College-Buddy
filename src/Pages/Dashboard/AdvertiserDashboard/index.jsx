@@ -82,7 +82,11 @@ const AdvertiserDashboard = () => {
                     </div>
                     <div className="advt-dashboard-content">
                         <Link to={`/advertiser-dashboard/${currentUserId}`}>
-                            <p className="poap-request">All POAP requests</p>
+                            {/* <p className="poap-request"> */}
+                                <button>
+                                All POAP requests
+                                    </button>
+                            {/* </p> */}
                         </Link>
                         {/* .no-institutes */}
                         {instData.length === 0 ? <h3 className="no-institutes"> No institutes registered or check are you connected or not  </h3> : null}

@@ -9,6 +9,7 @@ import { Modal } from "antd"
 import { updateInstitute, getInstitute } from "../../Services/InstituteUtilities";
 import { ContractContext } from "../../Provider/ContractProvider";
 import { useMoralis } from "react-moralis";
+import toast, { Toaster } from "react-hot-toast";
 
 const Register = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
@@ -43,20 +44,13 @@ const Register = () => {
   // const { user, isLoading } = info;
   const [redirect, setredirect] = useState(null);
 
-  // useEffect(() => {
-  //   if(user && !isLoading) {
-  //     history.push('/institute-dashboard');
-  //   }
-  // }, [user, isLoading]);
-
-  // const moralisSignIn = async () => {
-  //   try {
-  //     await SignInWithGoogle("INST");
-  //   } catch (err) {
-  //     console.log("Mishap ", err.message);
-  //   }
-  // }
-
+  const handleSubmit = () => {
+    try {
+      toast.error("Email based auth is under work please use moralis for auth :)");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 
   useEffect(() => {
     if(user) {
@@ -90,6 +84,7 @@ const Register = () => {
 
   return (
     <div>
+      <Toaster />
       <div className="register">
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
@@ -100,7 +95,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Register to LAE</strong>
+                  <strong>Welcome to LAE Platform</strong>
                 </b>
               </h1>
               <div className="register-with-google">
@@ -154,7 +149,7 @@ const Register = () => {
                     Creating an account means you’re okay with our Terms and
                     <a href="shit"> Privacy Policy</a>
                   </h5>
-                  <button type="submit">
+                  <button type="submit" onClick={() => handleSubmit()}>
                     Create Account
                   </button>
                 </form>

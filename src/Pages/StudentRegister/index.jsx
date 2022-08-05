@@ -9,6 +9,7 @@ import { Modal } from "antd"
 import { studentEnroll, getStudent } from "../../Services/StudentUtilities";
 import { useMoralis } from "react-moralis"
 import { ContractContext } from "../../Provider/ContractProvider";
+import toast, { Toaster } from "react-hot-toast"
 
 const Register = () => {
   const { authenticate, isAuthenticated, user } = useMoralis();
@@ -67,8 +68,17 @@ const Register = () => {
     }
   }
 
+  const handleSubmit = () => {
+    try {
+      toast.error("Email based auth is under work please use moralis for auth :)");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
   return (
     <div>
+      <Toaster />
       <Modal title="Add Stream" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
         <div className="stream-container">
           <input type="text" placeholder="Enter institute ID" name="instId" onChange={(e) => handleStudentInfo(e)} />
@@ -85,7 +95,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Register to LAE</strong>
+                  <strong>Welcome to LAE Platform</strong>
                 </b>
               </h1>
               <div className="register-with-google">
@@ -139,7 +149,7 @@ const Register = () => {
                     Creating an account means you're okay with our Terms and
                     <a href="shit"> Privacy Policy</a>
                   </h5>
-                  <button type="submit">
+                  <button type="submit" onClick={() => handleSubmit()}>
                     Create Account
                   </button>
                 </form>

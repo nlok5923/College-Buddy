@@ -25,7 +25,7 @@ const Promotion = () => {
                         <p>
                             Complete your daily assignments with great efficiency
                             <br />
-                            and get rewarded based on your performance
+                            and get rewarded based on your performance 
                         </p>
                     </div>
                     <div className="top-container-btn">
