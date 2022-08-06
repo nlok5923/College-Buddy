@@ -1,5 +1,5 @@
 import "./Navbar.scss";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "antd/dist/antd.css";
 import { Menu, Dropdown, Popover, Button } from "antd";
 import { DownloadOutlined, UserOutlined, LinkOutlined, LogoutOutlined, FileDoneOutlined } from "@ant-design/icons";
@@ -12,6 +12,8 @@ import { useMoralis } from "react-moralis";
 const Navbar = () => {
     const { user, isLoading } = useContext(UserContext);
     const contractData = useContext(ContractContext);
+    const [isVisitor, setIsVisitor] = useState(true);
+
     useEffect(() => {
         console.log(" this is contract ", contractData)
     }, [contractData])
@@ -26,6 +28,12 @@ const Navbar = () => {
             console.log(err.message);
         }
     }
+
+    useEffect(() => {
+        if(user) {
+            setIsVisitor(false);
+        }
+    }, [])
     
     return (
         <>

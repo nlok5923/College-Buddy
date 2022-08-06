@@ -7,7 +7,7 @@ const AssignmentCard = (props) => {
     return (
         <div className="assignment">
             <Popover content={props.data.name}>
-            <h1> Assignment: {props.data.name.slice(0, 15)} </h1>
+            <h1> Assignment: {props.data.name.slice(0, 12) + "..."} </h1>
             </Popover>
             <span>
                 <h3> File: <button onClick={() => {

@@ -144,8 +144,8 @@ const PoapRequest = () => {
                                     }}>
                                         <LinkOutlined /> Link to image file
                                     </Link>
-                                    <p> {data.imageUrl} </p>
                                     <Meta
+                                        style={{ marginTop: "20px" }}
                                         avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                                         title={"By " + data.address.slice(0, 7) + "..."}
                                     />

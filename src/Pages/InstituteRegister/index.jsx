@@ -89,13 +89,13 @@ const Register = () => {
         <div className="register-container">
           <div className="register-container-bg" style={backgroundStyling}>
             <h1>LAE</h1>
-            <p>Register manager your evaluations </p>
+            <p>Register and manage your evaluations </p>
           </div>
           <div className="register-container-inputarea">
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Welcome to LAE Platform</strong>
+                  <strong>Welcome to LAE !!</strong>
                 </b>
               </h1>
               <div className="register-with-google">

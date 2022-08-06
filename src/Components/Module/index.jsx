@@ -12,6 +12,7 @@ const ModuleCard = (props) => {
     setModuleResp(oldResponseData);
     console.log(" updating response ", oldResponseData);
   }
+  console.log(" there are props ", props);
 
   return (
     <div className="module-card">
