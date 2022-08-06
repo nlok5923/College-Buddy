@@ -103,7 +103,7 @@ const AdvertiserDashboard = () => {
                                         pageSize: 3,
                                     }}
                                     renderItem={(item, id) => (
-                                        <PostCard loadingState={setLoading} key={id} postData={item} />
+                                        <PostCard style={{ marginTop: "10%" }} loadingState={setLoading} key={id} postData={item} />
                                     )}
                                 />
                             </Card>

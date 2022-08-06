@@ -67,10 +67,14 @@ const InstituteDashboard = () => {
     const getInstituteAddress = async () => {
         try {
             if(contractData.contract) {
-                let data = await contractData.contract.getALlInstitutesManager();
-                console.log("resp from bc", data);
-                setInstAddress(data[0][1]);
-                getInstituteContract(data[0][1]);
+                let institutes = await contractData.contract.getALlInstitutesManager();
+                institutes.map((inst, id) => {
+                    console.log(" this is inst id ", inst);
+                    if(inst.instituteId === user.id) {
+                        setInstAddress(inst.instituteAddress);
+                        getInstituteContract(inst.instituteAddress);
+                    }
+                })
             }
         } catch (err) {
             console.log(err.message);
@@ -140,8 +144,8 @@ const InstituteDashboard = () => {
                     { gasLimit: 9000000 }
                     );
                 let receipt = await txn.wait();
-                setIsLoading(false);
                 toast.success("Institute added successfully !!");
+                setIsLoading(false);
                 getInstituteAddress();
                 // window.location.reload();
             } else {
@@ -216,7 +220,6 @@ const InstituteDashboard = () => {
                                 <b>
                                     <strong>Init & Add Streams</strong>
                                 </b>
-
                                 <p>
                                     <Popover content={address}>
                                     Address: {address !== '' ? address.slice(0, 11) + "..." : "Please connect"}
@@ -224,19 +227,12 @@ const InstituteDashboard = () => {
                                 </p>
                             </h1>
                             <div className="dashboard-inst-input">
-                                {!address && <div>
+                                {address === '' && <div>
                                     <input type="text" placeholder="Enter inst unique code" onChange={(e) => setName(e.target.value)} />
                                     <button onClick={() => initInstitute()}>
                                         Init Institute
                                     </button>
-                                </div>
-                                }
-                                 <div>
-                                    <input type="text" placeholder="Enter inst unique code" onChange={(e) => setName(e.target.value)} />
-                                    <button onClick={() => initInstitute()}>
-                                        Init Institute
-                                    </button>
-                                </div>
+                                </div>}
                                 <h4 className="inst-id">Institute Id: {user ? user.id: null}</h4>
                                 <List
                                     style = {{ 
