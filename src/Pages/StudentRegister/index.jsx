@@ -95,7 +95,7 @@ const Register = () => {
             <div className="register-container-inputarea-boxarea">
               <h1>
                 <b>
-                  <strong>Welcome to LAE Platform</strong>
+                  <strong>Welcome to LAE !!</strong>
                 </b>
               </h1>
               <div className="register-with-google">

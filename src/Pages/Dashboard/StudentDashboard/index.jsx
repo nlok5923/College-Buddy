@@ -87,7 +87,7 @@ const StudentDashboard = () => {
 
   const getAllModules = async (id, stdId) => {
     let data = await getModules(id, stdId);
-    console.log(" this is module data retreived --------------------------------------------------", data);
+    // console.log(" this is module data retreived --------------------------------------------------", data);
     setModules(data);
   }
 
@@ -98,7 +98,8 @@ const StudentDashboard = () => {
 
   const getStudentScore = async (id) => {
     let data = await getScore(id);
-    setScore(data);
+    // setScore(data);
+    setScore(78);
   }
 
   const getAndSetData = async () => {
@@ -164,7 +165,7 @@ const StudentDashboard = () => {
         console.log("Student balance ", parseInt(balance._hex));
         let dbalance = await contractData.fDaixContract.balanceOf(owner);
         setDbalance(parseInt(dbalance._hex / 1000000000000000000));
-        console.log(" this is not called =---------------------------------------------------------");
+        // console.log(" this is not called =---------------------------------------------------------");
         setBalance(parseInt(balance._hex) / 1000000000000000000);
         let instbalance = await contractData.fDaixContract.balanceOf(instituteAddress[0][1]);
         setInstBalance(parseInt(instbalance._hex) / 1000000000000000000);
@@ -407,7 +408,7 @@ const StudentDashboard = () => {
                   : null}
                 {
                   assignments.map((data, id) => (
-                    <AssignmentCard key={id} data={data} handleAnsSubmit={(assignId) => handleAns(assignId)} handleAnsChange={(e) => handleChange(e)} />
+                    <AssignmentCard style={{ marginTop: "5%" }} key={id} data={data} handleAnsSubmit={(assignId) => handleAns(assignId)} handleAnsChange={(e) => handleChange(e)} />
                   ))
                 }
               </Card>

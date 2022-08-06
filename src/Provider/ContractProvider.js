@@ -17,11 +17,11 @@ const ContractProvider = (props) => {
   const [fDaixContract, setfDaixContract] = useState(null);
 
   // change this address every time you deploy a factory like change it with new factory address
-  const contractAddress = "0xC8A26A607d4f0ecbA7176c1c2F54FcF3379F27C6"
+  const contractAddress = "0xE74752f793818d7b5c9b601f369317Deb73c0F05"
   //! need to update it after deploying distributeToken
   const distributeTokenAddress = "0x31F1574875DBf52b4A4dCfDD40BC47a2515A4F58"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"
-  const poaContractAddress = "0xdAF16b6bc9f6A6259Caf5016adce95C14a58F49a"
+  const poaContractAddress = "0x029E028c5DBb1E50b4f44be1aBcCbe9e59c6c919"
   const fDaixContractAddress = "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00"
   const _initEthers = async () => {
     let ethProvider = new ethers.providers.Web3Provider(window.ethereum);

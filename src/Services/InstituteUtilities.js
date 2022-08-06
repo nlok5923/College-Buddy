@@ -214,7 +214,8 @@ export const getModules = async (instId, studentId) => {
             if(!isPresent) {
                 data.push({
                     id: doc.id,
-                    questions: doc.data().questions
+                    questions: doc.data().questions,
+                    name: doc.data().name
                 })
             }
         })

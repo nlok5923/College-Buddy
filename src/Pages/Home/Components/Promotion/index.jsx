@@ -23,7 +23,7 @@ const Promotion = () => {
                             Earn Token 
                         </h2>
                         <p>
-                            Complete your daily assignments with great efficiency
+                            Get involved in course activities
                             <br />
                             and get rewarded based on your performance 
                         </p>

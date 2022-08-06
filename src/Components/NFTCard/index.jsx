@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import './NFTCard.scss'
-import { Modal, Button } from "antd"
+import { Modal, Button, Popover } from "antd"
 
 const NFTCard = (props) => {
     const [isRead, setIsRead] = useState(false);
@@ -26,7 +26,9 @@ const NFTCard = (props) => {
 
             <div className="poa-nft-card">
                 <img src={props.nftData.imageUrl} style={{ width: "80%", height: "40%", display: "block", margin: "0 auto 0 auto" }} alt="alt" />
-                <h2> {props.nftData.name} </h2>
+                <Popover content={props.nftData.name}>
+                    <h2> { props.nftData.name.length > 15 ? props.nftData.name.slice(0, 15) + "..." : props.nftData.name} </h2>
+                </Popover>
                 <h4><i><u>
                     About
                 </u>
