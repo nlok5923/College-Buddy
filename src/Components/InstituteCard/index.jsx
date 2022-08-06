@@ -203,7 +203,7 @@ const PostCard = (props) => {
             <Popover content={"Promote Advertisement"}>
                 <UsergroupAddOutlined style={{ fontSize: "30px" }} onClick={() => setIsModalVisible(true)} key="promote" />
             </Popover>,
-            <Popover content={"Add Modules"}>
+            <Popover content={"Take Survey"}>
                 <ScheduleOutlined style={{ fontSize: "30px" }} onClick={() => setModalVisible(true)} key="modules" />
             </Popover>,
             <Popover content={"Promote Events"}>
@@ -248,10 +248,10 @@ const PostCard = (props) => {
 
         {/* handleAddQuestion */}
 
-        <Modal title="Create tokenized module" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
+        <Modal title="Create tokenized survey" visible={modalVisible} onOk={() => handleModuleLock()} onCancel={() => handleModuleCancel()}>
             <div className="stream-container">
-                <input type="number" placeholder="Enter number of modules" onChange={(e) => setCount(e.target.value)} />
-                <input type="text" placeholder="Module name" name="name" onChange={(e) => setModuleName(e.target.value)} />
+                <input type="number" placeholder="Enter number of responses" onChange={(e) => setCount(e.target.value)} />
+                <input type="text" placeholder="name" name="name" onChange={(e) => setModuleName(e.target.value)} />
                 {multiModule.map((data, id) => {
                     return (
                         <input 

@@ -231,6 +231,12 @@ const InstituteDashboard = () => {
                                     </button>
                                 </div>
                                 }
+                                 <div>
+                                    <input type="text" placeholder="Enter inst unique code" onChange={(e) => setName(e.target.value)} />
+                                    <button onClick={() => initInstitute()}>
+                                        Init Institute
+                                    </button>
+                                </div>
                                 <h4 className="inst-id">Institute Id: {user ? user.id: null}</h4>
                                 <List
                                     style = {{ 
