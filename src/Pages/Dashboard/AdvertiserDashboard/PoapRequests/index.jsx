@@ -49,7 +49,9 @@ const PoapRequest = () => {
                         name: data.name,
                         contribution: data.contribution,
                         about: data.about,
-                        imageUrl: data.imageUrl
+                        description: data.contribution, 
+                        imageUrl: data.imageUrl,
+                        image: data.imageUrl,
                     }),
                     headers: {
                         'pinata_api_key': process.env.REACT_APP_PINATA_API_KEY,
