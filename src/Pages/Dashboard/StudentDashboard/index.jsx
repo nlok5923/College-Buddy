@@ -343,7 +343,7 @@ const StudentDashboard = () => {
       <Toaster />
       <Loader isLoading={loading} message={"Loading student dashboard"} >
         <div className="LAE">
-          <Modal title="Add Post" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
+          <Modal title="Enter inst and stream id" visible={isModalVisible} onOk={() => handleOk()} onCancel={() => handleCancel()}>
             <div className="stream-container">
               <input type="text" placeholder="Enter Institute Id" name="instId" onChange={(e) => setStudentData({
                 ...studentData,
