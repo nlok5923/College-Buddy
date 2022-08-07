@@ -17,7 +17,7 @@ const ContractProvider = (props) => {
   const [fDaixContract, setfDaixContract] = useState(null);
 
   // change this address every time you deploy a factory like change it with new factory address
-  const contractAddress = "0xE74752f793818d7b5c9b601f369317Deb73c0F05"
+  const contractAddress = "0x4cC97d9053d9ED4E7a1cB92fd387a7a78a8cC410"
   //! need to update it after deploying distributeToken
   const distributeTokenAddress = "0x31F1574875DBf52b4A4dCfDD40BC47a2515A4F58"
   const learnAndEarnTokenAddress = "0xC760202A0d87ECD6b53a8bbc72FF63a9b411986D"

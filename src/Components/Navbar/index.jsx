@@ -39,7 +39,7 @@ const Navbar = () => {
         <>
             <div className="navbar">
                 <Link to="/" className="brand-name">
-                    <span className="brand-name-blue"> <img style={{ display: "inline-block", marginTop: "-7px", height:"30px", width: "40px" }} src="/asset/general/images/LAE.png" alt="LAE logo" /> LAE</span>
+                    <span className="brand-name-blue"> <img style={{ display: "inline-block", marginTop: "-7px", height:"30px", width: "100px" }} src="/asset/logo/logo.png" alt="LAE logo" /></span>
                 </Link>
                 <ul className="nav-items">
                     <li>
