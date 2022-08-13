@@ -31,6 +31,9 @@
  #### Institute Funds Manager Contract: 0x5a846208b94F874325aB8B91C226C477aC72C1be
  #### Proof of Attendence Token Contract: 0x4c2BA21D58324F94FD1A924B9C09dA7B9e920F21
  
+ ## Architecture at a glimpse:
+  <img src="images/arch-new.png" alt="architecture" />
+ 
  ## Snaps:
   
   <img src="images/landing.png" alt="landing" />
@@ -39,3 +42,5 @@
   <img src="images/advt-dashboard.png" alt="landing" />  
   <img src="images/std-dashboard.png" alt="landing" />  
   <img src="images/poap-claim.png" alt="landing" />  
+  
+ ### WAGMI
