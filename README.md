@@ -1,3 +1,4 @@
+## Project: College $Buddy
 ## Problem
 
 - To Make people work effectively there should be some kind of incentive attached to the work they are doing.
@@ -18,8 +19,19 @@
     - Normal advertisements (poster, information etc).
     - Tokenized modules (for survey, feedback etc) which will instantly reward the respondent.
     - POAP based events advertisers can launch events for students and on successful attendance students can claim the POAP for the event.
-    
-  ## Snaps:
+
+## Tech Stack behind the solutions:
+<p> <b> Smart Contracts: </b> When ever a new institute is registered a funds manager smart contract is deployed which will manage all funds coming from advertiser to institute. </p>
+<p> <b> SuperFluid IDA: </b> Leveraged the Superfluid instant distribution agreement for distributing super tokens to the students based upon their score. </p>
+<p>  <b> Gelato: </b> For setting up task for distributing tokens on a monthly basis. </p>
+<p> <b> Pinata: </b> For saving Proof Of Attendence (POA) token metadata to IPFS. </p>   
+  
+ #### Token used: fDAIx
+ #### Token address on mumbai testnet: 0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f
+ #### Institute Funds Manager Contract: 0x5a846208b94F874325aB8B91C226C477aC72C1be
+ #### Proof of Attendence Token Contract: 0x4c2BA21D58324F94FD1A924B9C09dA7B9e920F21
+ 
+ ## Snaps:
   
   <img src="images/landing.png" alt="landing" />
   <img src="images/register.png" alt="landing" />  
